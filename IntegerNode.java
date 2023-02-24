@@ -10,10 +10,6 @@ public class IntegerNode extends Node {
         return value;
     }
 
-    public void setValue(int inputValue) {
-        value = inputValue;
-    }
-
     public String ToString() {
         return "IntegerNode(" + value + ")";
     }

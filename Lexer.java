@@ -15,7 +15,7 @@ public class Lexer {
     private double indentationLevel;
     private double previousIndentationLevel = 0;
 
-    HashMap<String, Token.tokenType> knownWords = new HashMap<String, Token.tokenType>();
+    private HashMap<String, Token.tokenType> knownWords = new HashMap<String, Token.tokenType>();
 
     public Lexer() {
         initializeKeys();
