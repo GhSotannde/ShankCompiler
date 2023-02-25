@@ -15,6 +15,6 @@ public class FunctionNode extends Node {
     } 
 
     public String ToString() {
-        return "FunctionNode(" + name + ")";
+        return "FunctionNode(" + name + ", " + parameterArray + ")";
     }
 }

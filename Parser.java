@@ -30,7 +30,8 @@ public class Parser {
             else {
                 newNode = function();
                 if (newNode != null) {
-                    System.out.println("Success!");
+                    FunctionNode functionNode = (FunctionNode) newNode;
+                    System.out.println(functionNode.ToString());
                 }
                 else {
                     break;
@@ -288,6 +289,33 @@ public class Parser {
         return newMathOpNode;
     }
 
+    private void createVariableFromParameter(Token inputCurrentToken, int inputChangeable, ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
+        inputCurrentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+                if (inputCurrentToken != null) {
+                    VariableNode.variableType variableType = searchForType();
+                    if (variableType == null)
+                        throw new SyntaxErrorException(tokenArray.get(0));
+                    inputVariableNodeArray.add(new VariableNode(inputCurrentToken.getValue(), variableType, 1));
+                    while (matchAndRemove(Token.tokenType.COMMA) != null) {
+                        inputCurrentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+                        if (inputCurrentToken != null) {
+                            variableType = searchForType();
+                            if (variableType == null)
+                                throw new SyntaxErrorException(tokenArray.get(0));
+                            inputVariableNodeArray.add(new VariableNode(inputCurrentToken.getValue(), variableType, 1));
+                        }
+                    }
+                    if (matchAndRemove(Token.tokenType.COLON) != null) {
+                        matchAndRemove(Token.tokenType.INTEGER);
+                        matchAndRemove(Token.tokenType.REAL);
+                        matchAndRemove(Token.tokenType.CHARACTER);
+                        matchAndRemove(Token.tokenType.ARRAY);
+                        matchAndRemove(Token.tokenType.BOOLEAN);
+                        matchAndRemove(Token.tokenType.SEMICOLON);
+                    }
+                }
+    }
+
     private Token expectEndsOfLine() throws SyntaxErrorException {
         Token newToken = matchAndRemove(Token.tokenType.ENDOFLINE);
         int endOfLineCounter = 0;
@@ -357,23 +385,31 @@ public class Parser {
                 return newRealNode;
             }
         }
-        if (matchAndRemove(Token.tokenType.OPENPARENTHESES) != null) {
+        if (matchAndRemove(Token.tokenType.LEFTPARENTHESES) != null) {
             MathOpNode newMathOpNode = (MathOpNode) expression();
-            if (matchAndRemove(Token.tokenType.CLOSEPARENTHESES) != null) {
+            if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
                 return newMathOpNode;
             }
             else {
                 throw new SyntaxErrorException(tokenArray.get(0));
             }
-
         }
         return null;
     }
 
-    private FunctionNode function() {
+    private FunctionNode function() throws SyntaxErrorException {
         if (matchAndRemove(Token.tokenType.DEFINE) != null) {
-            FunctionNode functionNode = new FunctionNode(null, null, null, null);
-            return functionNode;
+            Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+            if (currentToken != null) {
+                String functionName = currentToken.getValue();
+                currentToken = matchAndRemove(Token.tokenType.LEFTPARENTHESES);
+                if (currentToken != null) {
+                    ArrayList<VariableNode> parameterArray = parameterDeclarations();
+                    FunctionNode functionNode = new FunctionNode(functionName, parameterArray, null, null);
+                    return functionNode;
+                }
+            }
+            throw new SyntaxErrorException(tokenArray.get(0));
         }
         return null;
     }
@@ -389,10 +425,53 @@ public class Parser {
         return null;
     }
 
+    private ArrayList<VariableNode> parameterDeclarations() throws SyntaxErrorException {
+        ArrayList<VariableNode> variableNodeArray = new ArrayList<VariableNode>();
+        while (peek(0).getToken() != Token.tokenType.RIGHTPARENTHESES) {
+            Token currentToken;
+            currentToken = matchAndRemove(Token.tokenType.VAR);
+            if (currentToken != null) {
+                createVariableFromParameter(currentToken, 1, variableNodeArray);
+            }
+            else {
+                createVariableFromParameter(currentToken, 0, variableNodeArray);
+            }
+        }
+        if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
+            if (variableNodeArray.size() == 0) {
+                return null;
+            }
+            return variableNodeArray;
+        }
+        throw new SyntaxErrorException(tokenArray.get(0));
+    }
+
     private Token peek(int inputInteger) {
         Token token = tokenArray.get(inputInteger) != null ? tokenArray.get(inputInteger) : null;
         return token;
     }
+
+    private VariableNode.variableType searchForType() {
+        for (int i = 0; i < 10; i++) {
+            switch (peek(i).getToken()) {
+                case INTEGER:
+                    return VariableNode.variableType.INTEGER;
+                case REAL:
+                    return VariableNode.variableType.REAL;
+                case CHARACTER:
+                    return VariableNode.variableType.CHARACTER;
+                case STRING:
+                    return VariableNode.variableType.STRING;
+                case ARRAY:
+                    return VariableNode.variableType.ARRAY;
+                case BOOLEAN:
+                    return VariableNode.variableType.BOOLEAN;
+                default:
+                    break;
+            }
+        }
+        return null;
+    } 
 
     private Node term() throws SyntaxErrorException {
         MathOpNode newMathOpNode;

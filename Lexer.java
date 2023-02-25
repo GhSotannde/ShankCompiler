@@ -257,19 +257,19 @@ public class Lexer {
                 break;
             case ')':
                 tokenArray.add(new Token());
-                tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.CLOSEPARENTHESES);
+                tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.RIGHTPARENTHESES);
                 tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
                 tokenArrayIndex++;
                 break;
             case '[':
                 tokenArray.add(new Token());
-                tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.OPENBRACKET);
+                tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.LEFTBRACKET);
                 tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
                 tokenArrayIndex++;
                 break;
             case ']':
                 tokenArray.add(new Token());
-                tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.CLOSEBRACKET);
+                tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.RIGHTBRACKET);
                 tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
                 tokenArrayIndex++;
                 break;
@@ -281,7 +281,7 @@ public class Lexer {
                 break;
             case '(':
                 tokenArray.add(new Token());
-                tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.OPENPARENTHESES);
+                tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.LEFTPARENTHESES);
                 tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
                 tokenArrayIndex++;
                 break;

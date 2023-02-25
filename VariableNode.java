@@ -3,20 +3,24 @@ public class VariableNode extends Node {
     public enum variableType { REAL, INTEGER, CHARACTER, STRING, BOOLEAN, ARRAY }
     private variableType type;
     private Node value;
-    private int changeable; //1 if changeable, 0 if not
+    private int isChangeable; //1 if changeable, 0 if not
+    private int initialSetSwitch = 0;
     private int from;
     private int to;
 
-    public VariableNode(String inputName, variableType inputType, Node inputValue, int inputChangeable) {
+    public VariableNode(String inputName, variableType inputType, int inputChangeable) {
         name = inputName;
         type = inputType;
-        value = inputValue;
-        changeable = inputChangeable;
+        isChangeable = inputChangeable;
     }
 
     public void setValue(Node inputValue) {
-        if (changeable == 1)
+        if (isChangeable == 1)
             value = inputValue;
+        if (isChangeable == 0 && initialSetSwitch == 0) {
+            value = inputValue;
+            initialSetSwitch = 1;
+        }
     }
 
     public Node getValue() {
