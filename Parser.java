@@ -9,46 +9,11 @@ public class Parser {
         tokenArray = inputTokenArray;
     }
 
-    private Token matchAndRemove(Token.tokenType inputTokenType) {
-        if (tokenArray.size() > 0) {
-            Token currentToken = tokenArray.get(0);
-            if (inputTokenType == currentToken.getToken()) {
-                tokenArray.remove(0);
-                return currentToken;
-            }
-        }
-        return null;
-    }
-
-    private Token expectEndsOfLine() throws SyntaxErrorException {
-        Token newToken = matchAndRemove(Token.tokenType.ENDOFLINE);
-        int endOfLineCounter = 0;
-        if (newToken != null) {
-            endOfLineCounter++;
-            while (tokenArray.size() > 0 && matchAndRemove(Token.tokenType.ENDOFLINE) != null) {
-                endOfLineCounter++;
-            }
-            return newToken;
-        }
-        if (endOfLineCounter == 0) {
-            throw new SyntaxErrorException(tokenArray.get(0));
-        }
-        else {
-            endOfLineCounter = 0;
-            return null;
-        }
-    }
-
-    private Token peek(int inputInteger) {
-        Token token = tokenArray.get(inputInteger) != null ? tokenArray.get(inputInteger) : null;
-        return token;
-    }
-
     public Node parse() throws SyntaxErrorException {
         Node newNode;
         do {
             newNode = expression();
-            if (newNode != null) {
+            if (newNode != null) { //Then we have a number
                 if (newNode instanceof MathOpNode) {
                     MathOpNode expressionNode = (MathOpNode) newNode;
                     System.out.println(expressionNode.ToString());
@@ -63,114 +28,17 @@ public class Parser {
                 }
             }
             else {
-                break;
+                newNode = function();
+                if (newNode != null) {
+                    System.out.println("Success!");
+                }
+                else {
+                    break;
+                }
             }
             endOfLineNode = expectEndsOfLine();
         } while (newNode != null && endOfLineNode != null);
         return newNode;
-    }
-
-    private Node expression() throws SyntaxErrorException {
-        MathOpNode newMathOpNode;
-        newMathOpNode = new MathOpNode();
-        Node leftNode = term();
-        if (leftNode == null) {
-            return null;
-        }
-        if (matchAndRemove(Token.tokenType.PLUS) != null) {
-            Node rightNode = term();
-            newMathOpNode = createMathOpNode(MathOpNode.operationType.ADD, leftNode, rightNode);
-        }
-        else if (matchAndRemove(Token.tokenType.MINUS) != null) {
-            Node rightNode = term();
-            newMathOpNode = createMathOpNode(MathOpNode.operationType.SUBTRACT, leftNode, rightNode);
-        }
-        else {
-            return leftNode; //If a factor is not succeeded by an operator, return it
-        }
-        while (tokenArray.size() > 0 && (peek(0).getToken() == Token.tokenType.PLUS 
-        || peek(0).getToken() == Token.tokenType.MINUS)) { //While loop checks if current token without removing it from array, allowing it to be mathchAndRemove'd later
-            if (matchAndRemove(Token.tokenType.PLUS) != null) {
-                Node rightNode = term();
-                newMathOpNode = createMathOpNode(MathOpNode.operationType.ADD, newMathOpNode, rightNode);
-            }
-            else if (matchAndRemove(Token.tokenType.MINUS) != null) {
-                Node rightNode = term();
-                newMathOpNode = createMathOpNode(MathOpNode.operationType.SUBTRACT, newMathOpNode, rightNode);
-            }
-        }
-        return newMathOpNode;
-    }
-
-    private Node term() throws SyntaxErrorException {
-        MathOpNode newMathOpNode;
-        newMathOpNode = new MathOpNode();
-        Node leftNode = factor();
-        if (leftNode == null) {
-            return null;
-        }
-        if (matchAndRemove(Token.tokenType.MULTIPLY) != null) {
-            Node rightNode = factor();
-            newMathOpNode = createMathOpNode(MathOpNode.operationType.MULTIPLY, leftNode, rightNode);
-        }
-        else if (matchAndRemove(Token.tokenType.DIVIDE) != null) {
-            Node rightNode = factor();
-            newMathOpNode = createMathOpNode(MathOpNode.operationType.DIVIDE, leftNode, rightNode);
-        }
-        else if (matchAndRemove(Token.tokenType.MOD) != null) {
-            Node rightNode = factor();
-            newMathOpNode = createMathOpNode(MathOpNode.operationType.MOD, leftNode, rightNode);
-        }
-        else {
-            return leftNode;
-        }
-        while (tokenArray.size() > 0 && (peek(0).getToken() == Token.tokenType.MULTIPLY
-        || peek(0).getToken() == Token.tokenType.DIVIDE || peek(0).getToken() == Token.tokenType.MOD)) {
-            if (matchAndRemove(Token.tokenType.MULTIPLY) != null) {
-                Node rightNode = factor();
-                newMathOpNode = createMathOpNode(MathOpNode.operationType.MULTIPLY, newMathOpNode, rightNode);
-            }
-            else if (matchAndRemove(Token.tokenType.DIVIDE) != null) {
-                Node rightNode = factor();
-                newMathOpNode = createMathOpNode(MathOpNode.operationType.DIVIDE, newMathOpNode, rightNode);
-            }
-            else if (matchAndRemove(Token.tokenType.MOD) != null) {
-                Node rightNode = factor();
-                newMathOpNode = createMathOpNode(MathOpNode.operationType.MOD, newMathOpNode, rightNode);
-            }
-        }
-        return newMathOpNode;
-    }
-        
-    private Node factor() throws SyntaxErrorException {
-        float numberValue;
-        int negativeMultiplier = 1;
-        if (matchAndRemove(Token.tokenType.MINUS) != null) {
-            negativeMultiplier = -1;
-        }
-        newToken = matchAndRemove(Token.tokenType.NUMBER);
-        if (newToken != null) {
-            numberValue = Float.parseFloat(newToken.getValue());
-            if (numberValue % 1 == 0) { //Check if number is float or integer
-                IntegerNode newIntegerNode = new IntegerNode((int) numberValue * negativeMultiplier);
-                return newIntegerNode;
-            }
-            else {
-                RealNode newRealNode = new RealNode(numberValue * negativeMultiplier);
-                return newRealNode;
-            }
-        }
-        if (matchAndRemove(Token.tokenType.OPENPARENTHESES) != null) {
-            MathOpNode newMathOpNode = (MathOpNode) expression();
-            if (matchAndRemove(Token.tokenType.CLOSEPARENTHESES) != null) {
-                return newMathOpNode;
-            }
-            else {
-                throw new SyntaxErrorException(tokenArray.get(0));
-            }
-
-        }
-        return null;
     }
 
     private MathOpNode createMathOpNode(MathOpNode.operationType inputOperationType, Node inputLeftChild, Node inputRightChild) throws SyntaxErrorException {
@@ -419,4 +287,151 @@ public class Parser {
 
         return newMathOpNode;
     }
+
+    private Token expectEndsOfLine() throws SyntaxErrorException {
+        Token newToken = matchAndRemove(Token.tokenType.ENDOFLINE);
+        int endOfLineCounter = 0;
+        if (newToken != null) {
+            endOfLineCounter++;
+            while (tokenArray.size() > 0 && matchAndRemove(Token.tokenType.ENDOFLINE) != null) {
+                endOfLineCounter++;
+            }
+            return newToken;
+        }
+        if (endOfLineCounter == 0) {
+            throw new SyntaxErrorException(tokenArray.get(0));
+        }
+        else {
+            endOfLineCounter = 0;
+            return null;
+        }
+    }
+
+    private Node expression() throws SyntaxErrorException {
+        MathOpNode newMathOpNode;
+        newMathOpNode = new MathOpNode();
+        Node leftNode = term();
+        if (leftNode == null) {
+            return null;
+        }
+        if (matchAndRemove(Token.tokenType.PLUS) != null) {
+            Node rightNode = term();
+            newMathOpNode = createMathOpNode(MathOpNode.operationType.ADD, leftNode, rightNode);
+        }
+        else if (matchAndRemove(Token.tokenType.MINUS) != null) {
+            Node rightNode = term();
+            newMathOpNode = createMathOpNode(MathOpNode.operationType.SUBTRACT, leftNode, rightNode);
+        }
+        else {
+            return leftNode; //If a factor is not succeeded by an operator, return it
+        }
+        while (tokenArray.size() > 0 && (peek(0).getToken() == Token.tokenType.PLUS 
+        || peek(0).getToken() == Token.tokenType.MINUS)) { //While loop checks if current token without removing it from array, allowing it to be mathchAndRemove'd later
+            if (matchAndRemove(Token.tokenType.PLUS) != null) {
+                Node rightNode = term();
+                newMathOpNode = createMathOpNode(MathOpNode.operationType.ADD, newMathOpNode, rightNode);
+            }
+            else if (matchAndRemove(Token.tokenType.MINUS) != null) {
+                Node rightNode = term();
+                newMathOpNode = createMathOpNode(MathOpNode.operationType.SUBTRACT, newMathOpNode, rightNode);
+            }
+        }
+        return newMathOpNode;
+    }
+
+    private Node factor() throws SyntaxErrorException {
+        float numberValue;
+        int negativeMultiplier = 1;
+        if (matchAndRemove(Token.tokenType.MINUS) != null) {
+            negativeMultiplier = -1;
+        }
+        newToken = matchAndRemove(Token.tokenType.NUMBER);
+        if (newToken != null) {
+            numberValue = Float.parseFloat(newToken.getValue());
+            if (numberValue % 1 == 0) { //Check if number is float or integer
+                IntegerNode newIntegerNode = new IntegerNode((int) numberValue * negativeMultiplier);
+                return newIntegerNode;
+            }
+            else {
+                RealNode newRealNode = new RealNode(numberValue * negativeMultiplier);
+                return newRealNode;
+            }
+        }
+        if (matchAndRemove(Token.tokenType.OPENPARENTHESES) != null) {
+            MathOpNode newMathOpNode = (MathOpNode) expression();
+            if (matchAndRemove(Token.tokenType.CLOSEPARENTHESES) != null) {
+                return newMathOpNode;
+            }
+            else {
+                throw new SyntaxErrorException(tokenArray.get(0));
+            }
+
+        }
+        return null;
+    }
+
+    private FunctionNode function() {
+        if (matchAndRemove(Token.tokenType.DEFINE) != null) {
+            FunctionNode functionNode = new FunctionNode(null, null, null, null);
+            return functionNode;
+        }
+        return null;
+    }
+
+    private Token matchAndRemove(Token.tokenType inputTokenType) {
+        if (tokenArray.size() > 0) {
+            Token currentToken = tokenArray.get(0);
+            if (inputTokenType == currentToken.getToken()) {
+                tokenArray.remove(0);
+                return currentToken;
+            }
+        }
+        return null;
+    }
+
+    private Token peek(int inputInteger) {
+        Token token = tokenArray.get(inputInteger) != null ? tokenArray.get(inputInteger) : null;
+        return token;
+    }
+
+    private Node term() throws SyntaxErrorException {
+        MathOpNode newMathOpNode;
+        newMathOpNode = new MathOpNode();
+        Node leftNode = factor();
+        if (leftNode == null) {
+            return null;
+        }
+        if (matchAndRemove(Token.tokenType.MULTIPLY) != null) {
+            Node rightNode = factor();
+            newMathOpNode = createMathOpNode(MathOpNode.operationType.MULTIPLY, leftNode, rightNode);
+        }
+        else if (matchAndRemove(Token.tokenType.DIVIDE) != null) {
+            Node rightNode = factor();
+            newMathOpNode = createMathOpNode(MathOpNode.operationType.DIVIDE, leftNode, rightNode);
+        }
+        else if (matchAndRemove(Token.tokenType.MOD) != null) {
+            Node rightNode = factor();
+            newMathOpNode = createMathOpNode(MathOpNode.operationType.MOD, leftNode, rightNode);
+        }
+        else {
+            return leftNode;
+        }
+        while (tokenArray.size() > 0 && (peek(0).getToken() == Token.tokenType.MULTIPLY
+        || peek(0).getToken() == Token.tokenType.DIVIDE || peek(0).getToken() == Token.tokenType.MOD)) {
+            if (matchAndRemove(Token.tokenType.MULTIPLY) != null) {
+                Node rightNode = factor();
+                newMathOpNode = createMathOpNode(MathOpNode.operationType.MULTIPLY, newMathOpNode, rightNode);
+            }
+            else if (matchAndRemove(Token.tokenType.DIVIDE) != null) {
+                Node rightNode = factor();
+                newMathOpNode = createMathOpNode(MathOpNode.operationType.DIVIDE, newMathOpNode, rightNode);
+            }
+            else if (matchAndRemove(Token.tokenType.MOD) != null) {
+                Node rightNode = factor();
+                newMathOpNode = createMathOpNode(MathOpNode.operationType.MOD, newMathOpNode, rightNode);
+            }
+        }
+        return newMathOpNode;
+    }
 }
+    
