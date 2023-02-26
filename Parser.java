@@ -11,6 +11,7 @@ public class Parser {
 
     public Node parse() throws SyntaxErrorException {
         Node newNode;
+        ProgramNode programNode = new ProgramNode();
         do {
             newNode = expression();
             if (newNode != null) { //Then we have a number
@@ -31,7 +32,7 @@ public class Parser {
                 newNode = function();
                 if (newNode != null) {
                     FunctionNode functionNode = (FunctionNode) newNode;
-                    System.out.println(functionNode.ToString());
+                    programNode.addToFunctionMap(functionNode);
                 }
                 else {
                     break;
@@ -39,7 +40,89 @@ public class Parser {
             }
             endOfLineNode = expectEndsOfLine();
         } while (newNode != null && endOfLineNode != null);
-        return newNode;
+        return programNode;
+    }
+
+    private void addVariableNodesToArray(Token inputCurrentToken, int inputChangeable, ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
+        inputCurrentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+        if (inputCurrentToken != null) {
+            VariableNode.variableType variableType = searchForType();
+            if (variableType == null)
+                throw new SyntaxErrorException(tokenArray.get(0));
+            inputVariableNodeArray.add(new VariableNode(inputCurrentToken.getValue(), variableType, 1));
+            while (matchAndRemove(Token.tokenType.COMMA) != null) {
+                inputCurrentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+                if (inputCurrentToken != null) {
+                    variableType = searchForType();
+                    if (variableType == null)
+                        throw new SyntaxErrorException(tokenArray.get(0));
+                    inputVariableNodeArray.add(new VariableNode(inputCurrentToken.getValue(), variableType, 1));
+                }
+            }
+            if (matchAndRemove(Token.tokenType.COLON) != null) {
+                matchAndRemove(Token.tokenType.INTEGER);
+                matchAndRemove(Token.tokenType.REAL);
+                matchAndRemove(Token.tokenType.CHARACTER);
+                matchAndRemove(Token.tokenType.ARRAY);
+                matchAndRemove(Token.tokenType.BOOLEAN);
+                matchAndRemove(Token.tokenType.SEMICOLON);
+            }
+        }
+    }
+
+    private void addConstantToArray(ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
+        int negativeMultiplier = 1;
+        float numberValue;
+        Token currentToken;
+        do {
+            currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+            negativeMultiplier = 1;
+            if (currentToken != null) {
+                String constantName = currentToken.getValue();
+                if (matchAndRemove(Token.tokenType.COMPARISONEQUAL) != null) {
+                    currentToken = matchAndRemove(Token.tokenType.MINUS);
+                    if (currentToken != null) {
+                        negativeMultiplier = -1;
+                    } 
+                    currentToken = matchAndRemove(Token.tokenType.NUMBER);
+                    if (currentToken != null) {
+                        numberValue = Float.parseFloat(currentToken.getValue());
+                        if (numberValue % 1 == 0) { //Check if number is float or integer
+                            IntegerNode newIntegerNode = new IntegerNode((int) numberValue * negativeMultiplier);
+                            inputVariableNodeArray.add(new VariableNode(constantName, VariableNode.variableType.INTEGER, 0, newIntegerNode));
+                        }
+                        else {
+                            RealNode newRealNode = new RealNode(numberValue * negativeMultiplier);
+                            inputVariableNodeArray.add(new VariableNode(constantName, VariableNode.variableType.REAL, 0, newRealNode));
+                        }
+                    }
+                    currentToken = matchAndRemove(Token.tokenType.CHARACTERLITERAL);
+                    if (currentToken != null) {
+                        CharacterNode newCharacterNode = new CharacterNode(currentToken.getValue().charAt(0));
+                        inputVariableNodeArray.add(new VariableNode(constantName, VariableNode.variableType.CHARACTER, 0, newCharacterNode));
+                    }
+                    currentToken = matchAndRemove(Token.tokenType.STRINGLITERAL);
+                    if (currentToken != null) {
+                        StringNode newStringNode = new StringNode(currentToken.getValue());
+                        inputVariableNodeArray.add(new VariableNode(constantName, VariableNode.variableType.STRING, 0, newStringNode));
+                    }
+                    currentToken = matchAndRemove(Token.tokenType.TRUE);
+                    if (currentToken != null) {
+                        BooleanNode newBooleanNode = new BooleanNode(true);
+                        inputVariableNodeArray.add(new VariableNode(constantName, VariableNode.variableType.BOOLEAN, 0, newBooleanNode));
+                    }
+                    currentToken = matchAndRemove(Token.tokenType.FALSE);
+                    if (currentToken != null) {
+                        BooleanNode newBooleanNode = new BooleanNode(false);
+                        inputVariableNodeArray.add(new VariableNode(constantName, VariableNode.variableType.BOOLEAN, 0, newBooleanNode));
+                    }
+                }
+                else {
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                }
+            }
+        currentToken = matchAndRemove(Token.tokenType.COMMA);
+        } while (currentToken != null);
     }
 
     private MathOpNode createMathOpNode(MathOpNode.operationType inputOperationType, Node inputLeftChild, Node inputRightChild) throws SyntaxErrorException {
@@ -289,33 +372,6 @@ public class Parser {
         return newMathOpNode;
     }
 
-    private void createVariableFromParameter(Token inputCurrentToken, int inputChangeable, ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
-        inputCurrentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
-                if (inputCurrentToken != null) {
-                    VariableNode.variableType variableType = searchForType();
-                    if (variableType == null)
-                        throw new SyntaxErrorException(tokenArray.get(0));
-                    inputVariableNodeArray.add(new VariableNode(inputCurrentToken.getValue(), variableType, 1));
-                    while (matchAndRemove(Token.tokenType.COMMA) != null) {
-                        inputCurrentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
-                        if (inputCurrentToken != null) {
-                            variableType = searchForType();
-                            if (variableType == null)
-                                throw new SyntaxErrorException(tokenArray.get(0));
-                            inputVariableNodeArray.add(new VariableNode(inputCurrentToken.getValue(), variableType, 1));
-                        }
-                    }
-                    if (matchAndRemove(Token.tokenType.COLON) != null) {
-                        matchAndRemove(Token.tokenType.INTEGER);
-                        matchAndRemove(Token.tokenType.REAL);
-                        matchAndRemove(Token.tokenType.CHARACTER);
-                        matchAndRemove(Token.tokenType.ARRAY);
-                        matchAndRemove(Token.tokenType.BOOLEAN);
-                        matchAndRemove(Token.tokenType.SEMICOLON);
-                    }
-                }
-    }
-
     private Token expectEndsOfLine() throws SyntaxErrorException {
         Token newToken = matchAndRemove(Token.tokenType.ENDOFLINE);
         int endOfLineCounter = 0;
@@ -327,7 +383,7 @@ public class Parser {
             return newToken;
         }
         if (endOfLineCounter == 0) {
-            throw new SyntaxErrorException(tokenArray.get(0));
+            return null;
         }
         else {
             endOfLineCounter = 0;
@@ -405,8 +461,54 @@ public class Parser {
                 currentToken = matchAndRemove(Token.tokenType.LEFTPARENTHESES);
                 if (currentToken != null) {
                     ArrayList<VariableNode> parameterArray = parameterDeclarations();
-                    FunctionNode functionNode = new FunctionNode(functionName, parameterArray, null, null);
-                    return functionNode;
+                    ArrayList<VariableNode> variableArray = new ArrayList<VariableNode>();
+                    while (tokenArray.size() > 1 && (peek(1).getToken() == Token.tokenType.VARIABLES || peek(1).getToken() == Token.tokenType.CONSTANTS)) {
+                        expectEndsOfLine();
+                        if (peek(0).getToken() == Token.tokenType.VARIABLES) {
+                            matchAndRemove(Token.tokenType.VARIABLES);
+                            addVariableNodesToArray(currentToken, 1, variableArray);
+                        }
+                        else if (peek(0).getToken() == Token.tokenType.CONSTANTS) {
+                            matchAndRemove(Token.tokenType.CONSTANTS);
+                            addConstantToArray(variableArray);
+                        }
+                        else {
+                            throw new SyntaxErrorException(tokenArray.get(0));
+                        }
+                    }
+                    expectEndsOfLine();
+                    if (matchAndRemove(Token.tokenType.INDENT) != null) {
+                        Node currentNode = expression();
+                        while (currentNode != null) {
+                            if (currentNode instanceof MathOpNode) {
+                                MathOpNode expressionNode = (MathOpNode) currentNode;
+                                System.out.println(expressionNode.ToString());
+                            }
+                            else if (currentNode instanceof IntegerNode) {
+                                IntegerNode integerNode = (IntegerNode) currentNode;
+                                System.out.println(integerNode.ToString());
+                            }
+                            else if (currentNode instanceof RealNode) {
+                                RealNode realNode = (RealNode) currentNode;
+                                System.out.println(realNode.ToString());
+                            }
+                            expectEndsOfLine();
+                            while (peek(0).getToken() == Token.tokenType.INDENT) {
+                                matchAndRemove(Token.tokenType.INDENT);
+                            }
+                            currentNode = expression();
+                        }
+                        if (matchAndRemove(Token.tokenType.DEDENT) != null) {
+                            FunctionNode functionNode = new FunctionNode(functionName, parameterArray, variableArray, null);
+                            return functionNode;
+                        }
+                        else {
+                            throw new SyntaxErrorException(tokenArray.get(0));
+                        }
+                    }
+                    else {
+                        throw new SyntaxErrorException(tokenArray.get(0));
+                    }
                 }
             }
             throw new SyntaxErrorException(tokenArray.get(0));
@@ -431,10 +533,10 @@ public class Parser {
             Token currentToken;
             currentToken = matchAndRemove(Token.tokenType.VAR);
             if (currentToken != null) {
-                createVariableFromParameter(currentToken, 1, variableNodeArray);
+                addVariableNodesToArray(currentToken, 1, variableNodeArray);
             }
             else {
-                createVariableFromParameter(currentToken, 0, variableNodeArray);
+                addVariableNodesToArray(currentToken, 0, variableNodeArray);
             }
         }
         if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {

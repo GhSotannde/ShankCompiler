@@ -15,6 +15,28 @@ public class FunctionNode extends Node {
     } 
 
     public String ToString() {
-        return "FunctionNode(" + name + ", " + parameterArray + ")";
+        return "Function " + name + "\n" + printParameterArray() + printVariableArray();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    private String printParameterArray() {
+        String str = "Parameters: ";
+        for (VariableNode node : parameterArray) {
+            str += node.getName() + ":" + node.getType() + ", ";
+        }
+        str += "\n";
+        return str;
+    }
+
+    private String printVariableArray() {
+        String str = "Variables: ";
+        for (VariableNode node : variableArray) {
+            str += node.getName() + ":" + node.getType() + ", ";
+        }
+        str += "\n";
+        return str;
     }
 }

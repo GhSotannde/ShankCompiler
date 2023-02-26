@@ -3,7 +3,7 @@ public class CharacterNode extends Node {
 
     public CharacterNode(char inputChar) {
         character = inputChar;
-    } 
+    }
 
     public char getChar() {
         return character;

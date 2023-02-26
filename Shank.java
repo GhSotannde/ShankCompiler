@@ -36,6 +36,8 @@ public class Shank {
 
         Parser parseData = new Parser(lexData.getArray());
 
-        parseData.parse();
+        ProgramNode programNode = (ProgramNode) parseData.parse();
+
+        System.out.println(programNode.ToString());
     }
 }

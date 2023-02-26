@@ -12,7 +12,7 @@ public class Lexer {
     private int exceptionSwitch = 0;
     private int lineNumber = 1;
     private int spacesAtStartOfString;
-    private double indentationLevel;
+    private double indentationLevel = 0;
     private double previousIndentationLevel = 0;
 
     private HashMap<String, Token.tokenType> knownWords = new HashMap<String, Token.tokenType>();
@@ -27,11 +27,21 @@ public class Lexer {
         }
         stringIndex = 0;
         inputStringLength = inputString.length();
+        if (inputStringLength == 0) {
+            checkIndentLevel(inputString);
+            tokenArray.add(new Token());
+            tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.ENDOFLINE);
+            tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
+            tokenArrayIndex++;
+            lineNumber++;
+        }
+        else {
+            checkForComment(inputString);
+            checkIndentLevel(inputString);
+            startState(inputString);
+            lineNumber++;
+        }   
         
-        checkForComment(inputString);
-        checkIndentLevel(inputString);
-        startState(inputString);
-        lineNumber++;
     }
 
     public void printLexer() {
@@ -97,6 +107,8 @@ public class Lexer {
         knownWords.put("start", Token.tokenType.START);
         knownWords.put("end", Token.tokenType.END);
         knownWords.put("mod", Token.tokenType.MOD);
+        knownWords.put("true", Token.tokenType.TRUE);
+        knownWords.put("false", Token.tokenType.FALSE);
     }
 
     private void checkIndentLevel(String inputString) throws SyntaxErrorException {
@@ -105,7 +117,27 @@ public class Lexer {
             spacesAtStartOfString++;
             stringIndex++;
         }
-        if (inputString.charAt(stringIndex) != '{') { //If first char is open curly braces, line is a comment, and no check for indentation is necessary
+        if (inputString.length() == 0) {
+            indentationLevel = 0;
+            if (indentationLevel < previousIndentationLevel) {
+                for (int i = 0; i < (previousIndentationLevel - indentationLevel); i++) {
+                    tokenArray.add(new Token());
+                    tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.DEDENT);
+                    tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
+                    tokenArrayIndex++;
+                }
+            }
+            else if (indentationLevel > previousIndentationLevel) {
+                for (int i = 0; i < (indentationLevel - previousIndentationLevel); i++) {
+                    tokenArray.add(new Token());
+                    tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.INDENT);
+                    tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
+                    tokenArrayIndex++;
+                }
+            }
+            previousIndentationLevel = indentationLevel;
+        }
+        else if (stringIndex < inputStringLength && inputString.charAt(stringIndex) != '{') { //If first char is open curly braces, line is a comment, and no check for indentation is necessary
             indentationLevel = Math.floor(spacesAtStartOfString/4);
             if (indentationLevel < previousIndentationLevel) {
                 for (int i = 0; i < (previousIndentationLevel - indentationLevel); i++) {
@@ -133,7 +165,6 @@ public class Lexer {
                 System.out.print(inputString.charAt(stringIndex));
                 stringIndex++;
                 if (stringIndex < inputStringLength && inputString.charAt(stringIndex) == '}') { 
-                    System.out.println("TEST");
                     commentSwitch = 0;
                 }
             }
@@ -397,6 +428,5 @@ public class Lexer {
             tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
         }
         tokenArrayIndex++;
-        stringIndex++;
     }
 }

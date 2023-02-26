@@ -14,6 +14,13 @@ public class VariableNode extends Node {
         isChangeable = inputChangeable;
     }
 
+    public VariableNode(String inputName, variableType inputType, int inputChangeable, Node inputValue) {
+        name = inputName;
+        type = inputType;
+        isChangeable = inputChangeable;
+        value = inputValue;
+    }
+
     public void setValue(Node inputValue) {
         if (isChangeable == 1)
             value = inputValue;
