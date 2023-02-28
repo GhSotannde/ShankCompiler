@@ -8,20 +8,20 @@ public class VariableNode extends Node {
     private int from;
     private int to;
 
-    public VariableNode(String inputName, variableType inputType, int inputChangeable) {
+    public VariableNode(String inputName, variableType inputType, int inputChangeable) { //For variables
         name = inputName;
         type = inputType;
         isChangeable = inputChangeable;
     }
 
-    public VariableNode(String inputName, variableType inputType, int inputChangeable, Node inputValue) {
+    public VariableNode(String inputName, variableType inputType, int inputChangeable, Node inputValue) { //For constants
         name = inputName;
         type = inputType;
         isChangeable = inputChangeable;
         value = inputValue;
     }
 
-    public void setValue(Node inputValue) {
+    public void setValue(Node inputValue) { //Only works once for constants
         if (isChangeable == 1)
             value = inputValue;
         if (isChangeable == 0 && initialSetSwitch == 0) {

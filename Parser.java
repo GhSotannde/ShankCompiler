@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Parser {
     private ArrayList<Token> tokenArray = new ArrayList<Token>();
-    private Token endOfLineNode;
+    
     private Token newToken = new Token();
     
     public Parser(ArrayList<Token> inputTokenArray) {
@@ -12,9 +12,10 @@ public class Parser {
     public Node parse() throws SyntaxErrorException {
         Node newNode;
         ProgramNode programNode = new ProgramNode();
+        Token endOfLineNode;
         do {
             newNode = expression();
-            if (newNode != null) { //Then we have a number
+            if (newNode != null) { //Then we have an expression
                 if (newNode instanceof MathOpNode) {
                     MathOpNode expressionNode = (MathOpNode) newNode;
                     System.out.println(expressionNode.ToString());
@@ -27,6 +28,9 @@ public class Parser {
                     RealNode realNode = (RealNode) newNode;
                     System.out.println(realNode.ToString());
                 }
+                else {
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                }
             }
             else {
                 newNode = function();
@@ -34,32 +38,29 @@ public class Parser {
                     FunctionNode functionNode = (FunctionNode) newNode;
                     programNode.addToFunctionMap(functionNode);
                 }
-                else {
-                    break;
-                }
             }
             endOfLineNode = expectEndsOfLine();
-        } while (newNode != null && endOfLineNode != null);
+        } while (newNode != null && endOfLineNode != null); 
         return programNode;
     }
 
-    private void addVariableNodesToArray(Token inputCurrentToken, int inputChangeable, ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
-        inputCurrentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
-        if (inputCurrentToken != null) {
-            VariableNode.variableType variableType = searchForType();
+    private void addVariableNodesToArray(int inputChangeable, ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
+        Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+        if (currentToken != null) {
+            VariableNode.variableType variableType = searchForType(); //Looks ahead for variable's data type
             if (variableType == null)
                 throw new SyntaxErrorException(tokenArray.get(0));
-            inputVariableNodeArray.add(new VariableNode(inputCurrentToken.getValue(), variableType, 1));
-            while (matchAndRemove(Token.tokenType.COMMA) != null) {
-                inputCurrentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
-                if (inputCurrentToken != null) {
+            inputVariableNodeArray.add(new VariableNode(currentToken.getValue(), variableType, 1));
+            while (matchAndRemove(Token.tokenType.COMMA) != null) { //Checks for another variable
+                currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+                if (currentToken != null) {
                     variableType = searchForType();
                     if (variableType == null)
                         throw new SyntaxErrorException(tokenArray.get(0));
-                    inputVariableNodeArray.add(new VariableNode(inputCurrentToken.getValue(), variableType, 1));
+                    inputVariableNodeArray.add(new VariableNode(currentToken.getValue(), variableType, 1));
                 }
             }
-            if (matchAndRemove(Token.tokenType.COLON) != null) {
+            if (matchAndRemove(Token.tokenType.COLON) != null) { //Clears out the type and punctuation tokens following variable names
                 matchAndRemove(Token.tokenType.INTEGER);
                 matchAndRemove(Token.tokenType.REAL);
                 matchAndRemove(Token.tokenType.CHARACTER);
@@ -78,56 +79,61 @@ public class Parser {
             currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
             negativeMultiplier = 1;
             if (currentToken != null) {
-                String constantName = currentToken.getValue();
+                String functionName = currentToken.getValue();
                 if (matchAndRemove(Token.tokenType.COMPARISONEQUAL) != null) {
                     currentToken = matchAndRemove(Token.tokenType.MINUS);
                     if (currentToken != null) {
                         negativeMultiplier = -1;
-                    } 
-                    currentToken = matchAndRemove(Token.tokenType.NUMBER);
-                    if (currentToken != null) {
+                    }
+                    if (peek(0).getToken() == Token.tokenType.NUMBER) {
+                        currentToken = matchAndRemove(Token.tokenType.NUMBER);
                         numberValue = Float.parseFloat(currentToken.getValue());
-                        if (numberValue % 1 == 0) { //Check if number is float or integer
+                        if (numberValue % 1 == 0) { //if number divided by 1 does not give a remainder, its an integer
                             IntegerNode newIntegerNode = new IntegerNode((int) numberValue * negativeMultiplier);
-                            inputVariableNodeArray.add(new VariableNode(constantName, VariableNode.variableType.INTEGER, 0, newIntegerNode));
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.INTEGER, 0, newIntegerNode));
                         }
                         else {
                             RealNode newRealNode = new RealNode(numberValue * negativeMultiplier);
-                            inputVariableNodeArray.add(new VariableNode(constantName, VariableNode.variableType.REAL, 0, newRealNode));
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.REAL, 0, newRealNode));
                         }
                     }
-                    currentToken = matchAndRemove(Token.tokenType.CHARACTERLITERAL);
-                    if (currentToken != null) {
+                    else if (peek(0).getToken() == Token.tokenType.CHARACTERLITERAL) {
+                        currentToken = matchAndRemove(Token.tokenType.CHARACTERLITERAL);
                         CharacterNode newCharacterNode = new CharacterNode(currentToken.getValue().charAt(0));
-                        inputVariableNodeArray.add(new VariableNode(constantName, VariableNode.variableType.CHARACTER, 0, newCharacterNode));
+                        inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.CHARACTER, 0, newCharacterNode));
                     }
-                    currentToken = matchAndRemove(Token.tokenType.STRINGLITERAL);
-                    if (currentToken != null) {
+                    else if (peek(0).getToken() == Token.tokenType.STRINGLITERAL) {
+                        currentToken = matchAndRemove(Token.tokenType.STRINGLITERAL);
                         StringNode newStringNode = new StringNode(currentToken.getValue());
-                        inputVariableNodeArray.add(new VariableNode(constantName, VariableNode.variableType.STRING, 0, newStringNode));
+                        inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.STRING, 0, newStringNode));
                     }
-                    currentToken = matchAndRemove(Token.tokenType.TRUE);
-                    if (currentToken != null) {
+                    else if (peek(0).getToken() == Token.tokenType.TRUE) {
+                        currentToken = matchAndRemove(Token.tokenType.TRUE);
                         BooleanNode newBooleanNode = new BooleanNode(true);
-                        inputVariableNodeArray.add(new VariableNode(constantName, VariableNode.variableType.BOOLEAN, 0, newBooleanNode));
+                        inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.BOOLEAN, 0, newBooleanNode));
                     }
-                    currentToken = matchAndRemove(Token.tokenType.FALSE);
-                    if (currentToken != null) {
+                    else if (peek(0).getToken() == Token.tokenType.FALSE) {
+                        currentToken = matchAndRemove(Token.tokenType.FALSE);
                         BooleanNode newBooleanNode = new BooleanNode(false);
-                        inputVariableNodeArray.add(new VariableNode(constantName, VariableNode.variableType.BOOLEAN, 0, newBooleanNode));
+                        inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.BOOLEAN, 0, newBooleanNode));
+                    }
+                    else {
+                        throw new SyntaxErrorException(tokenArray.get(0));
                     }
                 }
                 else {
                     throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
-        currentToken = matchAndRemove(Token.tokenType.COMMA);
+            else {
+                throw new SyntaxErrorException(tokenArray.get(0));
+            }
+        currentToken = matchAndRemove(Token.tokenType.COMMA); //If a comma follows the data, another constant should exist
         } while (currentToken != null);
     }
 
     private MathOpNode createMathOpNode(MathOpNode.operationType inputOperationType, Node inputLeftChild, Node inputRightChild) throws SyntaxErrorException {
         MathOpNode newMathOpNode;
-
         if (inputLeftChild == null) {
             throw new SyntaxErrorException(tokenArray.get(0));
         }
@@ -139,6 +145,7 @@ public class Parser {
             else if (inputRightChild instanceof IntegerNode) {
                 IntegerNode rightIntegerNode = (IntegerNode) inputRightChild;
                 newMathOpNode = new MathOpNode(inputOperationType, leftIntegerNode, rightIntegerNode);
+                //Combines the two child nodes into one MathOpNode and calculates its value based on the value of its children and assigned operator
                 switch (inputOperationType) {
                     case ADD:
                         newMathOpNode.setValue(leftIntegerNode.getValue() + rightIntegerNode.getValue());
@@ -373,20 +380,13 @@ public class Parser {
     }
 
     private Token expectEndsOfLine() throws SyntaxErrorException {
-        Token newToken = matchAndRemove(Token.tokenType.ENDOFLINE);
-        int endOfLineCounter = 0;
-        if (newToken != null) {
-            endOfLineCounter++;
-            while (tokenArray.size() > 0 && matchAndRemove(Token.tokenType.ENDOFLINE) != null) {
-                endOfLineCounter++;
+        Token currentToken = matchAndRemove(Token.tokenType.ENDOFLINE);
+        if (currentToken != null) {
+            while (tokenArray.size() > 0 && matchAndRemove(Token.tokenType.ENDOFLINE) != null) { //Eats up any additional ENDOFLINE tokens
             }
-            return newToken;
-        }
-        if (endOfLineCounter == 0) {
-            return null;
+            return currentToken;
         }
         else {
-            endOfLineCounter = 0;
             return null;
         }
     }
@@ -453,63 +453,30 @@ public class Parser {
         return null;
     }
 
-    private FunctionNode function() throws SyntaxErrorException {
+    private FunctionNode function() throws SyntaxErrorException { //HERE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
         if (matchAndRemove(Token.tokenType.DEFINE) != null) {
             Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
             if (currentToken != null) {
                 String functionName = currentToken.getValue();
                 currentToken = matchAndRemove(Token.tokenType.LEFTPARENTHESES);
                 if (currentToken != null) {
-                    ArrayList<VariableNode> parameterArray = parameterDeclarations();
+                    ArrayList<VariableNode> parameterArray = parameterDeclarations(); //Records parameters
                     ArrayList<VariableNode> variableArray = new ArrayList<VariableNode>();
-                    while (tokenArray.size() > 1 && (peek(1).getToken() == Token.tokenType.VARIABLES || peek(1).getToken() == Token.tokenType.CONSTANTS)) {
-                        expectEndsOfLine();
-                        if (peek(0).getToken() == Token.tokenType.VARIABLES) {
-                            matchAndRemove(Token.tokenType.VARIABLES);
-                            addVariableNodesToArray(currentToken, 1, variableArray);
-                        }
-                        else if (peek(0).getToken() == Token.tokenType.CONSTANTS) {
-                            matchAndRemove(Token.tokenType.CONSTANTS);
-                            addConstantToArray(variableArray);
-                        }
-                        else {
-                            throw new SyntaxErrorException(tokenArray.get(0));
-                        }
-                    }
-                    expectEndsOfLine();
+                    variableArray = variableDeclarations(variableArray); //Records variables 
+                    currentToken = expectEndsOfLine();
+                    if (currentToken == null)
+                        throw new SyntaxErrorException(tokenArray.get(0));
                     if (matchAndRemove(Token.tokenType.INDENT) != null) {
-                        Node currentNode = expression();
-                        while (currentNode != null) {
-                            if (currentNode instanceof MathOpNode) {
-                                MathOpNode expressionNode = (MathOpNode) currentNode;
-                                System.out.println(expressionNode.ToString());
-                            }
-                            else if (currentNode instanceof IntegerNode) {
-                                IntegerNode integerNode = (IntegerNode) currentNode;
-                                System.out.println(integerNode.ToString());
-                            }
-                            else if (currentNode instanceof RealNode) {
-                                RealNode realNode = (RealNode) currentNode;
-                                System.out.println(realNode.ToString());
-                            }
-                            expectEndsOfLine();
-                            while (peek(0).getToken() == Token.tokenType.INDENT) {
-                                matchAndRemove(Token.tokenType.INDENT);
-                            }
-                            currentNode = expression();
-                        }
+                        statementDeclarations(); //Prints statements
                         if (matchAndRemove(Token.tokenType.DEDENT) != null) {
                             FunctionNode functionNode = new FunctionNode(functionName, parameterArray, variableArray, null);
                             return functionNode;
                         }
-                        else {
-                            throw new SyntaxErrorException(tokenArray.get(0));
-                        }
-                    }
-                    else {
                         throw new SyntaxErrorException(tokenArray.get(0));
                     }
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
+                throw new SyntaxErrorException(tokenArray.get(0));
             }
             throw new SyntaxErrorException(tokenArray.get(0));
         }
@@ -533,10 +500,10 @@ public class Parser {
             Token currentToken;
             currentToken = matchAndRemove(Token.tokenType.VAR);
             if (currentToken != null) {
-                addVariableNodesToArray(currentToken, 1, variableNodeArray);
+                addVariableNodesToArray(1, variableNodeArray); //Variable is changeable
             }
             else {
-                addVariableNodesToArray(currentToken, 0, variableNodeArray);
+                addVariableNodesToArray(0, variableNodeArray); //Variable can not be changed
             }
         }
         if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
@@ -554,7 +521,7 @@ public class Parser {
     }
 
     private VariableNode.variableType searchForType() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) { //Searches up to 10 tokens away for the variable type of the current variable
             switch (peek(i).getToken()) {
                 case INTEGER:
                     return VariableNode.variableType.INTEGER;
@@ -574,6 +541,31 @@ public class Parser {
         }
         return null;
     } 
+
+    private void statementDeclarations() throws SyntaxErrorException {
+        Node currentNode = expression();
+            while (currentNode != null) { //Loops until end of statement lines
+                if (currentNode instanceof MathOpNode) {
+                    MathOpNode expressionNode = (MathOpNode) currentNode;
+                    System.out.println(expressionNode.ToString());
+                }
+                else if (currentNode instanceof IntegerNode) {
+                    IntegerNode integerNode = (IntegerNode) currentNode;
+                    System.out.println(integerNode.ToString());
+                }
+                else if (currentNode instanceof RealNode) {
+                    RealNode realNode = (RealNode) currentNode;
+                    System.out.println(realNode.ToString());
+                }
+                Token currentToken = expectEndsOfLine();
+                if (currentToken == null)
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                while (peek(0).getToken() == Token.tokenType.INDENT) { //Eats up indent tokens between statement lines
+                    matchAndRemove(Token.tokenType.INDENT);
+                }
+                currentNode = expression();
+            }
+    }
 
     private Node term() throws SyntaxErrorException {
         MathOpNode newMathOpNode;
@@ -613,6 +605,26 @@ public class Parser {
             }
         }
         return newMathOpNode;
+    }
+    
+    private ArrayList<VariableNode> variableDeclarations(ArrayList<VariableNode> inputVariableArray) throws SyntaxErrorException {
+        while (tokenArray.size() > 1 && (peek(1).getToken() == Token.tokenType.VARIABLES || peek(1).getToken() == Token.tokenType.CONSTANTS)) {
+            Token currentToken = expectEndsOfLine();
+            if (currentToken == null)
+                throw new SyntaxErrorException(tokenArray.get(0));
+            if (peek(0).getToken() == Token.tokenType.VARIABLES) {
+                matchAndRemove(Token.tokenType.VARIABLES);
+                addVariableNodesToArray(1, inputVariableArray);
+            }
+            else if (peek(0).getToken() == Token.tokenType.CONSTANTS) {
+                matchAndRemove(Token.tokenType.CONSTANTS);
+                addConstantToArray(inputVariableArray);
+            }
+            else {
+                throw new SyntaxErrorException(tokenArray.get(0));
+            }
+        }
+        return inputVariableArray;
     }
 }
     
