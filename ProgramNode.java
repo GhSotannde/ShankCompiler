@@ -4,7 +4,6 @@ public class ProgramNode extends Node {
     private HashMap<String, FunctionNode> functionMap = new HashMap<String, FunctionNode>();
 
     public ProgramNode() {
-
     }
 
     public void addToFunctionMap(FunctionNode inputFunctionNode) {
