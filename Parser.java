@@ -132,7 +132,7 @@ public class Parser {
         } while (currentToken != null);
     }
 
-    private BooleanCompareNode boolCompare() throws SyntaxErrorException {
+    private Node boolCompare() throws SyntaxErrorException {
         Node leftNode = expression();
 
         if (leftNode instanceof IntegerNode) { 
@@ -165,7 +165,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.GREATERTHAN);
@@ -196,7 +196,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.LESSTHANOREQUALTO);
@@ -227,7 +227,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.GREATERTHANOREQUALTO);
@@ -258,7 +258,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.COMPARISONEQUAL);
@@ -289,7 +289,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.NOTEQUAL);
@@ -320,10 +320,10 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
-            return null;
+            return leftNode;
         }
         else if (leftNode instanceof RealNode) {
             RealNode left = (RealNode) leftNode;
@@ -355,7 +355,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.GREATERTHAN);
@@ -386,7 +386,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.LESSTHANOREQUALTO);
@@ -417,7 +417,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.GREATERTHANOREQUALTO);
@@ -448,7 +448,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.COMPARISONEQUAL);
@@ -479,7 +479,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.NOTEQUAL);
@@ -510,10 +510,10 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
-            return null;
+            return leftNode;
         }
         else if (leftNode instanceof MathOpNode) {
             MathOpNode left = (MathOpNode) leftNode;
@@ -545,7 +545,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.GREATERTHAN);
@@ -576,7 +576,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.LESSTHANOREQUALTO);
@@ -607,7 +607,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.GREATERTHANOREQUALTO);
@@ -638,7 +638,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.COMPARISONEQUAL);
@@ -669,7 +669,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.NOTEQUAL);
@@ -700,10 +700,10 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
-            return null;
+            return leftNode;
         }
         else if (leftNode instanceof VariableReferenceNode) {
             VariableReferenceNode left = (VariableReferenceNode) leftNode;
@@ -735,7 +735,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.GREATERTHAN);
@@ -766,7 +766,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.LESSTHANOREQUALTO);
@@ -797,7 +797,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.GREATERTHANOREQUALTO);
@@ -828,7 +828,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.COMPARISONEQUAL);
@@ -859,7 +859,7 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
             currentToken = matchAndRemove(Token.tokenType.NOTEQUAL);
@@ -890,10 +890,10 @@ public class Parser {
                     return newBooleanCompareNode;
                 }
                 else {
-                    return null;
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 }
             }
-            return null;
+            return leftNode;
         }
         else {
             return null;
@@ -1210,13 +1210,54 @@ public class Parser {
             }
         }
         if (matchAndRemove(Token.tokenType.LEFTPARENTHESES) != null) {
-            MathOpNode newMathOpNode = (MathOpNode) expression();
-            if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
-                return newMathOpNode;
+            //MathOpNode newMathOpNode = (MathOpNode) expression();
+            Node currentNode = boolCompare();
+            if (currentNode instanceof IntegerNode) {
+                currentNode = (IntegerNode) currentNode;
+                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
+                    return currentNode;
+                }
+                else {
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                }
             }
-            else {
-                throw new SyntaxErrorException(tokenArray.get(0));
+            else if (currentNode instanceof RealNode) {
+                currentNode = (RealNode) currentNode;
+                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
+                    return currentNode;
+                }
+                else {
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                }
             }
+            else if (currentNode instanceof MathOpNode) {
+                currentNode = (MathOpNode) currentNode;
+                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
+                    return currentNode;
+                }
+                else {
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                }
+            }
+            else if (currentNode instanceof VariableReferenceNode) {
+                currentNode = (VariableReferenceNode) currentNode;
+                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
+                    return currentNode;
+                }
+                else {
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                }
+            }
+            else if (currentNode instanceof BooleanCompareNode) {
+                currentNode = (BooleanCompareNode) currentNode;
+                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
+                    return currentNode;
+                }
+                else {
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                }
+            }
+            return null;
         }
         newToken = matchAndRemove(Token.tokenType.IDENTIFIER);
         if (newToken != null) {
