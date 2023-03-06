@@ -132,6 +132,774 @@ public class Parser {
         } while (currentToken != null);
     }
 
+    private BooleanCompareNode boolCompare() throws SyntaxErrorException {
+        Node leftNode = expression();
+
+        if (leftNode instanceof IntegerNode) { 
+            IntegerNode left = (IntegerNode) leftNode;
+            Token currentToken = matchAndRemove(Token.tokenType.LESSTHAN);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0; 
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.GREATERTHAN);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.LESSTHANOREQUALTO);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.GREATERTHANOREQUALTO);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.COMPARISONEQUAL);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.NOTEQUAL);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            return null;
+        }
+        else if (leftNode instanceof RealNode) {
+            RealNode left = (RealNode) leftNode;
+            Token currentToken = matchAndRemove(Token.tokenType.LESSTHAN);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.GREATERTHAN);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.LESSTHANOREQUALTO);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.GREATERTHANOREQUALTO);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.COMPARISONEQUAL);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.NOTEQUAL);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            return null;
+        }
+        else if (leftNode instanceof MathOpNode) {
+            MathOpNode left = (MathOpNode) leftNode;
+            Token currentToken = matchAndRemove(Token.tokenType.LESSTHAN);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.GREATERTHAN);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.LESSTHANOREQUALTO);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.GREATERTHANOREQUALTO);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.COMPARISONEQUAL);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.NOTEQUAL);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            return null;
+        }
+        else if (leftNode instanceof VariableReferenceNode) {
+            VariableReferenceNode left = (VariableReferenceNode) leftNode;
+            Token currentToken = matchAndRemove(Token.tokenType.LESSTHAN);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() < right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.GREATERTHAN);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() > right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHAN, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.LESSTHANOREQUALTO);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() <= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.LESSTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.GREATERTHANOREQUALTO);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() >= right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.GREATERTHANOREQUALTO, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.COMPARISONEQUAL);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() == right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.EQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            currentToken = matchAndRemove(Token.tokenType.NOTEQUAL);
+            if (currentToken != null) {
+                Node rightNode = expression();
+                if (rightNode instanceof IntegerNode) {
+                    IntegerNode right = (IntegerNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof RealNode) {
+                    RealNode right = (RealNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof MathOpNode) {
+                    MathOpNode right = (MathOpNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else if (rightNode instanceof VariableReferenceNode) {
+                    VariableReferenceNode right = (VariableReferenceNode) rightNode;
+                    Integer value = (left.getValue() != right.getValue()) ? 1 : 0;
+                    BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(BooleanCompareNode.comparisonType.NOTEQUAL, left, right, value);
+                    return newBooleanCompareNode;
+                }
+                else {
+                    return null;
+                }
+            }
+            return null;
+        }
+        else {
+            return null;
+        }
+    }
+
     private MathOpNode createMathOpNode(MathOpNode.operationType inputOperationType, Node inputLeftChild, Node inputRightChild) throws SyntaxErrorException {
         MathOpNode newMathOpNode;
         if (inputLeftChild == null) {
@@ -450,10 +1218,15 @@ public class Parser {
                 throw new SyntaxErrorException(tokenArray.get(0));
             }
         }
+        newToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+        if (newToken != null) {
+            VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(newToken.getValue());
+            return newVariableReferenceNode;
+        }
         return null;
     }
 
-    private FunctionNode function() throws SyntaxErrorException { //HERE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-
+    private FunctionNode function() throws SyntaxErrorException {
         if (matchAndRemove(Token.tokenType.DEFINE) != null) {
             Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
             if (currentToken != null) {
@@ -540,7 +1313,7 @@ public class Parser {
             }
         }
         return null;
-    } 
+    }
 
     private void statementDeclarations() throws SyntaxErrorException {
         Node currentNode = expression();
