@@ -143,7 +143,7 @@ public class Parser {
         else
             throw new SyntaxErrorException(tokenArray.get(0));
         if (matchAndRemove(Token.tokenType.ASSIGNMENTEQUAL) == null)
-            return null; //Returns null if there is no expression following targer
+            return null; //Returns null if there is no expression following target
         Node assignmentValue = boolCompare();
         if (assignmentValue == null)
             throw new SyntaxErrorException(tokenArray.get(0));
@@ -153,7 +153,7 @@ public class Parser {
 
     private Node boolCompare() throws SyntaxErrorException {
         Node leftNode = expression();
-
+        //Checks left side, boolean operator, then right side in order to create a proper BooleanCompareNode
         if (leftNode instanceof IntegerNode) { 
             IntegerNode left = (IntegerNode) leftNode;
             Token currentToken = matchAndRemove(Token.tokenType.LESSTHAN);
@@ -1304,7 +1304,7 @@ public class Parser {
         Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
         targetName = (currentToken != null) ? currentToken.getValue() : null;
         if (matchAndRemove(Token.tokenType.LEFTBRACKET) != null) {
-            Node arrayIndex = getTargetNode();
+            Node arrayIndex = getTargetNode(); //Recursively calls itself in order to obtain any VariableReferenceNodes nested in the array index expression
             matchAndRemove(Token.tokenType.RIGHTBRACKET);
             VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(targetName, arrayIndex);
             return newVariableReferenceNode;
@@ -1421,7 +1421,7 @@ public class Parser {
                 statementNodeArray.add(currentStatement);
             }
             Token currentToken = expectEndsOfLine();
-            if (currentToken == null & peek(0).getToken() != Token.tokenType.DEDENT)
+            if (currentToken == null & peek(0).getToken() != Token.tokenType.DEDENT) //If a line isnt followed by a dedent or an EOL token, throw error
                 throw new SyntaxErrorException(tokenArray.get(0));
         } while (currentStatement != null);
         if (matchAndRemove(Token.tokenType.DEDENT) == null) {

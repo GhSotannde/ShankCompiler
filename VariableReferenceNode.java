@@ -24,6 +24,7 @@ public class VariableReferenceNode extends Node{
 
     public String ToString() {
         String str = "VariableReferenceNode(" + name;
+        // Will call the ToString method for all nested expressions within array index
         if (arrayIndexExpression instanceof VariableReferenceNode) {
             VariableReferenceNode innerExpression = (VariableReferenceNode) arrayIndexExpression;
             str += ", " + innerExpression.ToString();
