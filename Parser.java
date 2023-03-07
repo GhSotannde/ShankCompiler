@@ -131,6 +131,25 @@ public class Parser {
         currentToken = matchAndRemove(Token.tokenType.COMMA); //If a comma follows the data, another constant should exist
         } while (currentToken != null);
     }
+    
+    private AssignmentNode assignment() throws SyntaxErrorException {
+        Node targetNode = getTargetNode();
+        if (targetNode == null) {
+            return null;
+        }
+        VariableReferenceNode assignmentTargetNode;
+        if (targetNode instanceof VariableReferenceNode)
+            assignmentTargetNode = (VariableReferenceNode) targetNode;
+        else
+            throw new SyntaxErrorException(tokenArray.get(0));
+        if (matchAndRemove(Token.tokenType.ASSIGNMENTEQUAL) == null)
+            return null; //Returns null if there is no expression following targer
+        Node assignmentValue = boolCompare();
+        if (assignmentValue == null)
+            throw new SyntaxErrorException(tokenArray.get(0));
+        AssignmentNode newAssignmentNode = new AssignmentNode(assignmentTargetNode, assignmentValue);
+        return newAssignmentNode;
+    }
 
     private Node boolCompare() throws SyntaxErrorException {
         Node leftNode = expression();
@@ -1210,52 +1229,41 @@ public class Parser {
             }
         }
         if (matchAndRemove(Token.tokenType.LEFTPARENTHESES) != null) {
-            //MathOpNode newMathOpNode = (MathOpNode) expression();
-            Node currentNode = boolCompare();
+            Node currentNode = boolCompare(); // If a left parentheses is detected, will check for a boolean statement
             if (currentNode instanceof IntegerNode) {
                 currentNode = (IntegerNode) currentNode;
-                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
+                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null)
                     return currentNode;
-                }
-                else {
+                else
                     throw new SyntaxErrorException(tokenArray.get(0));
-                }
             }
             else if (currentNode instanceof RealNode) {
                 currentNode = (RealNode) currentNode;
-                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
+                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null)
                     return currentNode;
-                }
-                else {
+                else
                     throw new SyntaxErrorException(tokenArray.get(0));
-                }
             }
             else if (currentNode instanceof MathOpNode) {
                 currentNode = (MathOpNode) currentNode;
-                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
+                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null)
                     return currentNode;
-                }
-                else {
+                else
                     throw new SyntaxErrorException(tokenArray.get(0));
-                }
             }
             else if (currentNode instanceof VariableReferenceNode) {
                 currentNode = (VariableReferenceNode) currentNode;
-                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
+                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null)
                     return currentNode;
-                }
-                else {
+                else
                     throw new SyntaxErrorException(tokenArray.get(0));
-                }
             }
             else if (currentNode instanceof BooleanCompareNode) {
                 currentNode = (BooleanCompareNode) currentNode;
-                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
+                if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null)
                     return currentNode;
-                }
-                else {
+                else
                     throw new SyntaxErrorException(tokenArray.get(0));
-                }
             }
             return null;
         }
@@ -1280,21 +1288,29 @@ public class Parser {
                     currentToken = expectEndsOfLine();
                     if (currentToken == null)
                         throw new SyntaxErrorException(tokenArray.get(0));
-                    if (matchAndRemove(Token.tokenType.INDENT) != null) {
-                        statementDeclarations(); //Prints statements
-                        if (matchAndRemove(Token.tokenType.DEDENT) != null) {
-                            FunctionNode functionNode = new FunctionNode(functionName, parameterArray, variableArray, null);
-                            return functionNode;
-                        }
-                        throw new SyntaxErrorException(tokenArray.get(0));
-                    }
-                    throw new SyntaxErrorException(tokenArray.get(0));
+                    ArrayList<StatementNode> statementNodeArray = statements(); //Records statements
+                    FunctionNode functionNode = new FunctionNode(functionName, parameterArray, variableArray, statementNodeArray);
+                    return functionNode;
                 }
                 throw new SyntaxErrorException(tokenArray.get(0));
             }
             throw new SyntaxErrorException(tokenArray.get(0));
         }
         return null;
+    }
+
+    private Node getTargetNode() throws SyntaxErrorException {
+        String targetName;
+        Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+        targetName = (currentToken != null) ? currentToken.getValue() : null;
+        if (matchAndRemove(Token.tokenType.LEFTBRACKET) != null) {
+            Node arrayIndex = getTargetNode();
+            matchAndRemove(Token.tokenType.RIGHTBRACKET);
+            VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(targetName, arrayIndex);
+            return newVariableReferenceNode;
+        }
+        Node expressionNode = expression();
+        return (expressionNode != null) ? expressionNode : null;
     }
 
     private Token matchAndRemove(Token.tokenType inputTokenType) {
@@ -1356,29 +1372,62 @@ public class Parser {
         return null;
     }
 
+    private StatementNode statement() throws SyntaxErrorException {
+        AssignmentNode currentStatement = assignment();
+        if (currentStatement == null) {
+            return null;
+        }
+        StatementNode newStatementNode = new StatementNode(currentStatement);
+        return newStatementNode;
+    }
+
     private void statementDeclarations() throws SyntaxErrorException {
         Node currentNode = expression();
-            while (currentNode != null) { //Loops until end of statement lines
-                if (currentNode instanceof MathOpNode) {
-                    MathOpNode expressionNode = (MathOpNode) currentNode;
-                    System.out.println(expressionNode.ToString());
-                }
-                else if (currentNode instanceof IntegerNode) {
-                    IntegerNode integerNode = (IntegerNode) currentNode;
-                    System.out.println(integerNode.ToString());
-                }
-                else if (currentNode instanceof RealNode) {
-                    RealNode realNode = (RealNode) currentNode;
-                    System.out.println(realNode.ToString());
-                }
-                Token currentToken = expectEndsOfLine();
-                if (currentToken == null)
-                    throw new SyntaxErrorException(tokenArray.get(0));
-                while (peek(0).getToken() == Token.tokenType.INDENT) { //Eats up indent tokens between statement lines
-                    matchAndRemove(Token.tokenType.INDENT);
-                }
-                currentNode = expression();
+        while (currentNode != null) { //Loops until end of statement lines
+            if (currentNode instanceof MathOpNode) {
+                MathOpNode expressionNode = (MathOpNode) currentNode;
+                System.out.println(expressionNode.ToString());
             }
+            else if (currentNode instanceof IntegerNode) {
+                IntegerNode integerNode = (IntegerNode) currentNode;
+                System.out.println(integerNode.ToString());
+            }
+            else if (currentNode instanceof RealNode) {
+                RealNode realNode = (RealNode) currentNode;
+                System.out.println(realNode.ToString());
+            }
+            Token currentToken = expectEndsOfLine();
+            if (currentToken == null)
+                throw new SyntaxErrorException(tokenArray.get(0));
+            while (peek(0).getToken() == Token.tokenType.INDENT) { //Eats up indent tokens between statement lines
+                matchAndRemove(Token.tokenType.INDENT);
+            }
+            currentNode = expression();
+        }
+    }
+
+    private ArrayList<StatementNode> statements() throws SyntaxErrorException {
+        ArrayList<StatementNode> statementNodeArray = new ArrayList<StatementNode>();
+        if (matchAndRemove(Token.tokenType.INDENT) == null) {
+            throw new SyntaxErrorException(tokenArray.get(0));
+        }
+        StatementNode currentStatement;
+        do {
+            while (peek(0).getToken() == Token.tokenType.INDENT) { //Eats up indent tokens between statement lines
+                matchAndRemove(Token.tokenType.INDENT);
+            }
+            currentStatement = statement();
+            if (currentStatement != null) {
+                statementNodeArray.add(currentStatement);
+            }
+            Token currentToken = expectEndsOfLine();
+            if (currentToken == null & peek(0).getToken() != Token.tokenType.DEDENT)
+                throw new SyntaxErrorException(tokenArray.get(0));
+        } while (currentStatement != null);
+        if (matchAndRemove(Token.tokenType.DEDENT) == null) {
+            throw new SyntaxErrorException(tokenArray.get(0));
+        }
+        return statementNodeArray;
     }
 
     private Node term() throws SyntaxErrorException {

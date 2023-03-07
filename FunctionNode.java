@@ -15,7 +15,7 @@ public class FunctionNode extends Node {
     } 
 
     public String ToString() {
-        return "Function " + name + "\n" + printParameterArray() + printVariableArray();
+        return "Function " + name + "\n" + printParameterArray() + printVariableArray() + printStatementArray();
     }
 
     public String getName() {
@@ -39,4 +39,15 @@ public class FunctionNode extends Node {
         str += "\n";
         return str;
     }
+
+    private String printStatementArray() {
+        String str = "Statements: ";
+        for (StatementNode node : statementArray) {
+            str += node.ToString() + ", ";
+        }
+        str += "\n";
+        return str;
+    }
+
+    
 }
