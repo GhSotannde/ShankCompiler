@@ -999,6 +999,29 @@ public class Parser {
                         break;
                 }
             }
+            else if (inputRightChild instanceof VariableReferenceNode) {
+                VariableReferenceNode rightVariableReferenceNode = (VariableReferenceNode) inputRightChild;
+                newMathOpNode = new MathOpNode(inputOperationType, leftIntegerNode, rightVariableReferenceNode);
+                switch (inputOperationType) {
+                    case ADD:
+                        newMathOpNode.setValue(leftIntegerNode.getValue() + rightVariableReferenceNode.getValue());
+                        break;
+                    case SUBTRACT:
+                        newMathOpNode.setValue(leftIntegerNode.getValue() - rightVariableReferenceNode.getValue());
+                        break;
+                    case MULTIPLY:
+                        newMathOpNode.setValue(leftIntegerNode.getValue() * rightVariableReferenceNode.getValue());
+                        break;
+                    case DIVIDE:
+                        newMathOpNode.setValue(leftIntegerNode.getValue() / rightVariableReferenceNode.getValue());
+                        break;
+                    case MOD:
+                        newMathOpNode.setValue(leftIntegerNode.getValue() % rightVariableReferenceNode.getValue());
+                        break;
+                    default:
+                        break;
+                }
+            }
             else {
                 throw new SyntaxErrorException(tokenArray.get(0));
             }
@@ -1077,6 +1100,29 @@ public class Parser {
                         break;
                 }
             }
+            else if (inputRightChild instanceof VariableReferenceNode) {
+                VariableReferenceNode rightVariableReferenceNode = (VariableReferenceNode) inputRightChild;
+                newMathOpNode = new MathOpNode(inputOperationType, leftRealNode, rightVariableReferenceNode);
+                switch (inputOperationType) {
+                    case ADD:
+                        newMathOpNode.setValue(leftRealNode.getValue() + rightVariableReferenceNode.getValue());
+                        break;
+                    case SUBTRACT:
+                        newMathOpNode.setValue(leftRealNode.getValue() - rightVariableReferenceNode.getValue());
+                        break;
+                    case MULTIPLY:
+                        newMathOpNode.setValue(leftRealNode.getValue() * rightVariableReferenceNode.getValue());
+                        break;
+                    case DIVIDE:
+                        newMathOpNode.setValue(leftRealNode.getValue() / rightVariableReferenceNode.getValue());
+                        break;
+                    case MOD:
+                        newMathOpNode.setValue(leftRealNode.getValue() % rightVariableReferenceNode.getValue());
+                        break;
+                    default:
+                        break;
+                }
+            }
             else {
                 throw new SyntaxErrorException(tokenArray.get(0));
             }
@@ -1150,6 +1196,130 @@ public class Parser {
                         break;
                     case MOD:
                         newMathOpNode.setValue(leftMathOpNode.getValue() % rightMathOpNode.getValue());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else if (inputRightChild instanceof VariableReferenceNode) {
+                VariableReferenceNode rightVariableReferenceNode = (VariableReferenceNode) inputRightChild;
+                newMathOpNode = new MathOpNode(inputOperationType, leftMathOpNode, rightVariableReferenceNode);
+                switch (inputOperationType) {
+                    case ADD:
+                        newMathOpNode.setValue(leftMathOpNode.getValue() + rightVariableReferenceNode.getValue());
+                        break;
+                    case SUBTRACT:
+                        newMathOpNode.setValue(leftMathOpNode.getValue() - rightVariableReferenceNode.getValue());
+                        break;
+                    case MULTIPLY:
+                        newMathOpNode.setValue(leftMathOpNode.getValue() * rightVariableReferenceNode.getValue());
+                        break;
+                    case DIVIDE:
+                        newMathOpNode.setValue(leftMathOpNode.getValue() / rightVariableReferenceNode.getValue());
+                        break;
+                    case MOD:
+                        newMathOpNode.setValue(leftMathOpNode.getValue() % rightVariableReferenceNode.getValue());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else {
+                throw new SyntaxErrorException(tokenArray.get(0));
+            }
+        }
+        else if (inputLeftChild instanceof VariableReferenceNode) {
+            VariableReferenceNode leftVariableReferenceNode = (VariableReferenceNode) inputLeftChild;
+            if (inputRightChild == null) {
+                throw new SyntaxErrorException(tokenArray.get(0));
+            }
+            else if (inputRightChild instanceof IntegerNode) {
+                IntegerNode rightIntegerNode = (IntegerNode) inputRightChild;
+                newMathOpNode = new MathOpNode(inputOperationType, leftVariableReferenceNode, rightIntegerNode);
+                switch (inputOperationType) {
+                    case ADD:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() + rightIntegerNode.getValue());
+                        break;
+                    case SUBTRACT:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() - rightIntegerNode.getValue());
+                        break;
+                    case MULTIPLY:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() * rightIntegerNode.getValue());
+                        break;
+                    case DIVIDE:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() / rightIntegerNode.getValue());
+                        break;
+                    case MOD:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() % rightIntegerNode.getValue());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else if (inputRightChild instanceof RealNode) {
+                RealNode rightRealNode = (RealNode) inputRightChild;
+                newMathOpNode = new MathOpNode(inputOperationType, leftVariableReferenceNode, rightRealNode);
+                switch (inputOperationType) {
+                    case ADD:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() + rightRealNode.getValue());
+                        break;
+                    case SUBTRACT:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() - rightRealNode.getValue());
+                        break;
+                    case MULTIPLY:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() * rightRealNode.getValue());
+                        break;
+                    case DIVIDE:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() / rightRealNode.getValue());
+                        break;
+                    case MOD:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() % rightRealNode.getValue());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else if (inputRightChild instanceof MathOpNode) {
+                MathOpNode rightMathOpNode = (MathOpNode) inputRightChild;
+                newMathOpNode = new MathOpNode(inputOperationType, leftVariableReferenceNode, rightMathOpNode);
+                switch (inputOperationType) {
+                    case ADD:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() + rightMathOpNode.getValue());
+                        break;
+                    case SUBTRACT:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() - rightMathOpNode.getValue());
+                        break;
+                    case MULTIPLY:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() * rightMathOpNode.getValue());
+                        break;
+                    case DIVIDE:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() / rightMathOpNode.getValue());
+                        break;
+                    case MOD:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() % rightMathOpNode.getValue());
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else if (inputRightChild instanceof VariableReferenceNode) {
+                VariableReferenceNode rightVariableReferenceNode = (VariableReferenceNode) inputRightChild;
+                newMathOpNode = new MathOpNode(inputOperationType, leftVariableReferenceNode, rightVariableReferenceNode);
+                switch (inputOperationType) {
+                    case ADD:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() + rightVariableReferenceNode.getValue());
+                        break;
+                    case SUBTRACT:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() - rightVariableReferenceNode.getValue());
+                        break;
+                    case MULTIPLY:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() * rightVariableReferenceNode.getValue());
+                        break;
+                    case DIVIDE:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() / rightVariableReferenceNode.getValue());
+                        break;
+                    case MOD:
+                        newMathOpNode.setValue(leftVariableReferenceNode.getValue() % rightVariableReferenceNode.getValue());
                         break;
                     default:
                         break;
@@ -1267,10 +1437,9 @@ public class Parser {
             }
             return null;
         }
-        newToken = matchAndRemove(Token.tokenType.IDENTIFIER);
-        if (newToken != null) {
-            VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(newToken.getValue());
-            return newVariableReferenceNode;
+        if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.IDENTIFIER) {
+            Node variableNode = getTargetNode();
+            return variableNode;
         }
         return null;
     }
@@ -1305,12 +1474,24 @@ public class Parser {
         targetName = (currentToken != null) ? currentToken.getValue() : null;
         if (matchAndRemove(Token.tokenType.LEFTBRACKET) != null) {
             Node arrayIndex = getTargetNode(); //Recursively calls itself in order to obtain any VariableReferenceNodes nested in the array index expression
+            if (arrayIndex == null) {
+                throw new SyntaxErrorException(tokenArray.get(0));
+            }
             matchAndRemove(Token.tokenType.RIGHTBRACKET);
             VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(targetName, arrayIndex);
             return newVariableReferenceNode;
         }
         Node expressionNode = expression();
-        return (expressionNode != null) ? expressionNode : null;
+        if (expressionNode != null) {
+            return expressionNode;
+        }
+        else if (expressionNode == null && currentToken != null) {
+            VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(targetName);
+            return newVariableReferenceNode;
+        }
+        else {
+            return null;
+        }
     }
 
     private Token matchAndRemove(Token.tokenType inputTokenType) {
