@@ -92,7 +92,7 @@ public class Lexer {
         knownWords.put("elsif", Token.tokenType.ELSIF);
         knownWords.put("else", Token.tokenType.ELSE);
         knownWords.put("repeat", Token.tokenType.REPEAT);
-        knownWords.put("unitl", Token.tokenType.UNTIL);
+        knownWords.put("until", Token.tokenType.UNTIL);
         knownWords.put("not", Token.tokenType.NOT);
         knownWords.put("and", Token.tokenType.AND);
         knownWords.put("or", Token.tokenType.OR);

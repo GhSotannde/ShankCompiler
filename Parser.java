@@ -1613,7 +1613,27 @@ public class Parser {
                 return newWhileNode;
             }
             throw new SyntaxErrorException(tokenArray.get(0));
+        }
+        return null;
+    }
 
+    private RepeatNode parseRepeat() throws SyntaxErrorException {
+        if (matchAndRemove(Token.tokenType.REPEAT) != null) {
+            if (matchAndRemove(Token.tokenType.UNTIL) != null) {
+                Node condition = boolCompare();
+                if (condition == null || !(condition instanceof BooleanCompareNode))
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                BooleanCompareNode booleanCondition = (BooleanCompareNode) condition;
+                if (expectEndsOfLine() != null) {
+                    ArrayList<StatementNode> statements = statements();
+                    if (statements == null)
+                        throw new SyntaxErrorException(tokenArray.get(0));
+                    RepeatNode newRepeatNode = new RepeatNode(booleanCondition, statements);
+                    return newRepeatNode;
+                }
+                throw new SyntaxErrorException(tokenArray.get(0));
+            }
+            throw new SyntaxErrorException(tokenArray.get(0));
         }
         return null;
     }
@@ -1657,6 +1677,11 @@ public class Parser {
             return newStatementNode;
         }
         currentStatement = parseWhile();
+        if (currentStatement != null) {
+            StatementNode newStatementNode = new StatementNode(currentStatement);
+            return newStatementNode;
+        }
+        currentStatement = parseRepeat();
         if (currentStatement != null) {
             StatementNode newStatementNode = new StatementNode(currentStatement);
             return newStatementNode;
