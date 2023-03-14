@@ -41,6 +41,10 @@ public class VariableNode extends Node {
     public String getName() {
         return name;
     }
+
+    public int getChangeable() {
+        return isChangeable;
+    }
     
     public String ToString() {
         return "VariableNode(" + name + "," + type + ")";

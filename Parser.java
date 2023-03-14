@@ -52,14 +52,14 @@ public class Parser {
             VariableNode.variableType variableType = searchForType(); //Looks ahead for variable's data type
             if (variableType == null)
                 throw new SyntaxErrorException(tokenArray.get(0));
-            inputVariableNodeArray.add(new VariableNode(currentToken.getValue(), variableType, 1));
+            inputVariableNodeArray.add(new VariableNode(currentToken.getValue(), variableType, inputChangeable));
             while (matchAndRemove(Token.tokenType.COMMA) != null) { //Checks for another variable
                 currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
                 if (currentToken != null) {
                     variableType = searchForType();
                     if (variableType == null)
                         throw new SyntaxErrorException(tokenArray.get(0));
-                    inputVariableNodeArray.add(new VariableNode(currentToken.getValue(), variableType, 1));
+                    inputVariableNodeArray.add(new VariableNode(currentToken.getValue(), variableType, inputChangeable));
                 }
             }
             if (matchAndRemove(Token.tokenType.COLON) != null) { //Clears out the type and punctuation tokens following variable names
@@ -1510,12 +1510,12 @@ public class Parser {
     private ArrayList<VariableNode> parameterDeclarations() throws SyntaxErrorException {
         ArrayList<VariableNode> variableNodeArray = new ArrayList<VariableNode>();
         while (peek(0).getToken() != Token.tokenType.RIGHTPARENTHESES) {
-            Token currentToken;
-            currentToken = matchAndRemove(Token.tokenType.VAR);
-            if (currentToken != null) {
+            if (matchAndRemove(Token.tokenType.VAR) != null) {
                 addVariableNodesToArray(1, variableNodeArray); //Variable is changeable
+                System.out.println("Test1");
             }
             else {
+                System.out.println("Test2");
                 addVariableNodesToArray(0, variableNodeArray); //Variable can not be changed
             }
         }
@@ -1523,6 +1523,7 @@ public class Parser {
             if (variableNodeArray.size() == 0) {
                 return null;
             }
+            System.out.println(variableNodeArray.size());
             return variableNodeArray;
         }
         throw new SyntaxErrorException(tokenArray.get(0));

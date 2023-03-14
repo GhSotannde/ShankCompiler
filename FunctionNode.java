@@ -25,7 +25,10 @@ public class FunctionNode extends Node {
     private String printParameterArray() {
         String str = "Parameters:\n";
         for (VariableNode node : parameterArray) {
-            str += "    " + node.getName() + ":" + node.getType() + "\n";
+            str += "    ";
+            if (node.getChangeable() == 1)
+                str += "var ";
+            str += node.getName() + ":" + node.getType() + "\n";
         }
         str += "\n";
         return str;
