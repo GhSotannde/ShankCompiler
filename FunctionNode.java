@@ -45,7 +45,6 @@ public class FunctionNode extends Node {
         for (StatementNode node : statementArray) {
             str += node.ToString() + "\n";
         }
-        str += "\n";
         return str;
     }
 

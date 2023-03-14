@@ -38,7 +38,7 @@ public class AssignmentNode extends StatementNode {
             VariableReferenceNode expressionValue = (VariableReferenceNode) assignmentValue;
             str += " | Assignment Value:" + expressionValue.ToString();
         }
-        str += ")\n";
+        str += ")";
         return str;
     }
 }

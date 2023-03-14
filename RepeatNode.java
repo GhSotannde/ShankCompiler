@@ -11,13 +11,13 @@ public class RepeatNode extends StatementNode {
     }
 
     public String ToString() {
-        String str = "RepeatNode(Condition: ";
-        str += condition.ToString() + " Statements: ";
+        String str = "\nRepeatNode(\nCondition: ";
+        str += condition.ToString() + "\nStatements:\n";
         
         for (int i = 0; i < statements.size() ; i++) {
-            str += ", " + statements.get(i).ToString();
+            str += statements.get(i).ToString();
         }
-        str += ")";
+        str += "\n)";
         return str;
     } 
 

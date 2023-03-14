@@ -4,6 +4,8 @@ public class Parser {
     private ArrayList<Token> tokenArray = new ArrayList<Token>();
     
     private Token newToken = new Token();
+
+    private int indentationLevel = 0;
     
     public Parser(ArrayList<Token> inputTokenArray) {
         tokenArray = inputTokenArray;
@@ -1526,6 +1528,45 @@ public class Parser {
         throw new SyntaxErrorException(tokenArray.get(0));
     }
 
+    private ForNode parseFor() throws SyntaxErrorException {
+        if (matchAndRemove(Token.tokenType.FOR) != null) {
+            String targetName;
+            Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+            if (currentToken != null) {
+                targetName = currentToken.getValue();
+                VariableReferenceNode newVariableReferenceNode;
+                if (matchAndRemove(Token.tokenType.LEFTBRACKET) != null) {
+                    Node arrayIndex = getTargetNode(); //Recursively calls itself in order to obtain any VariableReferenceNodes nested in the array index expression
+                    if (arrayIndex == null)
+                        throw new SyntaxErrorException(tokenArray.get(0));
+                    if (matchAndRemove(Token.tokenType.RIGHTBRACKET) == null)
+                        throw new SyntaxErrorException(tokenArray.get(0));
+                    newVariableReferenceNode = new VariableReferenceNode(targetName, arrayIndex);
+                }
+                else {
+                    newVariableReferenceNode = new VariableReferenceNode(targetName);
+                }
+                if (matchAndRemove(Token.tokenType.FROM) != null) {
+                    Node fromExpression = expression();
+                    if (fromExpression == null)
+                        throw new SyntaxErrorException(tokenArray.get(0));
+                    if (matchAndRemove(Token.tokenType.TO) != null) {
+                        Node toExpression = expression();
+                        if (toExpression == null)
+                            throw new SyntaxErrorException(tokenArray.get(0));
+                        if (expectEndsOfLine() != null) {
+                            ArrayList<StatementNode> statements = statements();
+                            if (statements == null)
+                                throw new SyntaxErrorException(tokenArray.get(0));
+                            ForNode newForNode = new ForNode(newVariableReferenceNode, fromExpression, toExpression, statements);
+                            return newForNode;
+                        } throw new SyntaxErrorException(tokenArray.get(0));
+                    } throw new SyntaxErrorException(tokenArray.get(0));
+                } throw new SyntaxErrorException(tokenArray.get(0));
+            } throw new SyntaxErrorException(tokenArray.get(0));
+        } return null;
+    }
+
     private IfNode parseIf(boolean isElsifOrElse) throws SyntaxErrorException {
         if (isElsifOrElse == true) {
             if (matchAndRemove(Token.tokenType.ELSIF) != null) {
@@ -1686,31 +1727,33 @@ public class Parser {
             StatementNode newStatementNode = new StatementNode(currentStatement);
             return newStatementNode;
         }
+        currentStatement = parseFor();
+        if (currentStatement != null) {
+            StatementNode newStatementNode = new StatementNode(currentStatement);
+            return newStatementNode;
+        }
         return null;
     }
 
     private ArrayList<StatementNode> statements() throws SyntaxErrorException {
         ArrayList<StatementNode> statementNodeArray = new ArrayList<StatementNode>();
+        int startingIndentationLevel = indentationLevel;
         if (matchAndRemove(Token.tokenType.INDENT) != null) {
+            indentationLevel++;
             StatementNode currentStatement;
             do {
-                while (peek(0).getToken() == Token.tokenType.INDENT) { //Eats up indent tokens between statement lines
-                    matchAndRemove(Token.tokenType.INDENT);
-                }
                 currentStatement = statement();
-                if (currentStatement != null) {
+                if (currentStatement != null)
                     statementNodeArray.add(currentStatement);
+                expectEndsOfLine();
+                if (matchAndRemove(Token.tokenType.DEDENT) != null)
+                    indentationLevel--;
+                if (indentationLevel == startingIndentationLevel) { // Indentation tracking prevents statements outside of block from being included within block
+                    break;
                 }
-                Token currentToken = expectEndsOfLine();
-                if (currentToken == null & peek(0).getToken() != Token.tokenType.DEDENT) //If a line isnt followed by a dedent or an EOL token, throw error
-                    throw new SyntaxErrorException(tokenArray.get(0));
             } while (currentStatement != null);
-            if (matchAndRemove(Token.tokenType.DEDENT) == null) {
-                throw new SyntaxErrorException(tokenArray.get(0));
-            }
             return statementNodeArray;
-        }
-        return null;
+        } return null;
     }
 
     private Node term() throws SyntaxErrorException {
