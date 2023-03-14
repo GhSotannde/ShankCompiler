@@ -13,7 +13,7 @@ public class ProgramNode extends Node {
     public String ToString() {
         String str = "";
         for (String key: functionMap.keySet()){
-            str += functionMap.get(key).ToString();
+            str += functionMap.get(key).ToString() + "\n";
         }
         return str;
     }

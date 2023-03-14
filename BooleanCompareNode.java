@@ -14,7 +14,7 @@ public class BooleanCompareNode extends Node {
     }
 
     public String ToString() {
-        return "BooleanCompareNode()";
+        return "BooleanCompareNode(" + value + ")";
     }
 
     public Integer getValue() {

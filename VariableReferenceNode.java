@@ -23,27 +23,27 @@ public class VariableReferenceNode extends Node{
     }
 
     public String ToString() {
-        String str = "VariableReferenceNode(" + name;
+        String str = "VariableReferenceNode(Name: " + name;
         // Will call the ToString method for all nested expressions within array index
         if (arrayIndexExpression instanceof VariableReferenceNode) {
             VariableReferenceNode innerExpression = (VariableReferenceNode) arrayIndexExpression;
-            str += ", " + innerExpression.ToString();
+            str += ", Index: " + innerExpression.ToString();
         }
         else if (arrayIndexExpression instanceof IntegerNode) {
             IntegerNode innerExpression = (IntegerNode) arrayIndexExpression;
-            str += ", " + innerExpression.ToString();
+            str += ", Index: " + innerExpression.ToString();
         }
         else if (arrayIndexExpression instanceof RealNode) {
             RealNode innerExpression = (RealNode) arrayIndexExpression;
-            str += ", " + innerExpression.ToString();
+            str += ", Index: " + innerExpression.ToString();
         }
         else if (arrayIndexExpression instanceof MathOpNode) {
             MathOpNode innerExpression = (MathOpNode) arrayIndexExpression;
-            str += ", " + innerExpression.ToString();
+            str += ", Index: " + innerExpression.ToString();
         }
         else if (arrayIndexExpression instanceof BooleanCompareNode) {
             BooleanCompareNode innerExpression = (BooleanCompareNode) arrayIndexExpression;
-            str += ", " + innerExpression.ToString();
+            str += ", Index: " + innerExpression.ToString();
         }
         str += ")";
         return str;

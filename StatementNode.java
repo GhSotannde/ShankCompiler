@@ -1,16 +1,16 @@
 public class StatementNode extends Node {
 
-    private AssignmentNode statement;
+    private Node statement;
 
     public StatementNode() {
         
     }
 
-    public StatementNode(AssignmentNode inputStatement) {
+    public StatementNode(Node inputStatement) {
         statement = inputStatement;
     }
     
     public String ToString() {
-        return "StatementNode(" + statement.ToString() + ")";
+        return statement.ToString();
     }
 }

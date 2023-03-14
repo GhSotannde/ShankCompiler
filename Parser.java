@@ -1526,6 +1526,76 @@ public class Parser {
         throw new SyntaxErrorException(tokenArray.get(0));
     }
 
+    private IfNode parseIf(boolean isElsifOrElse) throws SyntaxErrorException {
+        if (isElsifOrElse == true) {
+            if (matchAndRemove(Token.tokenType.ELSIF) != null) {
+                Node condition = boolCompare();
+                if (matchAndRemove(Token.tokenType.THEN) != null) {
+                    if (expectEndsOfLine() != null) {
+                        ArrayList<StatementNode> statements = statements();
+                        if (peek(0).getToken() == Token.tokenType.ELSIF) {
+                            IfNode nextIfNode = parseIf(true);
+                            IfNode newIfNode = new IfNode(condition, statements, nextIfNode);
+                            return newIfNode;
+                        }
+                        else if (peek(0).getToken() == Token.tokenType.ELSE) {
+                            IfNode newElseNode = parseIf(true);
+                            IfNode newIfNode = new IfNode(condition, statements, newElseNode);
+                            return newIfNode;
+                        }
+                        else {
+                            IfNode newIfNode = new IfNode(condition, statements, null);
+                            return newIfNode;
+                        }
+                    }
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                }
+                throw new SyntaxErrorException(tokenArray.get(0));
+            }
+            else if (matchAndRemove(Token.tokenType.ELSE) != null) {
+                if (expectEndsOfLine() != null) {
+                    ArrayList<StatementNode> elseStatements = statements();
+                    IfNode newElseNode = new IfNode(elseStatements);
+                    return newElseNode;
+                }
+                throw new SyntaxErrorException(tokenArray.get(0));
+            }
+            return null;
+        }
+        else {
+            if (matchAndRemove(Token.tokenType.IF) != null) {
+                Node condition = boolCompare();
+                if (matchAndRemove(Token.tokenType.THEN) != null) {
+                    if (expectEndsOfLine() != null) {
+                        ArrayList<StatementNode> statements = statements();
+                        if (peek(0).getToken() == Token.tokenType.ELSIF) {
+                            IfNode nextIfNode = parseIf(true);
+                            IfNode newIfNode = new IfNode(condition, statements, nextIfNode);
+                            return newIfNode;
+                        }
+                        else if (peek(0).getToken() == Token.tokenType.ELSE) {
+                            IfNode newElseNode = parseIf(true);
+                            IfNode newIfNode = new IfNode(condition, statements, newElseNode);
+                            return newIfNode;
+                        }
+                        else {
+                            IfNode newIfNode = new IfNode(condition, statements, null);
+                            return newIfNode;
+                        }
+                    }
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                }
+                throw new SyntaxErrorException(tokenArray.get(0));
+            }
+            return null;
+        }
+    }
+
+    private WhileNode parseWhile() {
+        
+        return null;
+    }
+
     private Token peek(int inputInteger) {
         Token token = tokenArray.get(inputInteger) != null ? tokenArray.get(inputInteger) : null;
         return token;
@@ -1554,61 +1624,41 @@ public class Parser {
     }
 
     private StatementNode statement() throws SyntaxErrorException {
-        AssignmentNode currentStatement = assignment();
-        if (currentStatement == null) {
-            return null;
+        Node currentStatement = assignment();
+        if (currentStatement != null) {
+            StatementNode newStatementNode = new StatementNode(currentStatement);
+            return newStatementNode;
         }
-        StatementNode newStatementNode = new StatementNode(currentStatement);
-        return newStatementNode;
-    }
-
-    private void statementDeclarations() throws SyntaxErrorException {
-        Node currentNode = expression();
-        while (currentNode != null) { //Loops until end of statement lines
-            if (currentNode instanceof MathOpNode) {
-                MathOpNode expressionNode = (MathOpNode) currentNode;
-                System.out.println(expressionNode.ToString());
-            }
-            else if (currentNode instanceof IntegerNode) {
-                IntegerNode integerNode = (IntegerNode) currentNode;
-                System.out.println(integerNode.ToString());
-            }
-            else if (currentNode instanceof RealNode) {
-                RealNode realNode = (RealNode) currentNode;
-                System.out.println(realNode.ToString());
-            }
-            Token currentToken = expectEndsOfLine();
-            if (currentToken == null)
-                throw new SyntaxErrorException(tokenArray.get(0));
-            while (peek(0).getToken() == Token.tokenType.INDENT) { //Eats up indent tokens between statement lines
-                matchAndRemove(Token.tokenType.INDENT);
-            }
-            currentNode = expression();
+        currentStatement = parseIf(false); //False indicates that this is looking for an IF statement and not an ELSIF statement
+        if (currentStatement != null) {
+            StatementNode newStatementNode = new StatementNode(currentStatement);
+            return newStatementNode;
         }
+        return null;
     }
 
     private ArrayList<StatementNode> statements() throws SyntaxErrorException {
         ArrayList<StatementNode> statementNodeArray = new ArrayList<StatementNode>();
-        if (matchAndRemove(Token.tokenType.INDENT) == null) {
-            throw new SyntaxErrorException(tokenArray.get(0));
-        }
-        StatementNode currentStatement;
-        do {
-            while (peek(0).getToken() == Token.tokenType.INDENT) { //Eats up indent tokens between statement lines
-                matchAndRemove(Token.tokenType.INDENT);
-            }
-            currentStatement = statement();
-            if (currentStatement != null) {
-                statementNodeArray.add(currentStatement);
-            }
-            Token currentToken = expectEndsOfLine();
-            if (currentToken == null & peek(0).getToken() != Token.tokenType.DEDENT) //If a line isnt followed by a dedent or an EOL token, throw error
+        if (matchAndRemove(Token.tokenType.INDENT) != null) {
+            StatementNode currentStatement;
+            do {
+                while (peek(0).getToken() == Token.tokenType.INDENT) { //Eats up indent tokens between statement lines
+                    matchAndRemove(Token.tokenType.INDENT);
+                }
+                currentStatement = statement();
+                if (currentStatement != null) {
+                    statementNodeArray.add(currentStatement);
+                }
+                Token currentToken = expectEndsOfLine();
+                if (currentToken == null & peek(0).getToken() != Token.tokenType.DEDENT) //If a line isnt followed by a dedent or an EOL token, throw error
+                    throw new SyntaxErrorException(tokenArray.get(0));
+            } while (currentStatement != null);
+            if (matchAndRemove(Token.tokenType.DEDENT) == null) {
                 throw new SyntaxErrorException(tokenArray.get(0));
-        } while (currentStatement != null);
-        if (matchAndRemove(Token.tokenType.DEDENT) == null) {
-            throw new SyntaxErrorException(tokenArray.get(0));
+            }
+            return statementNodeArray;
         }
-        return statementNodeArray;
+        return null;
     }
 
     private Node term() throws SyntaxErrorException {

@@ -15,7 +15,7 @@ public class FunctionNode extends Node {
     } 
 
     public String ToString() {
-        return "Function " + name + "\n" + printParameterArray() + printVariableArray() + printStatementArray();
+        return "Function Name: " + name + "\n\n" + printParameterArray() + printVariableArray() + printStatementArray() + "\n";
     }
 
     public String getName() {
@@ -23,27 +23,27 @@ public class FunctionNode extends Node {
     }
 
     private String printParameterArray() {
-        String str = "Parameters: ";
+        String str = "Parameters:\n";
         for (VariableNode node : parameterArray) {
-            str += node.getName() + ":" + node.getType() + ", ";
+            str += "    " + node.getName() + ":" + node.getType() + "\n";
         }
         str += "\n";
         return str;
     }
 
     private String printVariableArray() {
-        String str = "Variables: ";
+        String str = "Variables:\n";
         for (VariableNode node : variableArray) {
-            str += node.getName() + ":" + node.getType() + ", ";
+            str += "    " + node.getName() + ":" + node.getType() + "\n";
         }
         str += "\n";
         return str;
     }
 
     private String printStatementArray() {
-        String str = "Statements: ";
+        String str = "Statements:\n\n";
         for (StatementNode node : statementArray) {
-            str += node.ToString() + ", ";
+            str += node.ToString() + "\n";
         }
         str += "\n";
         return str;
