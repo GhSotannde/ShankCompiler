@@ -16,11 +16,11 @@ public class ForNode extends StatementNode {
 
     public String ToString() {
         String str = "ForNode(\n";
-        str += "Variable: " + integerVariable.ToString() + "\nFrom: " + from.ToString() + "\nTo: " + to.ToString() +  "\nStatements:";
+        str += " Variable: " + integerVariable.ToString() + "\n From: " + from.ToString() + "\n To: " + to.ToString() +  "\n Statements:\n";
         for (int i = 0; i < statements.size() ; i++) {
             str += statements.get(i).ToString();
         }
-        str += "\n)";
+        str += ")\n";
         return str;
     } 
 }

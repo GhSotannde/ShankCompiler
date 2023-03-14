@@ -46,7 +46,7 @@ public class FunctionNode extends Node {
     private String printStatementArray() {
         String str = "Statements:\n\n";
         for (StatementNode node : statementArray) {
-            str += node.ToString() + "\n";
+            str += node.ToString();
         }
         return str;
     }

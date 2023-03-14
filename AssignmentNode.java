@@ -17,7 +17,7 @@ public class AssignmentNode extends StatementNode {
     }
 
     public String ToString() {
-        String str = "AssignmentNode(Target: " + targetOfAssignment.ToString();
+        String str = " AssignmentNode(Target: " + targetOfAssignment.ToString();
         if (assignmentValue instanceof MathOpNode) {
             MathOpNode expressionValue = (MathOpNode) assignmentValue;
             str += " | Assignment Value: " + expressionValue.ToString();
@@ -38,7 +38,7 @@ public class AssignmentNode extends StatementNode {
             VariableReferenceNode expressionValue = (VariableReferenceNode) assignmentValue;
             str += " | Assignment Value:" + expressionValue.ToString();
         }
-        str += ")";
+        str += ")\n";
         return str;
     }
 }

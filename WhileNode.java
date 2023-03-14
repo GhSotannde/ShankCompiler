@@ -11,13 +11,13 @@ public class WhileNode extends StatementNode {
     }
 
     public String ToString() {
-        String str = "\nWhileNode(\nCondition: ";
-        str += condition.ToString() + "\nStatements:\n";
+        String str = "WhileNode(\n Condition: ";
+        str += condition.ToString() + "\n Statements:\n";
         
         for (int i = 0; i < statements.size() ; i++) {
             str += statements.get(i).ToString();
         }
-        str += "\n)";
+        str += ")\n";
         return str;
     } 
 }

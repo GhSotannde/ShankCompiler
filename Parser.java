@@ -1512,10 +1512,8 @@ public class Parser {
         while (peek(0).getToken() != Token.tokenType.RIGHTPARENTHESES) {
             if (matchAndRemove(Token.tokenType.VAR) != null) {
                 addVariableNodesToArray(1, variableNodeArray); //Variable is changeable
-                System.out.println("Test1");
             }
             else {
-                System.out.println("Test2");
                 addVariableNodesToArray(0, variableNodeArray); //Variable can not be changed
             }
         }
@@ -1523,7 +1521,6 @@ public class Parser {
             if (variableNodeArray.size() == 0) {
                 return null;
             }
-            System.out.println(variableNodeArray.size());
             return variableNodeArray;
         }
         throw new SyntaxErrorException(tokenArray.get(0));
@@ -1635,6 +1632,9 @@ public class Parser {
                     }
                     throw new SyntaxErrorException(tokenArray.get(0));
                 }
+                throw new SyntaxErrorException(tokenArray.get(0));
+            }
+            if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.ELSE) {
                 throw new SyntaxErrorException(tokenArray.get(0));
             }
             return null;
