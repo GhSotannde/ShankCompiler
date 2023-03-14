@@ -1529,7 +1529,11 @@ public class Parser {
     private IfNode parseIf(boolean isElsifOrElse) throws SyntaxErrorException {
         if (isElsifOrElse == true) {
             if (matchAndRemove(Token.tokenType.ELSIF) != null) {
-                Node condition = boolCompare();
+                Node conditionNode = boolCompare();
+                if (!(conditionNode instanceof BooleanCompareNode)) {
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                }
+                BooleanCompareNode condition = (BooleanCompareNode) conditionNode;
                 if (matchAndRemove(Token.tokenType.THEN) != null) {
                     if (expectEndsOfLine() != null) {
                         ArrayList<StatementNode> statements = statements();
@@ -1564,7 +1568,11 @@ public class Parser {
         }
         else {
             if (matchAndRemove(Token.tokenType.IF) != null) {
-                Node condition = boolCompare();
+                Node conditionNode = boolCompare();
+                if (!(conditionNode instanceof BooleanCompareNode)) {
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                }
+                BooleanCompareNode condition = (BooleanCompareNode) conditionNode;
                 if (matchAndRemove(Token.tokenType.THEN) != null) {
                     if (expectEndsOfLine() != null) {
                         ArrayList<StatementNode> statements = statements();
@@ -1591,8 +1599,22 @@ public class Parser {
         }
     }
 
-    private WhileNode parseWhile() {
-        
+    private WhileNode parseWhile() throws SyntaxErrorException {
+        if (matchAndRemove(Token.tokenType.WHILE) != null) {
+            Node condition = boolCompare();
+            if (condition == null || !(condition instanceof BooleanCompareNode))
+                throw new SyntaxErrorException(tokenArray.get(0));
+            BooleanCompareNode booleanCondition = (BooleanCompareNode) condition;
+            if (expectEndsOfLine() != null) {
+                ArrayList<StatementNode> statements = statements();
+                if (statements == null)
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                WhileNode newWhileNode = new WhileNode(booleanCondition, statements);
+                return newWhileNode;
+            }
+            throw new SyntaxErrorException(tokenArray.get(0));
+
+        }
         return null;
     }
 
@@ -1630,6 +1652,11 @@ public class Parser {
             return newStatementNode;
         }
         currentStatement = parseIf(false); //False indicates that this is looking for an IF statement and not an ELSIF statement
+        if (currentStatement != null) {
+            StatementNode newStatementNode = new StatementNode(currentStatement);
+            return newStatementNode;
+        }
+        currentStatement = parseWhile();
         if (currentStatement != null) {
             StatementNode newStatementNode = new StatementNode(currentStatement);
             return newStatementNode;

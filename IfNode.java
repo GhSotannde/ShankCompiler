@@ -2,11 +2,11 @@ import java.util.ArrayList;
 
 public class IfNode extends StatementNode {
 
-    private Node condition = null;
+    private BooleanCompareNode condition = null;
     private ArrayList<StatementNode> statements = new ArrayList<StatementNode>();
     private IfNode nextIf = null;
 
-    public IfNode(Node inputCondition, ArrayList<StatementNode> inputStatementArray, IfNode inputNextIf) {
+    public IfNode(BooleanCompareNode inputCondition, ArrayList<StatementNode> inputStatementArray, IfNode inputNextIf) {
         condition = inputCondition;
         statements = inputStatementArray;
         nextIf = inputNextIf;
