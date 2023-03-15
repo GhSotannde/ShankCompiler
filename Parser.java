@@ -49,42 +49,140 @@ public class Parser {
     }
 
     private void addVariableNodesToArray(int inputChangeable, ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
-        VariableNode.variableType variableType = searchForType(); //Looks ahead for variable's data type
-        if (variableType == null)
-                throw new SyntaxErrorException(tokenArray.get(0));
-        if (variableType == VariableNode.variableType.ARRAY) {
-            VariableNode arrayVariableNode = createArray();
-            inputVariableNodeArray.add(arrayVariableNode);
-        }
-        else {
-            Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
-            if (currentToken == null)
-                throw new SyntaxErrorException(tokenArray.get(0));
-            inputVariableNodeArray.add(new VariableNode(currentToken.getValue(), variableType, inputChangeable));
-            while (matchAndRemove(Token.tokenType.COMMA) != null) { //Checks for another variable
+        ArrayList<String> variableNameArray = new ArrayList<String>();
+        Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+        if (currentToken != null) {
+            variableNameArray.add(currentToken.getValue());
+            while (matchAndRemove(Token.tokenType.COMMA) != null) {
                 currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
                 if (currentToken == null)
                     throw new SyntaxErrorException(tokenArray.get(0));
-                variableType = searchForType();
+                variableNameArray.add(currentToken.getValue());
+            }
+            if (matchAndRemove(Token.tokenType.COLON) != null) {
+                VariableNode.variableType variableType = searchForType();
                 if (variableType == null)
                     throw new SyntaxErrorException(tokenArray.get(0));
-                inputVariableNodeArray.add(new VariableNode(currentToken.getValue(), variableType, inputChangeable));
-            }
-            if (matchAndRemove(Token.tokenType.COLON) != null) { //Clears out the type and punctuation tokens following variable names
-                matchAndRemove(Token.tokenType.INTEGER);
-                matchAndRemove(Token.tokenType.REAL);
-                matchAndRemove(Token.tokenType.CHARACTER);
-                matchAndRemove(Token.tokenType.ARRAY);
-                matchAndRemove(Token.tokenType.BOOLEAN);
-                matchAndRemove(Token.tokenType.STRING);
+                if (variableType == VariableNode.variableType.ARRAY) {
+                    for (int i = 0; i < variableNameArray.size(); i++) {
+                        VariableNode arrayVariableNode = createArray(variableNameArray.get(i));
+                        inputVariableNodeArray.add(arrayVariableNode);
+                    }
+                }
+                else if (variableType == VariableNode.variableType.INTEGER || variableType == VariableNode.variableType.STRING || variableType == VariableNode.variableType.REAL) {
+                    if (matchAndRemove(Token.tokenType.INTEGER) != null) {
+                        if (matchAndRemove(Token.tokenType.FROM) != null) {
+                            Node fromNode = expression();
+                            if (fromNode instanceof IntegerNode) {
+                                IntegerNode fromIntegerNode = (IntegerNode) fromNode;
+                                int from = fromIntegerNode.getValue();
+                                System.out.println(from);
+                                if (matchAndRemove(Token.tokenType.TO) != null) {
+                                    Node toNode = expression();
+                                    if (toNode instanceof IntegerNode) {
+                                        IntegerNode toIntegerNode = (IntegerNode) toNode;
+                                        int to = toIntegerNode.getValue();
+                                        for (int i = 0; i < variableNameArray.size(); i++) {
+                                            inputVariableNodeArray.add(new VariableNode(variableNameArray.get(i), variableType, from, to));
+                                        }
+                                    }
+                                    else
+                                        throw new SyntaxErrorException(tokenArray.get(0));
+                                }
+                                else
+                                    throw new SyntaxErrorException(tokenArray.get(0));
+                            }
+                            else
+                                throw new SyntaxErrorException(tokenArray.get(0));
+                        }
+                        else {
+                            for (int i = 0; i < variableNameArray.size(); i++) {
+                                inputVariableNodeArray.add(new VariableNode(variableNameArray.get(i), variableType, inputChangeable));
+                            }
+                        }
+                    }
+                    else if (matchAndRemove(Token.tokenType.STRING) != null) {
+                        if (matchAndRemove(Token.tokenType.FROM) != null) {
+                            Node fromNode = expression();
+                            if (fromNode instanceof IntegerNode) {
+                                IntegerNode fromIntegerNode = (IntegerNode) fromNode;
+                                int from = fromIntegerNode.getValue();
+                                if (matchAndRemove(Token.tokenType.TO) != null) {
+                                    Node toNode = expression();
+                                    if (toNode instanceof IntegerNode) {
+                                        IntegerNode toIntegerNode = (IntegerNode) toNode;
+                                        int to = toIntegerNode.getValue();
+                                        for (int i = 0; i < variableNameArray.size(); i++) {
+                                            inputVariableNodeArray.add(new VariableNode(variableNameArray.get(i), variableType, from, to));
+                                        }
+                                    }
+                                    else
+                                        throw new SyntaxErrorException(tokenArray.get(0));
+                                }
+                                else
+                                    throw new SyntaxErrorException(tokenArray.get(0));
+                            }
+                            else
+                                throw new SyntaxErrorException(tokenArray.get(0));
+                        }
+                        else {
+                            for (int i = 0; i < variableNameArray.size(); i++) {
+                                inputVariableNodeArray.add(new VariableNode(variableNameArray.get(i), variableType, inputChangeable));
+                            }
+                        }
+                    }
+                    else if (matchAndRemove(Token.tokenType.REAL) != null) {
+                        if (matchAndRemove(Token.tokenType.FROM) != null) {
+                            Node fromNode = expression();
+                            if (fromNode instanceof RealNode) {
+                                RealNode fromRealNode = (RealNode) fromNode;
+                                float from = fromRealNode.getValue();
+                                if (matchAndRemove(Token.tokenType.TO) != null) {
+                                    Node toNode = expression();
+                                    if (toNode instanceof RealNode) {
+                                        RealNode toIntegerNode = (RealNode) toNode;
+                                        float to = toIntegerNode.getValue();
+                                        for (int i = 0; i < variableNameArray.size(); i++) {
+                                            inputVariableNodeArray.add(new VariableNode(variableNameArray.get(i), variableType, from, to));
+                                        }
+                                    }
+                                    else
+                                        throw new SyntaxErrorException(tokenArray.get(0));
+                                }
+                                else
+                                    throw new SyntaxErrorException(tokenArray.get(0));
+                            }
+                            else
+                                throw new SyntaxErrorException(tokenArray.get(0));
+                        }
+                        else {
+                            for (int i = 0; i < variableNameArray.size(); i++) {
+                                inputVariableNodeArray.add(new VariableNode(variableNameArray.get(i), variableType, inputChangeable));
+                            }
+                        }
+                    }
+                    else {
+                        throw new SyntaxErrorException(tokenArray.get(0));
+                    }
+                }
+                else {
+                    for (int i = 0; i < variableNameArray.size(); i++) {
+                        inputVariableNodeArray.add(new VariableNode(variableNameArray.get(i), variableType, inputChangeable));
+                    }
+                    matchAndRemove(Token.tokenType.CHARACTER);
+                    matchAndRemove(Token.tokenType.BOOLEAN);
+                }
                 matchAndRemove(Token.tokenType.SEMICOLON);
             }
+            else
+                throw new SyntaxErrorException(tokenArray.get(0));
         }
+        else
+            throw new SyntaxErrorException(tokenArray.get(0));
     }
 
     private void addConstantToArray(ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
         int negativeMultiplier = 1;
-        float numberValue;
         Token currentToken;
         do {
             currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
@@ -96,16 +194,24 @@ public class Parser {
                     if (currentToken != null) {
                         negativeMultiplier = -1;
                     }
-                    if (peek(0).getToken() == Token.tokenType.NUMBER) {
-                        currentToken = matchAndRemove(Token.tokenType.NUMBER);
-                        numberValue = Float.parseFloat(currentToken.getValue());
-                        if (numberValue % 1 == 0) { //if number divided by 1 does not give a remainder, its an integer
-                            IntegerNode newIntegerNode = new IntegerNode((int) numberValue * negativeMultiplier);
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.INTEGER, 0, newIntegerNode));
-                        }
-                        else {
+                    if (peek(0).getToken() == Token.tokenType.REAL || peek(0).getToken() == Token.tokenType.INTEGER) {
+                        currentToken = matchAndRemove(Token.tokenType.REAL);
+                        if (currentToken != null) {
+                            float numberValue = Float.parseFloat(currentToken.getValue());
                             RealNode newRealNode = new RealNode(numberValue * negativeMultiplier);
                             inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.REAL, 0, newRealNode));
+                        }
+                        else {
+                            currentToken = matchAndRemove(Token.tokenType.INTEGER);
+                            if (currentToken != null) {
+                                int numberValue = Integer.parseInt(currentToken.getValue());
+                                IntegerNode newIntegerNode = new IntegerNode((int) numberValue * negativeMultiplier);
+                                inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.INTEGER, 0, newIntegerNode));
+                            }
+                            else {
+                                throw new SyntaxErrorException(tokenArray.get(0));
+                            }
+
                         }
                     }
                     else if (peek(0).getToken() == Token.tokenType.CHARACTERLITERAL) {
@@ -930,11 +1036,7 @@ public class Parser {
         }
     }
 
-    private VariableNode createArray() throws SyntaxErrorException {
-        Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
-        if (currentToken != null) {
-            String arrayName = currentToken.getValue();
-            if (matchAndRemove(Token.tokenType.COLON) != null) {
+    private VariableNode createArray(String inputName) throws SyntaxErrorException {
                 if (matchAndRemove(Token.tokenType.ARRAY) != null) {
                     if (matchAndRemove(Token.tokenType.FROM) != null) {
                         Node fromNode = expression();
@@ -956,15 +1058,13 @@ public class Parser {
                                         matchAndRemove(Token.tokenType.ARRAY);
                                         matchAndRemove(Token.tokenType.BOOLEAN);
                                         matchAndRemove(Token.tokenType.STRING);
-                                        return new VariableNode(arrayName, arrayType, from, to);
+                                        return new VariableNode(inputName, arrayType, from, to, VariableNode.variableType.ARRAY);
                                     } throw new SyntaxErrorException(tokenArray.get(0));
                                 } throw new SyntaxErrorException(tokenArray.get(0));
                             } throw new SyntaxErrorException(tokenArray.get(0));
                         } throw new SyntaxErrorException(tokenArray.get(0));
                     } throw new SyntaxErrorException(tokenArray.get(0));
                 } throw new SyntaxErrorException(tokenArray.get(0));
-            } throw new SyntaxErrorException(tokenArray.get(0));
-        } throw new SyntaxErrorException(tokenArray.get(0));
     }
 
     private MathOpNode createMathOpNode(MathOpNode.operationType inputOperationType, Node inputLeftChild, Node inputRightChild) throws SyntaxErrorException {
@@ -1429,19 +1529,20 @@ public class Parser {
     }
 
     private Node factor() throws SyntaxErrorException {
-        float numberValue;
         int negativeMultiplier = 1;
         if (matchAndRemove(Token.tokenType.MINUS) != null) {
             negativeMultiplier = -1;
         }
-        newToken = matchAndRemove(Token.tokenType.NUMBER);
+        newToken = matchAndRemove(Token.tokenType.INTEGER);
         if (newToken != null) {
-            numberValue = Float.parseFloat(newToken.getValue());
-            if (numberValue % 1 == 0) { //Check if number is float or integer
-                IntegerNode newIntegerNode = new IntegerNode((int) numberValue * negativeMultiplier);
-                return newIntegerNode;
-            }
-            else {
+            int numberValue = Integer.parseInt(newToken.getValue());
+            IntegerNode newIntegerNode = new IntegerNode(numberValue * negativeMultiplier);
+            return newIntegerNode;
+        }
+        else {
+            newToken = matchAndRemove(Token.tokenType.REAL);
+            if (newToken != null) {
+                float numberValue = Float.parseFloat(newToken.getValue());
                 RealNode newRealNode = new RealNode(numberValue * negativeMultiplier);
                 return newRealNode;
             }
@@ -1770,7 +1871,7 @@ public class Parser {
     }
 
     private VariableNode.variableType searchForType() {
-        for (int i = 0; i < 10; i++) { //Searches up to 10 tokens away for the variable type of the current variable
+        for (int i = 0; i < 1; i++) { //Searches up to 10 tokens away for the variable type of the current variable
             switch (peek(i).getToken()) {
                 case INTEGER:
                     return VariableNode.variableType.INTEGER;

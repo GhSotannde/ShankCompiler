@@ -228,7 +228,7 @@ public class Lexer {
         }
         tokenArray.add(new Token());
         tokenArray.get(tokenArrayIndex).setValue(stringValue);
-        tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.NUMBER);
+        tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.REAL);
         tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
         tokenArrayIndex++;
         startState(inputString);
@@ -245,7 +245,7 @@ public class Lexer {
         else {
             tokenArray.add(new Token());
             tokenArray.get(tokenArrayIndex).setValue(stringValue);
-            tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.NUMBER);
+            tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.INTEGER);
             tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
             tokenArrayIndex++;
             startState(inputString);

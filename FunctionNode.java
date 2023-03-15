@@ -37,7 +37,16 @@ public class FunctionNode extends Node {
     private String printVariableArray() {
         String str = "Variables:\n";
         for (VariableNode node : variableArray) {
-            str += "    " + node.getName() + ":" + node.getType() + "\n";
+            str += "    " + node.getName() + ":" + node.getType();
+            if (node.getHasTypeLimit() == 1) {
+                if (node.getType() == VariableNode.variableType.REAL) {
+                    str += " From " + node.getRealFrom() + " To " + node.getRealTo();
+                }
+                else {
+                    str += " From " + node.getIntFrom() + " To " + node.getIntTo();
+                }
+            }
+            str += "\n";
         }
         str += "\n";
         return str;
