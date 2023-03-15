@@ -5,6 +5,8 @@ public class Parser {
     
     private Token newToken = new Token();
 
+    private ProgramNode programNode;
+
     private int indentationLevel = 0;
     
     public Parser(ArrayList<Token> inputTokenArray) {
@@ -13,7 +15,7 @@ public class Parser {
 
     public Node parse() throws SyntaxErrorException {
         Node newNode;
-        ProgramNode programNode = new ProgramNode();
+        programNode = new ProgramNode();
         Token endOfLineNode;
         do {
             newNode = expression();
@@ -1472,6 +1474,8 @@ public class Parser {
 
     private Node getTargetNode() throws SyntaxErrorException {
         String targetName;
+        if (tokenArray.size() > 0 && programNode.isAFunction(peek(0).getValue()))
+            return null;
         Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
         targetName = (currentToken != null) ? currentToken.getValue() : null;
         if (matchAndRemove(Token.tokenType.LEFTBRACKET) != null) {
@@ -1563,6 +1567,42 @@ public class Parser {
                 } throw new SyntaxErrorException(tokenArray.get(0));
             } throw new SyntaxErrorException(tokenArray.get(0));
         } return null;
+    }
+
+    private FunctionCallNode parseFunctionCalls() throws SyntaxErrorException {
+        if (tokenArray.size() > 0 && programNode.isAFunction(peek(0).getValue())) {
+            Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+            if (currentToken != null) {
+                String functionName = currentToken.getValue();
+                ArrayList<ParameterNode> parameterArray = new ArrayList<ParameterNode>();
+                do {
+                    if (matchAndRemove(Token.tokenType.VAR) != null) {
+                        if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.IDENTIFIER) {
+                            Node newVariableNode = getTargetNode();
+                            if (newVariableNode instanceof VariableReferenceNode) {
+                                VariableReferenceNode newVariableReferenceNode = (VariableReferenceNode) newVariableNode;
+                                ParameterNode newParameterNode = new ParameterNode(newVariableReferenceNode);
+                                parameterArray.add(newParameterNode);
+                            } 
+                            else
+                                throw new SyntaxErrorException(tokenArray.get(0));
+                        }
+                    }
+                    else {
+                        Node newExpression = boolCompare();
+                        if (newExpression != null) {
+                            ParameterNode newParameterNode = new ParameterNode(newExpression);
+                            parameterArray.add(newParameterNode);
+                        }
+                    }
+                    currentToken = matchAndRemove(Token.tokenType.COMMA);
+                } while (currentToken != null);
+                FunctionCallNode newFunctionCallNode = new FunctionCallNode(functionName, parameterArray);
+                if (expectEndsOfLine() == null)
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                return newFunctionCallNode;
+            } throw new SyntaxErrorException(tokenArray.get(0));
+        }   return null;
     }
 
     private IfNode parseIf(boolean isElsifOrElse) throws SyntaxErrorException {
@@ -1729,6 +1769,11 @@ public class Parser {
             return newStatementNode;
         }
         currentStatement = parseFor();
+        if (currentStatement != null) {
+            StatementNode newStatementNode = new StatementNode(currentStatement);
+            return newStatementNode;
+        }
+        currentStatement = parseFunctionCalls();
         if (currentStatement != null) {
             StatementNode newStatementNode = new StatementNode(currentStatement);
             return newStatementNode;

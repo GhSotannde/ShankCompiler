@@ -17,4 +17,8 @@ public class ProgramNode extends Node {
         }
         return str;
     }
+
+    public boolean isAFunction(String inputString) {
+        return functionMap.containsKey(inputString);
+    }
 }
