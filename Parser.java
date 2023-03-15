@@ -49,20 +49,26 @@ public class Parser {
     }
 
     private void addVariableNodesToArray(int inputChangeable, ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
-        Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
-        if (currentToken != null) {
-            VariableNode.variableType variableType = searchForType(); //Looks ahead for variable's data type
-            if (variableType == null)
+        VariableNode.variableType variableType = searchForType(); //Looks ahead for variable's data type
+        if (variableType == null)
+                throw new SyntaxErrorException(tokenArray.get(0));
+        if (variableType == VariableNode.variableType.ARRAY) {
+            VariableNode arrayVariableNode = createArray();
+            inputVariableNodeArray.add(arrayVariableNode);
+        }
+        else {
+            Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+            if (currentToken == null)
                 throw new SyntaxErrorException(tokenArray.get(0));
             inputVariableNodeArray.add(new VariableNode(currentToken.getValue(), variableType, inputChangeable));
             while (matchAndRemove(Token.tokenType.COMMA) != null) { //Checks for another variable
                 currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
-                if (currentToken != null) {
-                    variableType = searchForType();
-                    if (variableType == null)
-                        throw new SyntaxErrorException(tokenArray.get(0));
-                    inputVariableNodeArray.add(new VariableNode(currentToken.getValue(), variableType, inputChangeable));
-                }
+                if (currentToken == null)
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                variableType = searchForType();
+                if (variableType == null)
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                inputVariableNodeArray.add(new VariableNode(currentToken.getValue(), variableType, inputChangeable));
             }
             if (matchAndRemove(Token.tokenType.COLON) != null) { //Clears out the type and punctuation tokens following variable names
                 matchAndRemove(Token.tokenType.INTEGER);
@@ -70,6 +76,7 @@ public class Parser {
                 matchAndRemove(Token.tokenType.CHARACTER);
                 matchAndRemove(Token.tokenType.ARRAY);
                 matchAndRemove(Token.tokenType.BOOLEAN);
+                matchAndRemove(Token.tokenType.STRING);
                 matchAndRemove(Token.tokenType.SEMICOLON);
             }
         }
@@ -921,6 +928,43 @@ public class Parser {
         else {
             return null;
         }
+    }
+
+    private VariableNode createArray() throws SyntaxErrorException {
+        Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+        if (currentToken != null) {
+            String arrayName = currentToken.getValue();
+            if (matchAndRemove(Token.tokenType.COLON) != null) {
+                if (matchAndRemove(Token.tokenType.ARRAY) != null) {
+                    if (matchAndRemove(Token.tokenType.FROM) != null) {
+                        Node fromNode = expression();
+                        if (fromNode instanceof IntegerNode) {
+                            IntegerNode fromIntegerNode = (IntegerNode) fromNode;
+                            int from = fromIntegerNode.getValue();
+                            if (matchAndRemove(Token.tokenType.TO) != null) {
+                                Node toNode = expression();
+                                if (toNode instanceof IntegerNode) {
+                                    IntegerNode toIntegerNode = (IntegerNode) toNode;
+                                    int to = toIntegerNode.getValue();
+                                    if (matchAndRemove(Token.tokenType.OF) != null) {
+                                        VariableNode.variableType arrayType = searchForType();
+                                        if (arrayType == VariableNode.variableType.ARRAY || arrayType == null)
+                                            throw new SyntaxErrorException(tokenArray.get(0));
+                                        matchAndRemove(Token.tokenType.INTEGER);
+                                        matchAndRemove(Token.tokenType.REAL);
+                                        matchAndRemove(Token.tokenType.CHARACTER);
+                                        matchAndRemove(Token.tokenType.ARRAY);
+                                        matchAndRemove(Token.tokenType.BOOLEAN);
+                                        matchAndRemove(Token.tokenType.STRING);
+                                        return new VariableNode(arrayName, arrayType, from, to);
+                                    } throw new SyntaxErrorException(tokenArray.get(0));
+                                } throw new SyntaxErrorException(tokenArray.get(0));
+                            } throw new SyntaxErrorException(tokenArray.get(0));
+                        } throw new SyntaxErrorException(tokenArray.get(0));
+                    } throw new SyntaxErrorException(tokenArray.get(0));
+                } throw new SyntaxErrorException(tokenArray.get(0));
+            } throw new SyntaxErrorException(tokenArray.get(0));
+        } throw new SyntaxErrorException(tokenArray.get(0));
     }
 
     private MathOpNode createMathOpNode(MathOpNode.operationType inputOperationType, Node inputLeftChild, Node inputRightChild) throws SyntaxErrorException {
