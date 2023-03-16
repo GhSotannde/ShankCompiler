@@ -10,11 +10,11 @@ public class BooleanCompareNode extends Node {
     type = inputType;
     left = inputLeft;
     right = inputRight;
-    value = inputValue;
+    value = inputValue; //Can be 0 or 1
     }
 
     public String ToString() {
-        return "BooleanCompareNode(" + value + ")";
+        return "BooleanCompareNode(\n  Type: " + type + "\n  Value: " + value + "\n  Left: " + left.ToString() + "\n  Right: " + right.ToString() + "\n)";
     }
 
     public Integer getValue() {

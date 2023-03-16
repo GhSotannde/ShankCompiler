@@ -11,11 +11,11 @@ public class FunctionCallNode extends Node {
     }
 
     public String ToString() {
-        String str = "FunctionCallNode(\n Name: " + functionName + "\n Parameters:\n";
+        String str = "\nFunctionCallNode(\n Name: " + functionName + "\n Parameters:\n";
         for (int i = 0; i < parameterArray.size() ; i++) {
-            str += " " + parameterArray.get(i).ToString() + "\n";
+            str += parameterArray.get(i).ToString() + "\n";
         }
-        str += ")\n";
+        str += "\n)";
         return str;
     }
 }

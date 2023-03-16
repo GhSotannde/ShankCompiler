@@ -38,7 +38,10 @@ public class FunctionNode extends Node {
         String str = "Variables:\n";
         for (VariableNode node : variableArray) {
             str += "    " + node.getName() + ":" + node.getType();
-            if (node.getHasTypeLimit() == 1) {
+            if (node.getValue() != null) {
+                str += " = " + node.getValue().ToString();
+            }
+            if (node.getHasTypeLimit() == 1) { //If == 1, node has type limit and needs to print accordingly
                 if (node.getType() == VariableNode.variableType.REAL) {
                     str += " From " + node.getRealFrom() + " To " + node.getRealTo();
                 }
@@ -53,9 +56,9 @@ public class FunctionNode extends Node {
     }
 
     private String printStatementArray() {
-        String str = "Statements:\n\n";
+        String str = "Function Statements:\n\n";
         for (StatementNode node : statementArray) {
-            str += node.ToString();
+            str += node.ToString() + "\n";
         }
         return str;
     }

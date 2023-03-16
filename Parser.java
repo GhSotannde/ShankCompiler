@@ -154,7 +154,7 @@ public class Parser {
     }
 
     private void addConstantToArray(ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
-        int negativeMultiplier = 1; 
+        int negativeMultiplier;
         Token currentToken;
         do {
             currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);

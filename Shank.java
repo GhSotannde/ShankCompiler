@@ -32,7 +32,7 @@ public class Shank {
 
         lexData.addLastLineDedents();
 
-        lexData.printLexer();
+        //lexData.printLexer();
 
         Parser parseData = new Parser(lexData.getArray());
 

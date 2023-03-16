@@ -18,20 +18,20 @@ public class IfNode extends StatementNode {
 
     public String ToString() {
         if (condition == null) {
-            String str = "ElseNode(\n Statements:\n";
+            String str = "\nElseNode(\n Statements:\n";
             if (statements != null) 
             for (int i = 0; i < statements.size() ; i++) {
                 str += statements.get(i).ToString();
             }
-            str += ")\n";
+            str += "\n)";
             return str;
         }
-        String str = "IfNode(\n Condition: ";
+        String str = "\nIfNode(\n Condition: ";
         str += condition.ToString() + "\n Statements:\n";
         for (int i = 0; i < statements.size() ; i++) {
             str += statements.get(i).ToString();
         }
-        str += ")\n";
+        str += "\n)";
         if (nextIf != null) 
             str += nextIf.ToString();
         return str;

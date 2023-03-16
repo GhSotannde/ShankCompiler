@@ -17,28 +17,28 @@ public class AssignmentNode extends StatementNode {
     }
 
     public String ToString() {
-        String str = " AssignmentNode(Target: " + targetOfAssignment.ToString();
+        String str = "\nAssignmentNode(\n  Target: " + targetOfAssignment.ToString();
         if (assignmentValue instanceof MathOpNode) {
             MathOpNode expressionValue = (MathOpNode) assignmentValue;
-            str += " | Assignment Value: " + expressionValue.ToString();
+            str += "\n  Value: " + expressionValue.ToString();
         }
         else if (assignmentValue instanceof IntegerNode) {
             IntegerNode expressionValue = (IntegerNode) assignmentValue;
-            str += " | Assignment Value: " + expressionValue.ToString();
+            str += "\n  Value: " + expressionValue.ToString();
         }
         else if (assignmentValue instanceof RealNode) {
             RealNode expressionValue = (RealNode) assignmentValue;
-            str += " | Assignment Value:" + expressionValue.ToString();
+            str += "\n  Value:" + expressionValue.ToString();
         }
         else if (assignmentValue instanceof BooleanCompareNode) {
             BooleanCompareNode expressionValue = (BooleanCompareNode) assignmentValue;
-            str += " | Assignment Value:" + expressionValue.ToString();
+            str += "\n  Value:" + expressionValue.ToString();
         }
         else if (assignmentValue instanceof VariableReferenceNode) {
             VariableReferenceNode expressionValue = (VariableReferenceNode) assignmentValue;
-            str += " | Assignment Value:" + expressionValue.ToString();
+            str += "\n  Value:" + expressionValue.ToString();
         }
-        str += ")\n";
+        str += "\n)";
         return str;
     }
 }

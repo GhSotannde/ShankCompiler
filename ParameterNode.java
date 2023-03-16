@@ -14,7 +14,7 @@ public class ParameterNode extends Node {
     }
 
     public String ToString() {
-        String str = "ParameterNode(\n";
+        String str = "\nParameterNode(\n";
         if (varIdentifier != null)
             str += " Var Identifier: " +varIdentifier.ToString();
         if (expression != null) {

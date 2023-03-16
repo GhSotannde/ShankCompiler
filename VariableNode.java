@@ -3,7 +3,7 @@ public class VariableNode extends Node {
     public enum variableType { REAL, INTEGER, CHARACTER, STRING, BOOLEAN, ARRAY }
     private variableType type;
     private variableType arrayType;
-    private Node value;
+    private Node value = null;
     private int isChangeable; //1 if changeable, 0 if not
     private int hasTypeLimit = 0; // 1 if has type limit, 0 if not
     private int initialSetSwitch = 0;
