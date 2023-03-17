@@ -12,14 +12,11 @@ public class FunctionNode extends Node {
         parameterArray = inputParameterArray;
         variableArray = inputVariableArray;
         statementArray = inputStatementArray;
-    } 
-
-    public String ToString() {
-        return "Function Name: " + name + "\n\n" + printParameterArray() + printVariableArray() + printStatementArray() + "\n";
     }
 
-    public String getName() {
-        return name;
+    private boolean isVariadic() {
+        boolean result = (name == "Read" || name == "Write") ? true : false;
+        return result;
     }
 
     private String printParameterArray() {
@@ -62,6 +59,15 @@ public class FunctionNode extends Node {
         }
         return str;
     }
+
+    public String ToString() {
+        return "Function Name: " + name + "\n\n" + printParameterArray() + printVariableArray() + printStatementArray() + "\n";
+    }
+
+    public String getName() {
+        return name;
+    }
+
 
     
 }
