@@ -3,8 +3,9 @@ public class IntegerDataType extends InterpreterDataType {
     private int data;
     private boolean isChangeable;
 
-    public IntegerDataType(int inputData) {
+    public IntegerDataType(int inputData, boolean inputIsChangeable) {
         data = inputData;
+        isChangeable = inputIsChangeable;
     }
 
     public void FromString(String input) {

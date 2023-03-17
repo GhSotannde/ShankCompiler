@@ -10,7 +10,7 @@ public class BuiltInStart extends FunctionNode {
         if (inputData.size() == 1 && inputData.get(0) instanceof IntegerDataType && inputData.get(0).isChangeable() == true) {
             // start = first index of array
             IntegerDataType startData = (IntegerDataType) inputData.get(0);
-            int start;
+            int start = 0; //HERE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             startData.setData(start);
             inputData.set(0, startData);
         }

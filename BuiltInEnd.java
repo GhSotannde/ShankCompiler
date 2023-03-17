@@ -10,7 +10,7 @@ public class BuiltInEnd extends FunctionNode {
         if (inputData.size() == 1 && inputData.get(0) instanceof IntegerDataType && inputData.get(0).isChangeable() == true) {
             // end = last index of array
             IntegerDataType endData = (IntegerDataType) inputData.get(0);
-            int end;
+            int end = 0; //HERE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             endData.setData(end);
             inputData.set(0, endData);
         }

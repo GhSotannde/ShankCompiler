@@ -3,8 +3,10 @@ public class StringDataType extends InterpreterDataType {
     private String data;
     private boolean isChangeable;
 
-    public StringDataType(String inputData) {
+    public StringDataType(String inputData, boolean inputIsChangeable) {
         data = inputData;
+        isChangeable = inputIsChangeable;
+
     }
 
     public void FromString(String input) {

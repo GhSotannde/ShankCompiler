@@ -2,8 +2,17 @@ import java.util.ArrayList;
 
 public class BuiltInRealToInteger extends FunctionNode {
 
+    private ArrayList<InterpreterDataType> arguments = new ArrayList<InterpreterDataType>();
+    private RealDataType realData = new RealDataType((float) 5.5, false);
+    private IntegerDataType intData = new IntegerDataType(0, true);
+    
+
     public BuiltInRealToInteger() {
         super("RealToInteger", null, null, null);
+        arguments.add(realData); 
+        arguments.add(intData);
+        execute(arguments);//Temporarily allows testing
+        System.out.println("RealToInteger: Input: " + realData.getData() + ", Output: " + intData.getData() + "\n"); 
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

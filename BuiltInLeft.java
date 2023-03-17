@@ -2,8 +2,18 @@ import java.util.ArrayList;
 
 public class BuiltInLeft extends FunctionNode {
 
+    private ArrayList<InterpreterDataType> arguments = new ArrayList<InterpreterDataType>();
+    private StringDataType stringData = new StringDataType("Hello World", false);
+    private IntegerDataType intData = new IntegerDataType(3, false);
+    private StringDataType returnStringData = new StringDataType("", true);
+
     public BuiltInLeft() {
         super("Left", null, null, null);
+        arguments.add(stringData); 
+        arguments.add(intData);
+        arguments.add(returnStringData);
+        execute(arguments); //Temporary to allow for testing
+        System.out.println("Left: Input String: " + stringData.getData() + ", Input Length " + intData.getData() + ", Output String: " + returnStringData.getData() + "\n"); 
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {
@@ -15,7 +25,7 @@ public class BuiltInLeft extends FunctionNode {
             int length = lengthData.getData();
             String someString = someStringData.getData();
             String resultString = "";
-            for (int i = 0; i < length; i++) {
+            for (int i = 0; i < length; i++) { //Adds chars from start of node until char at indicated length
                 resultString += someString.charAt(i);
             }
             resultStringData.setData(resultString);

@@ -3,8 +3,9 @@ public class RealDataType extends InterpreterDataType {
     private float data;
     private boolean isChangeable;
 
-    public RealDataType(float inputData) {
+    public RealDataType(float inputData, boolean inputIsChangeable) {
         data = inputData;
+        isChangeable = inputIsChangeable;
     }
 
     public void FromString(String input) {

@@ -39,7 +39,6 @@ public class Shank {
         ProgramNode programNode = (ProgramNode) parseData.parse();
 
         BuiltInWrite builtInWrite = new BuiltInWrite();
-        BuiltInRead builtInRead = new BuiltInRead();
         BuiltInLeft builtInLeft = new BuiltInLeft();
         BuiltInRight builtInRight = new BuiltInRight();
         BuiltInSubstring builtInSubstring = new BuiltInSubstring();
@@ -49,9 +48,9 @@ public class Shank {
         BuiltInRealToInteger builtInRealToInteger = new BuiltInRealToInteger();
         BuiltInStart builtInStart = new BuiltInStart();
         BuiltInEnd builtInEnd = new BuiltInEnd();
+        BuiltInRead builtInRead = new BuiltInRead();
 
         programNode.addToFunctionMap(builtInWrite);
-        programNode.addToFunctionMap(builtInRead);
         programNode.addToFunctionMap(builtInLeft);
         programNode.addToFunctionMap(builtInRight);
         programNode.addToFunctionMap(builtInSubstring);
@@ -61,7 +60,8 @@ public class Shank {
         programNode.addToFunctionMap(builtInRealToInteger);
         programNode.addToFunctionMap(builtInStart);
         programNode.addToFunctionMap(builtInEnd);
+        programNode.addToFunctionMap(builtInRead);
 
-        System.out.println(programNode.ToString());
+        //System.out.println(programNode.ToString()); //Allows printing of all functions for testing purposes
     }
 }

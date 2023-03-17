@@ -3,8 +3,9 @@ public class BooleanDataType extends InterpreterDataType {
     private boolean data;
     private boolean isChangeable;
 
-    public BooleanDataType(boolean inputData) {
+    public BooleanDataType(boolean inputData, boolean inputIsChangeable) {
         data = inputData;
+        isChangeable = inputIsChangeable;
     }
 
     public void FromString(String input) {

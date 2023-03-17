@@ -2,13 +2,22 @@ import java.util.ArrayList;
 
 public class BuiltInWrite extends FunctionNode {
 
+    private ArrayList<InterpreterDataType> arguments = new ArrayList<InterpreterDataType>();
+    private StringDataType stringData = new StringDataType("Hello World", false);
+    private IntegerDataType intData = new IntegerDataType(1337, false);
+
     public BuiltInWrite() {
         super("Write", null, null, null);
+        arguments.add(stringData); 
+        arguments.add(intData);
+        execute(arguments); //Temporary to allow for testing
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {
+        System.out.print("Write: ");
         for (int i = 0; i < inputData.size() ; i++) {
-            if (inputData.get(i) instanceof ArrayDataType) {
+            InterpreterDataType arg = inputData.get(i);
+            if (inputData.get(i) instanceof ArrayDataType) { //Searches for data type of argument and prints accordingly
                 String str = "Array[";
                 ArrayDataType array = (ArrayDataType) inputData.get(i);
                 ArrayList<InterpreterDataType> arrayData = array.getData();
@@ -18,14 +27,33 @@ public class BuiltInWrite extends FunctionNode {
                 str += "] ";
                 System.out.println(str);
             }
-            else if (inputData.get(i) instanceof IntegerDataType || inputData.get(i) instanceof RealDataType || inputData.get(i) instanceof CharacterDataType ||
-            inputData.get(i) instanceof StringDataType || inputData.get(i) instanceof BooleanDataType) {
-                System.out.println(inputData.get(i).ToString() + " ");
-            }
             else {
-                System.out.println("ERROR");
+                if (arg instanceof IntegerDataType) {
+                    IntegerDataType intArg = (IntegerDataType) arg;
+                    System.out.print(intArg.getData() + " ");
+                }
+                else if (arg instanceof RealDataType) {
+                    RealDataType realArg = (RealDataType) arg;
+                    System.out.print(realArg.getData() + " ");
+                }
+                else if (arg instanceof StringDataType) {
+                    StringDataType stringArg = (StringDataType) arg;
+                    System.out.print(stringArg.getData() + " ");
+                }
+                else if (arg instanceof CharacterDataType) {
+                    CharacterDataType charArg = (CharacterDataType) arg;
+                    System.out.print(charArg.getData() + " ");
+                }
+                else if (arg instanceof BooleanDataType) {
+                    BooleanDataType boolArg = (BooleanDataType) arg;
+                    System.out.print(boolArg.getData() + " ");
+                }
+                else {
+                    System.out.println("Error: Incorrect data type given as argument in Write function call.");
+                    System.exit(1); 
+                }
             }
         }
+        System.out.print("\n\n");
     }
-
 }

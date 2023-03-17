@@ -3,8 +3,9 @@ public class CharacterDataType extends InterpreterDataType {
     private char data;
     private boolean isChangeable;
 
-    public CharacterDataType(char inputData) {
+    public CharacterDataType(char inputData, boolean inputIsChangeable) {
         data = inputData;
+        isChangeable = inputIsChangeable;
     }
 
     public void FromString(String input) {
