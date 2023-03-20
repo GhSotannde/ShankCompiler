@@ -1,13 +1,13 @@
 import java.util.ArrayList;
 
 public class ArrayDataType extends InterpreterDataType {
-
-    private boolean isChangeable = true;
     
     private ArrayList<InterpreterDataType> data = new ArrayList<InterpreterDataType>();
+    private boolean isChangeable;
 
-    public ArrayDataType(ArrayList<InterpreterDataType> inputData) {
+    public ArrayDataType(ArrayList<InterpreterDataType> inputData, boolean inputIsChangeable) {
         data = inputData;
+        isChangeable = inputIsChangeable;
     }
 
     public void FromString(String input) {

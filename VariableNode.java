@@ -11,6 +11,11 @@ public class VariableNode extends Node {
     private int intTo;
     private float realFrom;
     private float realTo;
+    private float realArray[];
+    private int intArray[];
+    private boolean boolArray[];
+    private String stringArray[];
+    private char charArray[];
 
     public VariableNode(String inputName, variableType inputType, int inputChangeable) { //For variables
         name = inputName;
@@ -33,6 +38,27 @@ public class VariableNode extends Node {
         intTo = inputTo;
         isChangeable = 1;
         hasTypeLimit = 1;
+        switch (arrayType) {
+            case REAL :
+                realArray = new float[inputTo - inputFrom];
+                break;
+            case INTEGER :
+                intArray = new int[inputTo - inputFrom];
+                break;
+            case BOOLEAN :
+                boolArray = new boolean[inputTo - inputFrom];
+                break;
+            case STRING :
+                stringArray = new String[inputTo - inputFrom];
+                break;
+            case CHARACTER :
+                charArray = new char[inputTo - inputFrom];
+                break;
+            default :
+                System.out.println("ERROR: No type for array.");
+                System.exit(0);
+                break;
+        }
     }
 
     public VariableNode(String inputName, variableType inputType, int inputFrom, int inputTo) { //For int and string ranges
@@ -92,6 +118,26 @@ public class VariableNode extends Node {
 
     public float getRealTo() {
         return realTo;
+    }
+
+    public float[] getRealArray() {
+        return realArray;
+    }
+
+    public int[] getIntArray() {
+        return intArray;
+    }
+
+    public boolean[] getBoolArray() {
+        return boolArray;
+    }
+
+    public String[] getStringArray() {
+        return stringArray;
+    }
+
+    public char[] getCharArray() {
+        return charArray;
     }
 
     public int getHasTypeLimit() {
