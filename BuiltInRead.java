@@ -3,16 +3,8 @@ import java.util.Scanner;
 
 public class BuiltInRead extends FunctionNode {
 
-    private ArrayList<InterpreterDataType> arguments = new ArrayList<InterpreterDataType>();
-    private StringDataType stringData = new StringDataType("", true);
-    private IntegerDataType intData = new IntegerDataType(0, true);
-
     public BuiltInRead() {
         super("Read", null, null, null);
-        arguments.add(stringData); 
-        arguments.add(intData);
-        execute(arguments); //Temporary to allow for testing
-        System.out.println("Read Output: " + stringData.getData()+ " " + intData.getData() + "\n"); 
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

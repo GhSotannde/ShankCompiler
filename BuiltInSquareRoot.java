@@ -3,16 +3,8 @@ import java.lang.Math;
 
 public class BuiltInSquareRoot extends FunctionNode {
 
-    private ArrayList<InterpreterDataType> arguments = new ArrayList<InterpreterDataType>();
-    private RealDataType realData = new RealDataType(16, false);
-    private RealDataType resultData = new RealDataType(0, true);
-
     public BuiltInSquareRoot() {
         super("SquareRoot", null, null, null);
-        arguments.add(realData); 
-        arguments.add(resultData);
-        execute(arguments); //Temporary to allow for testing
-        System.out.println("SquareRoot: Input: " + realData.getData() + ", Output: " + resultData.getData() + "\n");
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

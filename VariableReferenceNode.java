@@ -3,7 +3,6 @@ public class VariableReferenceNode extends Node{
     private String name;
     private float value;
     private Node arrayIndexExpression = null;
-    private Integer arrayIndex;
 
     public VariableReferenceNode(String inputName) {
         name = inputName;

@@ -2,15 +2,8 @@ import java.util.ArrayList;
 
 public class BuiltInWrite extends FunctionNode {
 
-    private ArrayList<InterpreterDataType> arguments = new ArrayList<InterpreterDataType>();
-    private StringDataType stringData = new StringDataType("Hello World", false);
-    private IntegerDataType intData = new IntegerDataType(1337, false);
-
     public BuiltInWrite() {
         super("Write", null, null, null);
-        arguments.add(stringData); 
-        arguments.add(intData);
-        execute(arguments); //Temporary to allow for testing
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

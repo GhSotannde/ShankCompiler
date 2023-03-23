@@ -2,18 +2,8 @@ import java.util.ArrayList;
 
 public class BuiltInRight extends FunctionNode {
 
-    private ArrayList<InterpreterDataType> arguments = new ArrayList<InterpreterDataType>();
-    private StringDataType stringData = new StringDataType("Hello World", false);
-    private IntegerDataType intData = new IntegerDataType(3, false);
-    private StringDataType returnStringData = new StringDataType("", true);
-
     public BuiltInRight() {
         super("Right", null, null, null);
-        arguments.add(stringData); 
-        arguments.add(intData);
-        arguments.add(returnStringData);
-        execute(arguments); //Temporary to allow for testing
-        System.out.println("Right: Input String: " + stringData.getData() + ", Input Length " + intData.getData() + ", Output String: " + returnStringData.getData() + "\n"); 
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

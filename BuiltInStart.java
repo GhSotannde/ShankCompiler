@@ -2,28 +2,8 @@ import java.util.ArrayList;
 
 public class BuiltInStart extends FunctionNode {
 
-    private ArrayList<InterpreterDataType> arguments = new ArrayList<InterpreterDataType>();
-    private ArrayList<InterpreterDataType> data = new ArrayList<InterpreterDataType>();
-    private IntegerDataType firstIndexData = new IntegerDataType(10, false);
-    private IntegerDataType secondIndexData = new IntegerDataType(20, false);
-    private ArrayDataType testData = new ArrayDataType(data, true);
-
     public BuiltInStart() {
         super("Start", null, null, null);
-        data.add(firstIndexData);
-        data.add(secondIndexData);
-        arguments.add(testData);
-        execute(arguments); //Temporary for testing
-        IntegerDataType testInt = (IntegerDataType) arguments.get(0);
-        String str = "Start: Input: Array[";
-        for (int i = 0; i < data.size(); i++) {
-            if (i == data.size() - 1)
-                str += data.get(i).ToString();
-            else
-                str += data.get(i).ToString() + ", ";
-        }
-        str += "] Output: " + testInt.getData() + '\n';
-        System.out.println(str);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {
