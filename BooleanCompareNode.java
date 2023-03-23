@@ -1,7 +1,6 @@
 public class BooleanCompareNode extends StatementNode {
     public enum comparisonType { LESSTHAN, GREATERTHAN, LESSTHANOREQUALTO, GREATERTHANOREQUALTO, EQUAL, NOTEQUAL }
     private comparisonType type;
-
     private Node left;
     private Node right;
     private Integer value;
@@ -20,4 +19,13 @@ public class BooleanCompareNode extends StatementNode {
     public Integer getValue() {
         return value;
     }
+
+    public Node getLeftChild() {
+        return left;
+    }
+
+    public Node getRightChild() {
+        return right;
+    }
+    
 }

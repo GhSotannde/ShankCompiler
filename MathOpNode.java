@@ -65,6 +65,18 @@ public class MathOpNode extends StatementNode {
         return stringValue;
     }
 
+    public Node getLeftChild() {
+        return left;
+    }
+
+    public Node getRightChild() {
+        return right;
+    }
+
+    public operationType getType() {
+        return type;
+    }
+
     public boolean isReal() {
         return isReal;
     }

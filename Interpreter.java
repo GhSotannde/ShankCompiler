@@ -4,9 +4,30 @@ import java.util.ArrayList;
 
 public class Interpreter {
 
+    private BooleanDataType booleanCompareNodeFunction(BooleanCompareNode inputBooleanCompareNode) {
+        BooleanDataType newBooleanDataType;
+        if (inputBooleanCompareNode.getValue() == 1)
+            newBooleanDataType = new BooleanDataType(true, false);
+        else
+            newBooleanDataType = new BooleanDataType(false, false);
+        return newBooleanDataType;
+    }
+
     private Node expression(Node inputNode) {
         if (inputNode instanceof MathOpNode) {
             MathOpNode currentMathOpNode = (MathOpNode) inputNode;
+            if (currentMathOpNode.getStringValue() != null) {
+                StringNode newStringNode = new StringNode(currentMathOpNode.getStringValue());
+                return newStringNode;
+            }
+            else if (currentMathOpNode.isReal()) {
+                RealNode newRealNode = new RealNode(currentMathOpNode.getRealValue());
+                return newRealNode;
+            }
+            else {
+                IntegerNode newIntegerNode = new IntegerNode(currentMathOpNode.getIntValue());
+                return newIntegerNode;
+            }
         }
         return null;
     }
@@ -17,13 +38,16 @@ public class Interpreter {
 
             }
             else if (inputStatementArray.get(i) instanceof BooleanCompareNode) {
-
+                BooleanCompareNode newBooleanCompareNode = (BooleanCompareNode) inputStatementArray.get(i);
+                BooleanDataType booleanCompareNodeData = booleanCompareNodeFunction(newBooleanCompareNode);
             }
             else if (inputStatementArray.get(i) instanceof BooleanNode) {
-                
+                BooleanNode newBooleanNode = (BooleanNode) inputStatementArray.get(i);
+                BooleanDataType booleanNodeData = new BooleanDataType(newBooleanNode.getValue(), false);
             }
             else if (inputStatementArray.get(i) instanceof CharacterNode) {
-                
+                CharacterNode newCharacterNode = (CharacterNode) inputStatementArray.get(i);
+                CharacterDataType characterNodeData = new CharacterDataType(newCharacterNode.getValue(), false);
             }
             else if (inputStatementArray.get(i) instanceof ForNode) {
                 
@@ -35,30 +59,31 @@ public class Interpreter {
                 
             }
             else if (inputStatementArray.get(i) instanceof IntegerNode) {
-                
+                IntegerNode newIntegerNode = (IntegerNode) inputStatementArray.get(i);
+                IntegerDataType integerNodeData = new IntegerDataType(newIntegerNode.getValue(), false);
             }
             else if (inputStatementArray.get(i) instanceof MathOpNode) {
                 MathOpNode newMathOpNode = (MathOpNode) inputStatementArray.get(i);
-                MathOpNodeFunction(newMathOpNode);
-            }
-            else if (inputStatementArray.get(i) instanceof ParameterNode) {
-                
+                InterpreterDataType newMathOpData = MathOpNodeFunction(newMathOpNode);
             }
             else if (inputStatementArray.get(i) instanceof RealNode) {
-                
+                RealNode newRealNode = (RealNode) inputStatementArray.get(i);
+                RealDataType realNodeData = new RealDataType(newRealNode.getValue(), false);
             }
             else if (inputStatementArray.get(i) instanceof RepeatNode) {
                 
             }
             else if (inputStatementArray.get(i) instanceof StringNode) {
-                
+                StringNode newStringNode = (StringNode) inputStatementArray.get(i);
+                StringDataType stringNodeData = new StringDataType(newStringNode.getValue(), false);
             }
             else if (inputStatementArray.get(i) instanceof VariableReferenceNode) {
                 VariableReferenceNode newVariableReferenceNode = (VariableReferenceNode) inputStatementArray.get(i);
                 InterpreterDataType newVariableData = VariableReferenceNodeFunction(inputLocalVariableMap, newVariableReferenceNode);
             }
             else if (inputStatementArray.get(i) instanceof WhileNode) {
-                
+                WhileNode newWhileNode = (WhileNode) inputStatementArray.get(i);
+
             }
             else {
                 System.out.println("ERROR: Statement Node type not detected.");
@@ -146,9 +171,25 @@ public class Interpreter {
         interpretBlock(localVariableMap, statementArray);
     }
 
-    private InterpreterDataType MathOpNodeFunction(MathOpNode inpuMathOpNode) {
-        expression(inpuMathOpNode);
-        return null;
+    private InterpreterDataType MathOpNodeFunction(MathOpNode inputMathOpNode) throws SyntaxErrorException {
+        Node leftChildNode = expression(inputMathOpNode.getLeftChild());
+        Node rightChildNode = expression(inputMathOpNode.getRightChild());
+        if (leftChildNode instanceof StringNode && rightChildNode instanceof StringNode) {
+            if (inputMathOpNode.getType() != MathOpNode.operationType.ADD)
+                throw new SyntaxErrorException(null);
+            StringDataType newStringData = new StringDataType(inputMathOpNode.getStringValue(), false);
+            return newStringData;
+        }
+        else if (leftChildNode instanceof RealNode && rightChildNode instanceof RealNode) {
+            RealDataType newRealData = new RealDataType(inputMathOpNode.getRealValue(), false);
+            return newRealData;
+        }
+        else if (leftChildNode instanceof IntegerNode && rightChildNode instanceof IntegerNode) {
+            IntegerDataType newIntegerData = new IntegerDataType(inputMathOpNode.getIntValue(), false);
+            return newIntegerData;
+        }
+        else
+            return null;
     }
 
     private InterpreterDataType VariableReferenceNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, VariableReferenceNode inputVariableReferenceNode) throws SyntaxErrorException {
