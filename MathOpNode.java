@@ -4,8 +4,10 @@ public class MathOpNode extends StatementNode {
     private operationType type;
     private Node left;
     private Node right;
-    private float value;
+    private float realValue;
+    private int intValue;
     private String stringValue = null;
+    private boolean isReal;
     
     public MathOpNode() {
     }
@@ -39,11 +41,20 @@ public class MathOpNode extends StatementNode {
     }
 
     public void setValue(int inputValue) {
-        value = (float) inputValue;
+        intValue = inputValue;
+    }
+
+    public int getIntValue() {
+        return intValue;
     }
 
     public void setValue(float inputValue) {
-        value = inputValue;
+        realValue = inputValue;
+        isReal = true;
+    }
+
+    public float getRealValue() {
+        return realValue;
     }
 
     public void setStringValue(String inputString) {
@@ -54,8 +65,11 @@ public class MathOpNode extends StatementNode {
         return stringValue;
     }
 
-    public float getValue() {
-        return value;
+    public boolean isReal() {
+        return isReal;
     }
+
+  
+    
 
 }

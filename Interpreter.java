@@ -4,8 +4,11 @@ import java.util.ArrayList;
 
 public class Interpreter {
 
-    private void expression(MathOpNode inputMathOpNode) {
-
+    private Node expression(Node inputNode) {
+        if (inputNode instanceof MathOpNode) {
+            MathOpNode currentMathOpNode = (MathOpNode) inputNode;
+        }
+        return null;
     }
 
     private void interpretBlock(HashMap<String, InterpreterDataType> inputLocalVariableMap, ArrayList<StatementNode> inputStatementArray) throws SyntaxErrorException {
