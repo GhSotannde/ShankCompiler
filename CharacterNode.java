@@ -1,4 +1,4 @@
-public class CharacterNode extends Node {
+public class CharacterNode extends StatementNode {
     private char character;
 
     public CharacterNode(char inputChar) {

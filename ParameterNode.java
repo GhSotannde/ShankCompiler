@@ -1,4 +1,4 @@
-public class ParameterNode extends Node {
+public class ParameterNode extends StatementNode {
     
     private VariableReferenceNode varIdentifier = null;
     private Node expression = null;

@@ -1,4 +1,4 @@
-public class BooleanCompareNode extends Node {
+public class BooleanCompareNode extends StatementNode {
     public enum comparisonType { LESSTHAN, GREATERTHAN, LESSTHANOREQUALTO, GREATERTHANOREQUALTO, EQUAL, NOTEQUAL }
     private comparisonType type;
 

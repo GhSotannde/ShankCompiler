@@ -1,4 +1,4 @@
-public class StringNode extends Node {
+public class StringNode extends StatementNode {
     private String string;
 
     public StringNode(String inputString) {

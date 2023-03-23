@@ -1,4 +1,4 @@
-public class IntegerNode extends Node {
+public class IntegerNode extends StatementNode {
 
     private int value;
 

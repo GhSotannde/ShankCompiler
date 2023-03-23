@@ -1436,6 +1436,21 @@ public class Parser {
                 throw new SyntaxErrorException(tokenArray.get(0));
             }
         }
+        else if (inputLeftChild instanceof StringNode) {
+            StringNode leftStringNode = (StringNode) inputLeftChild;
+            if (inputRightChild == null)
+                throw new SyntaxErrorException(tokenArray.get(0));
+            else if (inputRightChild instanceof StringNode) {
+                StringNode rightStringNode = (StringNode) inputRightChild;
+                if (inputOperationType != MathOpNode.operationType.ADD)
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                newMathOpNode = new MathOpNode(inputOperationType, leftStringNode, rightStringNode);
+                newMathOpNode.setStringValue(leftStringNode.getValue() + rightStringNode.getValue());
+            }
+            else {
+                throw new SyntaxErrorException(tokenArray.get(0));
+            }
+        }
         else {
             throw new SyntaxErrorException(tokenArray.get(0));
         }
@@ -1464,10 +1479,16 @@ public class Parser {
         }
         if (matchAndRemove(Token.tokenType.PLUS) != null) {
             Node rightNode = term();
+            if (leftNode instanceof StringNode ^ rightNode instanceof StringNode)
+                throw new SyntaxErrorException(tokenArray.get(0));
             newMathOpNode = createMathOpNode(MathOpNode.operationType.ADD, leftNode, rightNode);
         }
         else if (matchAndRemove(Token.tokenType.MINUS) != null) {
+            if (leftNode instanceof StringNode) //String nodes can only be added, not subtracted
+                throw new SyntaxErrorException(tokenArray.get(0));
             Node rightNode = term();
+            if (rightNode instanceof StringNode)
+                throw new SyntaxErrorException(tokenArray.get(0));
             newMathOpNode = createMathOpNode(MathOpNode.operationType.SUBTRACT, leftNode, rightNode);
         }
         else {
@@ -1477,10 +1498,16 @@ public class Parser {
         || peek(0).getToken() == Token.tokenType.MINUS)) { //While loop checks if current token without removing it from array, allowing it to be mathchAndRemove'd later
             if (matchAndRemove(Token.tokenType.PLUS) != null) {
                 Node rightNode = term();
+                if (leftNode instanceof StringNode ^ rightNode instanceof StringNode)
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 newMathOpNode = createMathOpNode(MathOpNode.operationType.ADD, newMathOpNode, rightNode);
             }
             else if (matchAndRemove(Token.tokenType.MINUS) != null) {
+                if (leftNode instanceof StringNode)
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 Node rightNode = term();
+                if (rightNode instanceof StringNode)
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 newMathOpNode = createMathOpNode(MathOpNode.operationType.SUBTRACT, newMathOpNode, rightNode);
             }
         }
@@ -1498,13 +1525,16 @@ public class Parser {
             IntegerNode newIntegerNode = new IntegerNode(numberValue * negativeMultiplier);
             return newIntegerNode;
         }
-        else {
-            newToken = matchAndRemove(Token.tokenType.REAL);
-            if (newToken != null) {
-                float numberValue = Float.parseFloat(newToken.getValue());
-                RealNode newRealNode = new RealNode(numberValue * negativeMultiplier);
-                return newRealNode;
-            }
+        newToken = matchAndRemove(Token.tokenType.REAL);
+        if (newToken != null) {
+            float numberValue = Float.parseFloat(newToken.getValue());
+            RealNode newRealNode = new RealNode(numberValue * negativeMultiplier);
+            return newRealNode;
+        }
+        newToken = matchAndRemove(Token.tokenType.STRINGLITERAL);
+        if (newToken != null) {
+            StringNode newStringNode = new StringNode(newToken.getValue());
+            return newStringNode;
         }
         if (matchAndRemove(Token.tokenType.LEFTPARENTHESES) != null) {
             Node currentNode = boolCompare(); // If a left parentheses is detected, will check for a boolean statement
@@ -1914,15 +1944,27 @@ public class Parser {
             return null;
         }
         if (matchAndRemove(Token.tokenType.MULTIPLY) != null) {
+            if (leftNode instanceof StringNode)
+                throw new SyntaxErrorException(tokenArray.get(0));
             Node rightNode = factor();
+            if (rightNode instanceof StringNode)
+                throw new SyntaxErrorException(tokenArray.get(0));
             newMathOpNode = createMathOpNode(MathOpNode.operationType.MULTIPLY, leftNode, rightNode);
         }
         else if (matchAndRemove(Token.tokenType.DIVIDE) != null) {
+            if (leftNode instanceof StringNode)
+                throw new SyntaxErrorException(tokenArray.get(0));
             Node rightNode = factor();
+            if (rightNode instanceof StringNode)
+                throw new SyntaxErrorException(tokenArray.get(0));
             newMathOpNode = createMathOpNode(MathOpNode.operationType.DIVIDE, leftNode, rightNode);
         }
         else if (matchAndRemove(Token.tokenType.MOD) != null) {
+            if (leftNode instanceof StringNode)
+                throw new SyntaxErrorException(tokenArray.get(0));
             Node rightNode = factor();
+            if (rightNode instanceof StringNode)
+                throw new SyntaxErrorException(tokenArray.get(0));
             newMathOpNode = createMathOpNode(MathOpNode.operationType.MOD, leftNode, rightNode);
         }
         else {
@@ -1931,15 +1973,27 @@ public class Parser {
         while (tokenArray.size() > 0 && (peek(0).getToken() == Token.tokenType.MULTIPLY
         || peek(0).getToken() == Token.tokenType.DIVIDE || peek(0).getToken() == Token.tokenType.MOD)) {
             if (matchAndRemove(Token.tokenType.MULTIPLY) != null) {
+                if (leftNode instanceof StringNode)
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 Node rightNode = factor();
+                if (rightNode instanceof StringNode)
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 newMathOpNode = createMathOpNode(MathOpNode.operationType.MULTIPLY, newMathOpNode, rightNode);
             }
             else if (matchAndRemove(Token.tokenType.DIVIDE) != null) {
+                if (leftNode instanceof StringNode)
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 Node rightNode = factor();
+                if (rightNode instanceof StringNode)
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 newMathOpNode = createMathOpNode(MathOpNode.operationType.DIVIDE, newMathOpNode, rightNode);
             }
             else if (matchAndRemove(Token.tokenType.MOD) != null) {
+                if (leftNode instanceof StringNode)
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 Node rightNode = factor();
+                if (rightNode instanceof StringNode)
+                    throw new SyntaxErrorException(tokenArray.get(0));
                 newMathOpNode = createMathOpNode(MathOpNode.operationType.MOD, newMathOpNode, rightNode);
             }
         }

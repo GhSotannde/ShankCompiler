@@ -32,7 +32,7 @@ public class Shank {
 
         lexData.addLastLineDedents();
 
-        //lexData.printLexer();
+        lexData.printLexer();
 
         Parser parseData = new Parser(lexData.getArray());
 
@@ -62,6 +62,6 @@ public class Shank {
         programNode.addToFunctionMap(builtInEnd);
         programNode.addToFunctionMap(builtInRead);
 
-        //System.out.println(programNode.ToString()); //Allows printing of all functions for testing purposes
+        System.out.println(programNode.ToString()); //Allows printing of all functions for testing purposes
     }
 }

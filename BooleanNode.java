@@ -1,4 +1,4 @@
-public class BooleanNode extends Node {
+public class BooleanNode extends StatementNode {
     private boolean bool;
 
     public BooleanNode(boolean inputBool) {

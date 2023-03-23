@@ -4,13 +4,68 @@ import java.util.ArrayList;
 
 public class Interpreter {
 
-    private HashMap<String, InterpreterDataType> localVariableMap = new HashMap<String, InterpreterDataType>();
-
-    private void interpretBlock(HashMap<String, InterpreterDataType> inputLocalVariableMap, ArrayList<StatementNode> inputStatementArray) {
+    private void expression(MathOpNode inputMathOpNode) {
 
     }
 
-    private void interpretFunction(FunctionNode inputFunctionNode) {
+    private void interpretBlock(HashMap<String, InterpreterDataType> inputLocalVariableMap, ArrayList<StatementNode> inputStatementArray) throws SyntaxErrorException {
+        for (int i = 0; i < inputStatementArray.size(); i++) {
+            if (inputStatementArray.get(i) instanceof AssignmentNode) {
+
+            }
+            else if (inputStatementArray.get(i) instanceof BooleanCompareNode) {
+
+            }
+            else if (inputStatementArray.get(i) instanceof BooleanNode) {
+                
+            }
+            else if (inputStatementArray.get(i) instanceof CharacterNode) {
+                
+            }
+            else if (inputStatementArray.get(i) instanceof ForNode) {
+                
+            }
+            else if (inputStatementArray.get(i) instanceof FunctionCallNode) {
+                
+            }
+            else if (inputStatementArray.get(i) instanceof IfNode) {
+                
+            }
+            else if (inputStatementArray.get(i) instanceof IntegerNode) {
+                
+            }
+            else if (inputStatementArray.get(i) instanceof MathOpNode) {
+                MathOpNode newMathOpNode = (MathOpNode) inputStatementArray.get(i);
+                MathOpNodeFunction(newMathOpNode);
+            }
+            else if (inputStatementArray.get(i) instanceof ParameterNode) {
+                
+            }
+            else if (inputStatementArray.get(i) instanceof RealNode) {
+                
+            }
+            else if (inputStatementArray.get(i) instanceof RepeatNode) {
+                
+            }
+            else if (inputStatementArray.get(i) instanceof StringNode) {
+                
+            }
+            else if (inputStatementArray.get(i) instanceof VariableReferenceNode) {
+                VariableReferenceNode newVariableReferenceNode = (VariableReferenceNode) inputStatementArray.get(i);
+                InterpreterDataType newVariableData = VariableReferenceNodeFunction(inputLocalVariableMap, newVariableReferenceNode);
+            }
+            else if (inputStatementArray.get(i) instanceof WhileNode) {
+                
+            }
+            else {
+                System.out.println("ERROR: Statement Node type not detected.");
+                System.exit(2);
+            }
+        }
+    }
+
+    private void interpretFunction(FunctionNode inputFunctionNode) throws SyntaxErrorException {
+        HashMap<String, InterpreterDataType> localVariableMap = new HashMap<String, InterpreterDataType>();
         ArrayList<VariableNode> variableArray = inputFunctionNode.getVariableArray();
         ArrayList<StatementNode> statementArray = inputFunctionNode.getStatementArray();
         for (int i = 0; i < variableArray.size(); i++) {
@@ -86,5 +141,18 @@ public class Interpreter {
             }
         }
         interpretBlock(localVariableMap, statementArray);
+    }
+
+    private InterpreterDataType MathOpNodeFunction(MathOpNode inpuMathOpNode) {
+        expression(inpuMathOpNode);
+        return null;
+    }
+
+    private InterpreterDataType VariableReferenceNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, VariableReferenceNode inputVariableReferenceNode) throws SyntaxErrorException {
+        InterpreterDataType variableMapKeyValue = inputLocalVariableMap.get(inputVariableReferenceNode.getName());
+        if (variableMapKeyValue == null) {
+            throw new SyntaxErrorException(null);
+        }
+        return variableMapKeyValue;
     }
 }

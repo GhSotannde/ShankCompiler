@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class FunctionCallNode extends Node {
+public class FunctionCallNode extends StatementNode {
     
     private String functionName;
     private ArrayList<ParameterNode> parameterArray = new ArrayList<ParameterNode>();

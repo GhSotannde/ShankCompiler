@@ -1,10 +1,11 @@
-public class MathOpNode extends Node {
+public class MathOpNode extends StatementNode {
 
     public enum operationType { ADD, SUBTRACT, MULTIPLY, DIVIDE, MOD }
     private operationType type;
     private Node left;
     private Node right;
     private float value;
+    private String stringValue = null;
     
     public MathOpNode() {
     }
@@ -43,6 +44,14 @@ public class MathOpNode extends Node {
 
     public void setValue(float inputValue) {
         value = inputValue;
+    }
+
+    public void setStringValue(String inputString) {
+        stringValue = inputString;
+    }
+
+    public String getStringValue() {
+        return stringValue;
     }
 
     public float getValue() {

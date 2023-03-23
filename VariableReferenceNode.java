@@ -1,4 +1,4 @@
-public class VariableReferenceNode extends Node{
+public class VariableReferenceNode extends StatementNode{
     
     private String name;
     private float value;
@@ -19,6 +19,10 @@ public class VariableReferenceNode extends Node{
 
     public float getValue() {
         return value;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String ToString() {
