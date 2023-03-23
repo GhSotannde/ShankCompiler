@@ -23,7 +23,7 @@ public class FunctionNode extends Node {
         String str = "Parameters:\n";
         for (VariableNode node : parameterArray) {
             str += "    ";
-            if (node.getChangeable() == 1)
+            if (node.getChangeable() == true)
                 str += "var ";
             str += node.getName() + ":" + node.getType() + "\n";
         }
@@ -74,6 +74,14 @@ public class FunctionNode extends Node {
 
     public String getName() {
         return name;
+    }
+
+    public ArrayList<VariableNode> getVariableArray() {
+        return variableArray;
+    }
+
+    public ArrayList<StatementNode> getStatementArray() {
+        return statementArray;
     }
 
 

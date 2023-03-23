@@ -5,7 +5,7 @@ public class StringNode extends Node {
         string = inputString;
     } 
 
-    public String getString() {
+    public String getValue() {
         return string;
     }
 

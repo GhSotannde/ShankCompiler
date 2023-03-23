@@ -4,7 +4,7 @@ public class VariableNode extends Node {
     private variableType type;
     private variableType arrayType;
     private Node value = null;
-    private int isChangeable; //1 if changeable, 0 if not
+    private boolean isChangeable; //1 if changeable, 0 if not
     private int hasTypeLimit = 0; // 1 if has type limit, 0 if not
     private int initialSetSwitch = 0;
     private int intFrom;
@@ -17,13 +17,13 @@ public class VariableNode extends Node {
     private String stringArray[];
     private char charArray[];
 
-    public VariableNode(String inputName, variableType inputType, int inputChangeable) { //For variables
+    public VariableNode(String inputName, variableType inputType, boolean inputChangeable) { //For variables
         name = inputName;
         type = inputType;
         isChangeable = inputChangeable;
     }
 
-    public VariableNode(String inputName, variableType inputType, int inputChangeable, Node inputValue) { //For constants
+    public VariableNode(String inputName, variableType inputType, boolean inputChangeable, Node inputValue) { //For constants
         name = inputName;
         type = inputType;
         isChangeable = inputChangeable;
@@ -36,7 +36,7 @@ public class VariableNode extends Node {
         arrayType = inputArrayType;
         intFrom = inputFrom;
         intTo = inputTo;
-        isChangeable = 1;
+        isChangeable = true;
         hasTypeLimit = 1;
         switch (arrayType) {
             case REAL :
@@ -66,7 +66,7 @@ public class VariableNode extends Node {
         type = inputType;
         intFrom = inputFrom;
         intTo = inputTo;
-        isChangeable = 1;
+        isChangeable = true;
         hasTypeLimit = 1;
     }
 
@@ -75,14 +75,14 @@ public class VariableNode extends Node {
         type = inputType;
         realFrom = inputRealFrom;
         realTo = inputRealTo;
-        isChangeable = 1;
+        isChangeable = true;
         hasTypeLimit = 1;
     }
 
     public void setValue(Node inputValue) { //Only works once for constants
-        if (isChangeable == 1)
+        if (isChangeable == true)
             value = inputValue;
-        if (isChangeable == 0 && initialSetSwitch == 0) {
+        if (isChangeable == false && initialSetSwitch == 0) {
             value = inputValue;
             initialSetSwitch = 1;
         }
@@ -96,11 +96,15 @@ public class VariableNode extends Node {
         return type;
     }
 
+    public variableType getArrayType() {
+        return arrayType;
+    }
+
     public String getName() {
         return name;
     }
 
-    public int getChangeable() {
+    public boolean getChangeable() {
         return isChangeable;
     }
 

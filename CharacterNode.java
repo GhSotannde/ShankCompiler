@@ -5,7 +5,7 @@ public class CharacterNode extends Node {
         character = inputChar;
     }
 
-    public char getChar() {
+    public char getValue() {
         return character;
     }
 

@@ -48,7 +48,7 @@ public class Parser {
         return programNode;
     }
 
-    private void addVariableNodesToArray(int inputChangeable, ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
+    private void addVariableNodesToArray(boolean inputChangeable, ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
         ArrayList<String> variableNameArray = new ArrayList<String>(); //Used to store multiple variable declarations that are on the same line
         Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
         if (currentToken != null) {
@@ -172,33 +172,33 @@ public class Parser {
                             currentToken = matchAndRemove(Token.tokenType.REAL);
                             float realValue = Float.parseFloat(currentToken.getValue());
                             RealNode newRealNode = new RealNode(realValue * negativeMultiplier);
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.INTEGER, 0, newRealNode));
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.INTEGER, false, newRealNode));
                             break;
                         case INTEGER:
                             currentToken = matchAndRemove(Token.tokenType.INTEGER);
                             int intValue = Integer.parseInt(currentToken.getValue());
                             IntegerNode newIntegerNode = new IntegerNode((int) intValue * negativeMultiplier);
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.INTEGER, 0, newIntegerNode));
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.INTEGER, false, newIntegerNode));
                             break;
                         case CHARACTERLITERAL:
                             currentToken = matchAndRemove(Token.tokenType.CHARACTERLITERAL);
                             CharacterNode newCharacterNode = new CharacterNode(currentToken.getValue().charAt(0));
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.CHARACTER, 0, newCharacterNode));
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.CHARACTER, false, newCharacterNode));
                             break;
                         case STRINGLITERAL:
                             currentToken = matchAndRemove(Token.tokenType.STRINGLITERAL);
                             StringNode newStringNode = new StringNode(currentToken.getValue());
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.STRING, 0, newStringNode));
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.STRING, false, newStringNode));
                             break;
                         case TRUE:
                             currentToken = matchAndRemove(Token.tokenType.TRUE);
                             BooleanNode newBooleanTrueNode = new BooleanNode(true);
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.BOOLEAN, 0, newBooleanTrueNode));
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.BOOLEAN, false, newBooleanTrueNode));
                             break;
                         case FALSE:
                             currentToken = matchAndRemove(Token.tokenType.FALSE);
                             BooleanNode newBooleanFalseNode = new BooleanNode(false);
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.BOOLEAN, 0, newBooleanFalseNode));
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.BOOLEAN, false, newBooleanFalseNode));
                             break;
                         default:
                             throw new SyntaxErrorException(tokenArray.get(0));
@@ -1619,10 +1619,10 @@ public class Parser {
         ArrayList<VariableNode> variableNodeArray = new ArrayList<VariableNode>();
         while (peek(0).getToken() != Token.tokenType.RIGHTPARENTHESES) {
             if (matchAndRemove(Token.tokenType.VAR) != null) {
-                addVariableNodesToArray(1, variableNodeArray); //Variable is changeable
+                addVariableNodesToArray(true, variableNodeArray); //Variable is changeable
             }
             else {
-                addVariableNodesToArray(0, variableNodeArray); //Variable can not be changed
+                addVariableNodesToArray(false, variableNodeArray); //Variable can not be changed
             }
         }
         if (matchAndRemove(Token.tokenType.RIGHTPARENTHESES) != null) {
@@ -1953,7 +1953,7 @@ public class Parser {
                 throw new SyntaxErrorException(tokenArray.get(0));
             if (peek(0).getToken() == Token.tokenType.VARIABLES) {
                 matchAndRemove(Token.tokenType.VARIABLES);
-                addVariableNodesToArray(1, inputVariableArray);
+                addVariableNodesToArray(true, inputVariableArray);
             }
             else if (peek(0).getToken() == Token.tokenType.CONSTANTS) {
                 matchAndRemove(Token.tokenType.CONSTANTS);

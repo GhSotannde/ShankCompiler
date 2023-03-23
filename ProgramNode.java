@@ -21,4 +21,8 @@ public class ProgramNode extends Node {
     public boolean isAFunction(String inputString) {
         return functionMap.containsKey(inputString);
     }
+
+    public HashMap<String, FunctionNode> getFunctionMap() {
+        return functionMap;
+    }
 }

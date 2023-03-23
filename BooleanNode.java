@@ -5,7 +5,7 @@ public class BooleanNode extends Node {
         bool = inputBool;
     } 
 
-    public boolean getBool() {
+    public boolean getValue() {
         return bool;
     }
 
