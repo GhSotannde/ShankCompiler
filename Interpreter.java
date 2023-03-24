@@ -85,7 +85,6 @@ public class Interpreter {
             System.out.println("ERROR: Incorrect data type on left side of boolean compare.");
             System.exit(3);
         }
-        System.out.println(value);
         BooleanDataType newBooleanData = new BooleanDataType(value, false);
         return newBooleanData;
     }

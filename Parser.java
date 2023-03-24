@@ -242,7 +242,7 @@ public class Parser {
             comparisonType = BooleanCompareNode.comparisonType.EQUAL;
         else if (matchAndRemove(Token.tokenType.NOTEQUAL) != null)
             comparisonType = BooleanCompareNode.comparisonType.NOTEQUAL;
-        else 
+        else
             return left;
         Node right = expression();
         BooleanCompareNode newBooleanCompareNode = new BooleanCompareNode(comparisonType, left, right);
@@ -366,6 +366,16 @@ public class Parser {
         if (newToken != null) {
             StringNode newStringNode = new StringNode(newToken.getValue());
             return newStringNode;
+        }
+        newToken = matchAndRemove(Token.tokenType.TRUE);
+        if (newToken != null) {
+            BooleanNode newBooleanNode = new BooleanNode(true);
+            return newBooleanNode;
+        }
+        newToken = matchAndRemove(Token.tokenType.FALSE);
+        if (newToken != null) {
+            BooleanNode newBooleanNode = new BooleanNode(false);
+            return newBooleanNode;
         }
         if (matchAndRemove(Token.tokenType.LEFTPARENTHESES) != null) {
             Node currentNode = boolCompare(); // If a left parentheses is detected, will check for a boolean statement
