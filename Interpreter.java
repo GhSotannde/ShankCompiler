@@ -10,7 +10,65 @@ public class Interpreter {
     }
 
     private void AssignmentNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, AssignmentNode inputAssignmentNode) {
-        Node assignmentNode = expression(inputLocalVariableMap, inputAssignmentNode);
+        AssignmentNode currentAssignmentNode = inputAssignmentNode;
+        String assignmentTarget = currentAssignmentNode.getTarget().getName();
+        Node assignmentValue = currentAssignmentNode.getValue();
+        if (!(inputLocalVariableMap.get(assignmentTarget).isChangeable())) {
+            System.out.println("ERROR: Cannot change the value of a constant.");
+            System.exit(17);
+        }
+        if (assignmentValue instanceof IntegerNode) {
+            IntegerNode currentIntegerNode = (IntegerNode) assignmentValue;
+            IntegerDataType newIntegerData = new IntegerDataType(currentIntegerNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
+            inputLocalVariableMap.put(assignmentTarget, newIntegerData);
+        }
+        else if (assignmentValue instanceof MathOpNode) {
+            Node newNode = expression(inputLocalVariableMap, assignmentValue);
+            if (newNode instanceof IntegerNode) {
+                IntegerNode currentIntNode = (IntegerNode) newNode;
+                IntegerDataType newIntegerData = new IntegerDataType(currentIntNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
+                inputLocalVariableMap.put(assignmentTarget, newIntegerData);
+            }
+            else if (newNode instanceof RealNode) {
+                RealNode currentRealNode = (RealNode) newNode;
+                RealDataType newRealData = new RealDataType(currentRealNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
+                inputLocalVariableMap.put(assignmentTarget, newRealData);
+            }
+            else if (newNode instanceof StringNode) {
+                StringNode currentStringNode = (StringNode) newNode;
+                StringDataType newStringData = new StringDataType(currentStringNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
+                inputLocalVariableMap.put(assignmentTarget, newStringData);
+            }
+            else {
+                System.out.println("ERROR: Incorrect data type returned from math op calculation.");
+                System.exit(14);
+            }
+        }
+        else if (assignmentValue instanceof RealNode) {
+            RealNode currentRealNode = (RealNode) assignmentValue;
+            RealDataType newRealData = new RealDataType(currentRealNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
+            inputLocalVariableMap.put(assignmentTarget, newRealData);
+        }
+        else if (assignmentValue instanceof CharacterNode) {
+            CharacterNode currentCharacterNode = (CharacterNode) assignmentValue;
+            CharacterDataType newCharacterData = new CharacterDataType(currentCharacterNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
+            inputLocalVariableMap.put(assignmentTarget, newCharacterData);
+        }
+        else if (assignmentValue instanceof StringNode) {
+            StringNode currentStringNode = (StringNode) assignmentValue;
+            StringDataType newStringData = new StringDataType(currentStringNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
+            inputLocalVariableMap.put(assignmentTarget, newStringData);
+        }
+        else if (assignmentValue instanceof BooleanNode) {
+            BooleanNode currentBooleanNode = (BooleanNode) assignmentValue;
+            BooleanDataType newBooleanData = new BooleanDataType(currentBooleanNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
+            inputLocalVariableMap.put(assignmentTarget, newBooleanData);
+        }
+        else if (assignmentValue instanceof BooleanCompareNode) {
+            BooleanCompareNode currentBooleanCompareNode = (BooleanCompareNode) assignmentValue;
+            BooleanDataType newBooleanCompareData = booleanCompareNodeFunction(inputLocalVariableMap, currentBooleanCompareNode);
+            inputLocalVariableMap.put(assignmentTarget, newBooleanCompareData);
+        }
     }
 
     private BooleanDataType booleanCompareNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, BooleanCompareNode inputBooleanCompareNode) {
@@ -187,64 +245,47 @@ public class Interpreter {
                 System.exit(13);
             }
         }
-        else if (inputNode instanceof AssignmentNode) {
-            AssignmentNode currentAssignmentNode = (AssignmentNode) inputNode;
-            String assignmentTarget = currentAssignmentNode.getTarget().getName();
-            Node assignmentValue = currentAssignmentNode.getValue();
-            if (assignmentValue instanceof IntegerNode) {
-                IntegerNode currentIntegerNode = (IntegerNode) assignmentValue;
-                IntegerDataType newIntegerData = new IntegerDataType(currentIntegerNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-                inputLocalVariableMap.put(assignmentTarget, newIntegerData);
-            }
-            else if (assignmentValue instanceof MathOpNode) {
-                Node newNode = expression(inputLocalVariableMap, assignmentValue);
-                if (newNode instanceof IntegerNode) {
-                    IntegerNode currentIntNode = (IntegerNode) newNode;
-                    IntegerDataType newIntegerData = new IntegerDataType(currentIntNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-                    inputLocalVariableMap.put(assignmentTarget, newIntegerData);
-                }
-                else if (newNode instanceof RealNode) {
-                    RealNode currentRealNode = (RealNode) newNode;
-                    RealDataType newRealData = new RealDataType(currentRealNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-                    inputLocalVariableMap.put(assignmentTarget, newRealData);
-                }
-                else if (newNode instanceof StringNode) {
-                    StringNode currentStringNode = (StringNode) newNode;
-                    StringDataType newStringData = new StringDataType(currentStringNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-                    inputLocalVariableMap.put(assignmentTarget, newStringData);
-                }
-                else {
-                    System.out.println("ERROR: Incorrect data type returned from math op calculation.");
-                    System.exit(14);
-                }
-            }
-            else if (assignmentValue instanceof RealNode) {
-                RealNode currentRealNode = (RealNode) assignmentValue;
-                RealDataType newRealData = new RealDataType(currentRealNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-                inputLocalVariableMap.put(assignmentTarget, newRealData);
-            }
-            else if (assignmentValue instanceof CharacterNode) {
-                CharacterNode currentCharacterNode = (CharacterNode) assignmentValue;
-                CharacterDataType newCharacterData = new CharacterDataType(currentCharacterNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-                inputLocalVariableMap.put(assignmentTarget, newCharacterData);
-            }
-            else if (assignmentValue instanceof StringNode) {
-                StringNode currentStringNode = (StringNode) assignmentValue;
-                StringDataType newStringData = new StringDataType(currentStringNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-                inputLocalVariableMap.put(assignmentTarget, newStringData);
-            }
-            else if (assignmentValue instanceof BooleanNode) {
-                BooleanNode currentBooleanNode = (BooleanNode) assignmentValue;
-                BooleanDataType newBooleanData = new BooleanDataType(currentBooleanNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-                inputLocalVariableMap.put(assignmentTarget, newBooleanData);
-            }
-            else if (assignmentValue instanceof BooleanCompareNode) {
-                BooleanCompareNode currentBooleanCompareNode = (BooleanCompareNode) assignmentValue;
-                BooleanDataType newBooleanCompareData = booleanCompareNodeFunction(inputLocalVariableMap, currentBooleanCompareNode);
-                inputLocalVariableMap.put(assignmentTarget, newBooleanCompareData);
-            }
-        }
         return null;
+    }
+
+    private void forNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, ForNode inputForNode) throws SyntaxErrorException {
+        Node fromNode = expression(inputLocalVariableMap, inputForNode.getFrom());
+        Node toNode = expression(inputLocalVariableMap, inputForNode.getTo());
+        if (!(fromNode instanceof IntegerNode && toNode instanceof IntegerNode)) {
+            System.out.println("ERROR: Incorrect values given from FOR loop.");
+            System.exit(15);
+        }
+        if (!(inputLocalVariableMap.containsKey(inputForNode.getIntegerVariable().getName()))) {
+            System.out.println("ERROR: Integer variable for FOR loop not declared.");
+            System.exit(16);
+        }
+        IntegerNode fromIntNode = (IntegerNode) fromNode;
+        IntegerNode toIntNode = (IntegerNode) toNode;
+        int fromValue = fromIntNode.getValue();
+        int toValue = toIntNode.getValue();
+        IntegerDataType fromData = new IntegerDataType(fromValue, true);
+        String integerVariableName = inputForNode.getIntegerVariable().getName();
+        inputLocalVariableMap.put(integerVariableName, fromData);
+        InterpreterDataType integerVariableData = inputLocalVariableMap.get(integerVariableName);
+        IntegerDataType integerVariableIntegerData = (IntegerDataType) integerVariableData;
+        while (integerVariableIntegerData.getData() != toValue) {
+            interpretBlock(inputLocalVariableMap, inputForNode.getStatements());
+            integerVariableIntegerData = new IntegerDataType(integerVariableIntegerData.getData() + 1, true);
+        }
+    }
+
+    private void ifNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, IfNode inputIfNode) throws SyntaxErrorException {
+        BooleanCompareNode ifNodeConditionNode = inputIfNode.getCondition();
+        BooleanDataType ifNodeCondition = booleanCompareNodeFunction(inputLocalVariableMap, ifNodeConditionNode);
+        while (ifNodeCondition.getData() == false) {
+            inputIfNode = inputIfNode.getNextIf();
+            if (inputIfNode == null || inputIfNode.getCondition() == null)
+                break;
+            ifNodeConditionNode = inputIfNode.getCondition();
+            ifNodeCondition = booleanCompareNodeFunction(inputLocalVariableMap, ifNodeConditionNode);
+        }
+        if (inputIfNode != null)
+            interpretBlock(inputLocalVariableMap, inputIfNode.getStatements());
     }
 
     private void interpretBlock(HashMap<String, InterpreterDataType> inputLocalVariableMap, ArrayList<StatementNode> inputStatementArray) throws SyntaxErrorException {
@@ -267,13 +308,15 @@ public class Interpreter {
                     CharacterDataType characterNodeData = new CharacterDataType(newCharacterNode.getValue(), false);
                 }
                 else if (inputStatementArray.get(i) instanceof ForNode) {
-                    
+                    ForNode newForNode = (ForNode) inputStatementArray.get(i);
+                    forNodeFunction(inputLocalVariableMap, newForNode);
                 }
                 else if (inputStatementArray.get(i) instanceof FunctionCallNode) {
                     
                 }
                 else if (inputStatementArray.get(i) instanceof IfNode) {
-                    
+                    IfNode newIfNode = (IfNode) inputStatementArray.get(i);
+                    ifNodeFunction(inputLocalVariableMap, newIfNode);
                 }
                 else if (inputStatementArray.get(i) instanceof IntegerNode) {
                     IntegerNode newIntegerNode = (IntegerNode) inputStatementArray.get(i);
@@ -288,7 +331,8 @@ public class Interpreter {
                     RealDataType realNodeData = new RealDataType(newRealNode.getValue(), false);
                 }
                 else if (inputStatementArray.get(i) instanceof RepeatNode) {
-                    
+                    RepeatNode newRepeatNode = (RepeatNode) inputStatementArray.get(i);
+                    RepeatNodeFunction(inputLocalVariableMap, newRepeatNode);
                 }
                 else if (inputStatementArray.get(i) instanceof StringNode) {
                     StringNode newStringNode = (StringNode) inputStatementArray.get(i);
@@ -300,6 +344,7 @@ public class Interpreter {
                 }
                 else if (inputStatementArray.get(i) instanceof WhileNode) {
                     WhileNode newWhileNode = (WhileNode) inputStatementArray.get(i);
+                    WhileNodeFunction(inputLocalVariableMap, newWhileNode);
                 }
             }
         }
@@ -452,6 +497,14 @@ public class Interpreter {
             return null;
     }
 
+    private void RepeatNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, RepeatNode inputRepeatNode) throws SyntaxErrorException {
+        BooleanDataType booleanCompare = booleanCompareNodeFunction(inputLocalVariableMap, inputRepeatNode.getCondition());
+        do {
+            interpretBlock(inputLocalVariableMap, inputRepeatNode.getStatements());
+            booleanCompare = booleanCompareNodeFunction(inputLocalVariableMap, inputRepeatNode.getCondition());
+        } while (booleanCompare.getData() == false);
+    }
+
     private InterpreterDataType VariableReferenceNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, VariableReferenceNode inputVariableReferenceNode) throws SyntaxErrorException {
         InterpreterDataType variableMapKeyValue = inputLocalVariableMap.get(inputVariableReferenceNode.getName());
         if (variableMapKeyValue == null) {
@@ -459,5 +512,13 @@ public class Interpreter {
                 System.exit(14);
         }
         return variableMapKeyValue;
+    }
+
+    private void WhileNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, WhileNode inputWhileNode) throws SyntaxErrorException {
+        BooleanDataType booleanCompare = booleanCompareNodeFunction(inputLocalVariableMap, inputWhileNode.getCondition());
+        while (booleanCompare.getData() == true) {
+            interpretBlock(inputLocalVariableMap, inputWhileNode.getStatements());
+            booleanCompare = booleanCompareNodeFunction(inputLocalVariableMap, inputWhileNode.getCondition());
+        }
     }
 }

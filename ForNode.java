@@ -14,6 +14,22 @@ public class ForNode extends StatementNode {
         integerVariable = inputIntegerVariable;
     }
 
+    public Node getFrom() {
+        return from;
+    }
+
+    public Node getTo() {
+        return to;
+    }
+
+    public ArrayList<StatementNode> getStatements() {
+        return statements;
+    }
+
+    public VariableReferenceNode getIntegerVariable() {
+        return integerVariable;
+    }
+
     public String ToString() {
         String str = "\nForNode(\n";
         str += " Variable: " + integerVariable.ToString() + "\n From: " + from.ToString() + "\n To: " + to.ToString() +  "\n Statements:\n";

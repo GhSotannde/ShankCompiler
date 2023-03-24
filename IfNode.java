@@ -16,6 +16,20 @@ public class IfNode extends StatementNode {
         statements = inputStatementArray;
     }
 
+    public BooleanCompareNode getCondition() {
+        if (condition == null)
+            return null;
+        return condition;
+    }
+
+    public ArrayList<StatementNode> getStatements() {
+        return statements;
+    }
+
+    public IfNode getNextIf() {
+        return nextIf;
+    }
+
     public String ToString() {
         if (condition == null) {
             String str = "\nElseNode(\n Statements:\n";

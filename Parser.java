@@ -310,8 +310,13 @@ public class Parser {
         }
         if (matchAndRemove(Token.tokenType.PLUS) != null) {
             Node rightNode = term();
-            if ((leftNode instanceof StringNode || leftNode instanceof VariableReferenceNode) ^ (rightNode instanceof StringNode || rightNode instanceof VariableReferenceNode))
-                throw new SyntaxErrorException(tokenArray.get(0));
+            if (leftNode instanceof StringNode ^ rightNode instanceof StringNode) {
+                if (leftNode instanceof StringNode && !(rightNode instanceof VariableReferenceNode))
+                    throw new SyntaxErrorException(tokenArray.get(0));
+                else if (rightNode instanceof StringNode && !(leftNode instanceof VariableReferenceNode))
+                    throw new SyntaxErrorException(tokenArray.get(0));
+            }
+                
             newMathOpNode = createMathOpNode(MathOpNode.operationType.ADD, leftNode, rightNode);
         }
         else if (matchAndRemove(Token.tokenType.MINUS) != null) {

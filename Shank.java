@@ -32,13 +32,13 @@ public class Shank {
 
         lexData.addLastLineDedents();
 
-        //lexData.printLexer();
+        //lexData.printLexer(); //Prints out all tokens collected by lexer
 
         Parser parseData = new Parser(lexData.getArray());
 
         ProgramNode programNode = (ProgramNode) parseData.parse();
 
-        //System.out.println(programNode.ToString()); //Allows printing of all functions for testing purposes
+        //System.out.println(programNode.ToString()); //Prints out node tree created by parser
 
         BuiltInWrite builtInWrite = new BuiltInWrite();
         BuiltInLeft builtInLeft = new BuiltInLeft();
@@ -52,7 +52,7 @@ public class Shank {
         BuiltInEnd builtInEnd = new BuiltInEnd();
         BuiltInRead builtInRead = new BuiltInRead();
 
-        /* programNode.addToFunctionMap(builtInWrite);
+        programNode.addToFunctionMap(builtInWrite);
         programNode.addToFunctionMap(builtInLeft);
         programNode.addToFunctionMap(builtInRight);
         programNode.addToFunctionMap(builtInSubstring);
@@ -62,7 +62,7 @@ public class Shank {
         programNode.addToFunctionMap(builtInRealToInteger);
         programNode.addToFunctionMap(builtInStart);
         programNode.addToFunctionMap(builtInEnd);
-        programNode.addToFunctionMap(builtInRead); */
+        programNode.addToFunctionMap(builtInRead);
 
         Interpreter interpreter = new Interpreter(programNode.getFunctionMap());
     }

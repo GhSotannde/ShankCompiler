@@ -21,4 +21,12 @@ public class RepeatNode extends StatementNode {
         return str;
     } 
 
+    public BooleanCompareNode getCondition() {
+        return condition;
+    }
+
+    public ArrayList<StatementNode> getStatements() {
+        return statements;
+    }
+
 }
