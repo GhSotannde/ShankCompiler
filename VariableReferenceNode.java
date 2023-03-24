@@ -1,7 +1,6 @@
 public class VariableReferenceNode extends StatementNode{
     
     private String name;
-    private float value;
     private Node arrayIndexExpression = null;
 
     public VariableReferenceNode(String inputName) {
@@ -11,14 +10,6 @@ public class VariableReferenceNode extends StatementNode{
     public VariableReferenceNode(String inputName, Node inputArrayIndexExpression) {
         name = inputName;
         arrayIndexExpression = inputArrayIndexExpression;
-    }
-
-    public void setValue(float inputValue) {
-        value = inputValue;
-    }
-
-    public float getValue() {
-        return value;
     }
 
     public String getName() {

@@ -3,14 +3,8 @@ import java.util.Random;
 
 public class BuiltInGetRandom extends FunctionNode {
 
-    private ArrayList<InterpreterDataType> arguments = new ArrayList<InterpreterDataType>();
-    private IntegerDataType intData = new IntegerDataType(0, true);
-
     public BuiltInGetRandom() {
         super("GetRandom", null, null, null);
-        arguments.add(intData); 
-        execute(arguments); //Temporary to allow for testing
-        System.out.println("GetRandom: Output: " + intData.getData() + "\n"); 
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

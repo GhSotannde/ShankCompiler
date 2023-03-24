@@ -2,16 +2,8 @@ import java.util.ArrayList;
 
 public class BuiltInIntegerToReal extends FunctionNode {
 
-    private ArrayList<InterpreterDataType> arguments = new ArrayList<InterpreterDataType>();
-    private IntegerDataType intData = new IntegerDataType(5, false);
-    private RealDataType realData = new RealDataType(0, true);
-
     public BuiltInIntegerToReal() {
         super("IntegerToReal", null, null, null);
-        arguments.add(intData); 
-        arguments.add(realData);
-        execute(arguments); //Temporary to allow for testing
-        System.out.println("IntegerToReal: Input: " + intData.getData() + ", Output: " + realData.getData() + "\n"); 
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

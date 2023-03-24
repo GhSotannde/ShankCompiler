@@ -3,21 +3,15 @@ public class BooleanCompareNode extends StatementNode {
     private comparisonType type;
     private Node left;
     private Node right;
-    private Integer value;
 
-    public BooleanCompareNode(comparisonType inputType, Node inputLeft, Node inputRight, Integer inputValue) {
+    public BooleanCompareNode(comparisonType inputType, Node inputLeft, Node inputRight) {
     type = inputType;
     left = inputLeft;
     right = inputRight;
-    value = inputValue; //Can be 0 or 1
     }
 
     public String ToString() {
-        return "BooleanCompareNode(\n  Type: " + type + "\n  Value: " + value + "\n  Left: " + left.ToString() + "\n  Right: " + right.ToString() + "\n)";
-    }
-
-    public Integer getValue() {
-        return value;
+        return "BooleanCompareNode(\n  Type: " + type + "\n  Left: " + left.ToString() + "\n  Right: " + right.ToString() + "\n)";
     }
 
     public Node getLeftChild() {
@@ -26,6 +20,10 @@ public class BooleanCompareNode extends StatementNode {
 
     public Node getRightChild() {
         return right;
+    }
+
+    public comparisonType getType() {
+        return type;
     }
     
 }

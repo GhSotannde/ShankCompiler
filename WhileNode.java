@@ -19,5 +19,13 @@ public class WhileNode extends StatementNode {
         }
         str += "\n)";
         return str;
-    } 
+    }
+    
+    public BooleanCompareNode getCondition() {
+        return condition;
+    }
+
+    public ArrayList<StatementNode> getStatements() {
+        return statements;
+    }
 }

@@ -2,30 +2,8 @@ import java.util.ArrayList;
 
 public class BuiltInEnd extends FunctionNode {
 
-    private ArrayList<InterpreterDataType> arguments = new ArrayList<InterpreterDataType>();
-    private ArrayList<InterpreterDataType> data = new ArrayList<InterpreterDataType>();
-    private IntegerDataType firstIndexData = new IntegerDataType(10, false);
-    private IntegerDataType nextIndexData = new IntegerDataType(20, false);
-    private IntegerDataType lastIndexData = new IntegerDataType(30, false);
-    private ArrayDataType testData = new ArrayDataType(data, true);
-
     public BuiltInEnd() {
         super("End", null, null, null);
-        data.add(firstIndexData);
-        data.add(nextIndexData);
-        data.add(lastIndexData);
-        arguments.add(testData);
-        execute(arguments); //Temporary for testing
-        IntegerDataType testInt = (IntegerDataType) arguments.get(0);
-        String str = "End: Input: Array[";
-        for (int i = 0; i < data.size(); i++) {
-            if (i == data.size() - 1)
-                str += data.get(i).ToString();
-            else
-                str += data.get(i).ToString() + ", ";
-        }
-        str += "] Output: " + testInt.getData() + '\n';
-        System.out.println(str);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {
