@@ -2,8 +2,12 @@ import java.util.ArrayList;
 
 public class BuiltInStart extends FunctionNode {
 
+    VariableNode arrayParameter = new VariableNode("someArray", VariableNode.variableType.ARRAY, true);
+    static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
+    
     public BuiltInStart() {
-        super("start", null, null, null);
+        super("start", parameterArray, null, null);
+        parameterArray.add(arrayParameter);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

@@ -2,14 +2,17 @@ import java.util.*;
 
 public class Interpreter {
 
+    private HashMap<String, FunctionNode> functionMap;
+
     public Interpreter(HashMap<String, FunctionNode> inputFunctionMap) throws SyntaxErrorException {
+        functionMap = inputFunctionMap;
         Collection<FunctionNode> functionArray = inputFunctionMap.values();
         for (FunctionNode function : functionArray) {
             interpretFunction(function);
         }
     }
 
-    private void addArrayToVariableMap(HashMap<String, InterpreterDataType> inputLocalVariableMap, ArrayList<VariableNode> inputArray, boolean inputIsParameterArray) {
+    private void addVariableArrayToVariableMap(HashMap<String, InterpreterDataType> inputLocalVariableMap, ArrayList<VariableNode> inputArray, boolean inputIsParameterArray) {
         if (inputIsParameterArray) {
             if (inputArray != null) {
                 for (int i = 0; i < inputArray.size(); i++) {
@@ -40,25 +43,27 @@ public class Interpreter {
                             int startIndex = currentVariableNode.getIntFrom();
                             int endIndex = currentVariableNode.getIntTo();
                             ArrayDataType newArrayData = null;
-                            switch (currentVariableNode.getArrayType()) {
-                                case INTEGER:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.INTEGER, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                case REAL:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.REAL, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                case CHARACTER:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.CHARACTER, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                case BOOLEAN:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.BOOLEAN, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                case STRING:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.STRING, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                default:
-                                    System.out.println("Error: Array type not detected.");
-                                    System.exit(1);
+                            if (currentVariableNode.getArrayType() != null) {
+                                switch (currentVariableNode.getArrayType()) {
+                                    case INTEGER:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.INTEGER, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    case REAL:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.REAL, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    case CHARACTER:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.CHARACTER, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    case BOOLEAN:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.BOOLEAN, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    case STRING:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.STRING, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    default:
+                                        System.out.println("Error: Array type not detected.");
+                                        System.exit(1);
+                                }
                             }
                             inputLocalVariableMap.put(name, newArrayData);
                             break;
@@ -70,7 +75,7 @@ public class Interpreter {
                 }
             }
         }
-        else {
+        else { //Variable/Constant Array
             if (inputArray != null) {
                 for (int i = 0; i < inputArray.size(); i++) {
                     VariableNode currentVariableNode = inputArray.get(i);
@@ -191,7 +196,6 @@ public class Interpreter {
                 }
             }
         }
-        
     }
 
     private void AssignmentNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, AssignmentNode inputAssignmentNode) {
@@ -332,6 +336,309 @@ public class Interpreter {
         return newBooleanData;
     }
 
+    private ArrayList<InterpreterDataType> collectFunctionCallArguments(HashMap<String, InterpreterDataType> inputLocalVariableMap, FunctionCallNode inputFunctionCallNode) throws SyntaxErrorException {
+        ArrayList<InterpreterDataType> functionCallArgumentArray = new ArrayList<InterpreterDataType>();
+        String functionName = inputFunctionCallNode.getName().toLowerCase();
+        if (!functionMap.containsKey(functionName)) {
+            System.out.println("ERROR: Referenced function does not exist.");
+            System.exit(0);
+        }
+        FunctionNode referencedFunction = functionMap.get(functionName.toLowerCase());
+        if (!referencedFunction.isVariadic()) {
+            ArrayList<ParameterNode> functionCallParameterArray = inputFunctionCallNode.getParameterArray();
+            ArrayList<VariableNode> referencedFunctionParameterArray = referencedFunction.getParameterArray();
+            if (functionCallParameterArray.size() != referencedFunctionParameterArray.size()) {
+                System.out.println("ERROR: Incorrect number of arguments for function call.");
+                System.exit(1);
+            }
+            /* For loop checks each function call argument and makes sure it matches the variable data type and changeability of corresponding function parameter
+               If arguments pass test, they are added to the function call argument array */ 
+            for (int i = 0; i < functionCallParameterArray.size(); i++) { 
+                ParameterNode currentFunctionCallParameterNode = functionCallParameterArray.get(i);
+                VariableNode currentReferencedFunctionParameterNode = referencedFunctionParameterArray.get(i);
+                VariableNode.variableType variableReferencedByFunctionCallType = null;
+                if (currentReferencedFunctionParameterNode.getChangeable() == currentFunctionCallParameterNode.getChangeable()) {
+                    if (currentFunctionCallParameterNode.getChangeable() == false && currentFunctionCallParameterNode.getExpression() != null) {
+                        Node functionCallArgumentExpression = currentFunctionCallParameterNode.getExpression();
+                        if (functionCallArgumentExpression instanceof BooleanCompareNode) {
+                            variableReferencedByFunctionCallType = VariableNode.variableType.BOOLEAN;
+                            BooleanCompareNode booleanCompareNodeArgument = (BooleanCompareNode) functionCallArgumentExpression;
+                            BooleanDataType newBooleanArgument = booleanCompareNodeFunction(inputLocalVariableMap, booleanCompareNodeArgument);
+                            functionCallArgumentArray.add(newBooleanArgument);
+                        }
+                        else if (functionCallArgumentExpression instanceof IntegerNode) {
+                            variableReferencedByFunctionCallType = VariableNode.variableType.INTEGER;
+                            IntegerNode integerNodeArgument = (IntegerNode) functionCallArgumentExpression;
+                            IntegerDataType newIntegerArgument = new IntegerDataType(integerNodeArgument.getValue(), false);
+                            functionCallArgumentArray.add(newIntegerArgument);
+                        }
+                        else if (functionCallArgumentExpression instanceof RealNode) {
+                            variableReferencedByFunctionCallType = VariableNode.variableType.REAL;
+                            RealNode realNodeArgument = (RealNode) functionCallArgumentExpression;
+                            RealDataType newRealArgument = new RealDataType(realNodeArgument.getValue(), false);
+                            functionCallArgumentArray.add(newRealArgument);
+                        }
+                        else if (functionCallArgumentExpression instanceof BooleanNode) {
+                            variableReferencedByFunctionCallType = VariableNode.variableType.BOOLEAN;
+                            BooleanNode booleanNodeArgument = (BooleanNode) functionCallArgumentExpression;
+                            BooleanDataType newBooleanArgument = new BooleanDataType(booleanNodeArgument.getValue(), false);
+                            functionCallArgumentArray.add(newBooleanArgument);
+                        }
+                        else if (functionCallArgumentExpression instanceof CharacterNode) {
+                            variableReferencedByFunctionCallType = VariableNode.variableType.CHARACTER;
+                            CharacterNode characterNodeArgument = (CharacterNode) functionCallArgumentExpression;
+                            CharacterDataType newCharacterArgument = new CharacterDataType(characterNodeArgument.getValue(), false);
+                            functionCallArgumentArray.add(newCharacterArgument);
+                        }
+                        else if (functionCallArgumentExpression instanceof StringNode) {
+                            variableReferencedByFunctionCallType = VariableNode.variableType.STRING;
+                            StringNode stringNodeArgument = (StringNode) functionCallArgumentExpression;
+                            StringDataType newStringArgument = new StringDataType(stringNodeArgument.getValue(), false);
+                            functionCallArgumentArray.add(newStringArgument);
+                        }
+                        else if (functionCallArgumentExpression instanceof VariableReferenceNode) {
+                            VariableReferenceNode newVariableReferenceNode = (VariableReferenceNode) functionCallArgumentExpression;
+                            InterpreterDataType referencedVariable = VariableReferenceNodeFunction(inputLocalVariableMap, newVariableReferenceNode);
+                            if (referencedVariable instanceof IntegerDataType) {
+                                variableReferencedByFunctionCallType = VariableNode.variableType.INTEGER;
+                                IntegerDataType newIntArgument = (IntegerDataType) referencedVariable;
+                                functionCallArgumentArray.add(newIntArgument);
+                            }
+                            else if (referencedVariable instanceof RealDataType) {
+                                variableReferencedByFunctionCallType = VariableNode.variableType.REAL;
+                                RealDataType newRealArgument = (RealDataType) referencedVariable;
+                                functionCallArgumentArray.add(newRealArgument);
+                            }
+                            else if (referencedVariable instanceof BooleanDataType) {
+                                variableReferencedByFunctionCallType = VariableNode.variableType.BOOLEAN;
+                                BooleanDataType newBoolArgument = (BooleanDataType) referencedVariable;
+                                functionCallArgumentArray.add(newBoolArgument);
+                            }
+                            else if (referencedVariable instanceof CharacterDataType) {
+                                variableReferencedByFunctionCallType = VariableNode.variableType.CHARACTER;
+                                CharacterDataType newCharArgument = (CharacterDataType) referencedVariable;
+                                functionCallArgumentArray.add(newCharArgument);
+                            }
+                            else if (referencedVariable instanceof StringDataType) {
+                                variableReferencedByFunctionCallType = VariableNode.variableType.STRING;
+                                StringDataType newStringArgument = (StringDataType) referencedVariable;
+                                functionCallArgumentArray.add(newStringArgument);
+                            }
+                            else if (referencedVariable instanceof ArrayDataType) {
+                                variableReferencedByFunctionCallType = VariableNode.variableType.ARRAY;
+                                ArrayDataType newArrayArgument = (ArrayDataType) referencedVariable;
+                                functionCallArgumentArray.add(newArrayArgument);
+                            }
+
+                        }
+                        else if (functionCallArgumentExpression instanceof MathOpNode) {
+                            MathOpNode mathOpNodeArgument = (MathOpNode) functionCallArgumentExpression;
+                            InterpreterDataType mathOpNodeData = MathOpNodeFunction(inputLocalVariableMap, mathOpNodeArgument);
+                            if (mathOpNodeData instanceof IntegerDataType) {
+                                variableReferencedByFunctionCallType = VariableNode.variableType.INTEGER;
+                                IntegerDataType newIntegerArgument = (IntegerDataType) mathOpNodeData;
+                                functionCallArgumentArray.add(newIntegerArgument);
+                            }
+                            else if (mathOpNodeData instanceof RealDataType) {
+                                variableReferencedByFunctionCallType = VariableNode.variableType.REAL;
+                                RealDataType newRealArgument = (RealDataType) mathOpNodeData;
+                                functionCallArgumentArray.add(newRealArgument);
+                            }
+                            else if (mathOpNodeData instanceof StringDataType) {
+                                variableReferencedByFunctionCallType = VariableNode.variableType.STRING;
+                                StringDataType newStringArgument = (StringDataType) mathOpNodeData;
+                                functionCallArgumentArray.add(newStringArgument);
+                            }
+                            else {
+                                System.out.println("ERROR: Unrecognized data type retrieved from expression within function call argument");
+                                System.exit(5);
+                            }
+                        }
+                        if (currentReferencedFunctionParameterNode.getType() != variableReferencedByFunctionCallType) {
+                            System.out.println("ERROR: Data type of variable referenced in function call does not match data type of function parameter.");
+                            System.exit(5);
+                        }
+                    }
+                    else {
+                        String functionCallVariableName = currentFunctionCallParameterNode.getName();
+                        if (!inputLocalVariableMap.containsKey(functionCallVariableName)) {
+                            System.out.println("ERROR: Variable referenced in function call not found.");
+                            System.exit(3);
+                        }
+                        InterpreterDataType variableReferencedByFunctionCall = inputLocalVariableMap.get(functionCallVariableName);
+                        if (variableReferencedByFunctionCall instanceof IntegerDataType) {
+                            variableReferencedByFunctionCallType = VariableNode.variableType.INTEGER;
+                            IntegerDataType newIntArgument = (IntegerDataType) variableReferencedByFunctionCall;
+                            functionCallArgumentArray.add(newIntArgument);
+                        }
+                        else if (variableReferencedByFunctionCall instanceof RealDataType) {
+                            variableReferencedByFunctionCallType = VariableNode.variableType.REAL;
+                            RealDataType newRealArgument = (RealDataType) variableReferencedByFunctionCall;
+                            functionCallArgumentArray.add(newRealArgument);
+                        }
+                        else if (variableReferencedByFunctionCall instanceof BooleanDataType) {
+                            variableReferencedByFunctionCallType = VariableNode.variableType.BOOLEAN;
+                            BooleanDataType newBoolArgument = (BooleanDataType) variableReferencedByFunctionCall;
+                            functionCallArgumentArray.add(newBoolArgument);
+                        }
+                        else if (variableReferencedByFunctionCall instanceof CharacterDataType) {
+                            variableReferencedByFunctionCallType = VariableNode.variableType.CHARACTER;
+                            CharacterDataType newCharArgument = (CharacterDataType) variableReferencedByFunctionCall;
+                            functionCallArgumentArray.add(newCharArgument);
+                        }
+                        else if (variableReferencedByFunctionCall instanceof StringDataType) {
+                            variableReferencedByFunctionCallType = VariableNode.variableType.STRING;
+                            StringDataType newStringArgument = (StringDataType) variableReferencedByFunctionCall;
+                            functionCallArgumentArray.add(newStringArgument);
+                        }
+                        else if (variableReferencedByFunctionCall instanceof ArrayDataType) {
+                            variableReferencedByFunctionCallType = VariableNode.variableType.ARRAY;
+                            ArrayDataType newArrayArgument = (ArrayDataType) variableReferencedByFunctionCall;
+                            functionCallArgumentArray.add(newArrayArgument);
+                        }
+                        else {
+                            System.out.println("ERROR: Data type of variable referenced in function call not found.");
+                            System.exit(4);
+                        }
+                        if (currentReferencedFunctionParameterNode.getType() != variableReferencedByFunctionCallType) {
+                            System.out.println("ERROR: Data type of variable referenced in function call does not match data type of function parameter.");
+                            System.exit(5);
+                        }
+                    }
+                }
+                else {
+                    System.out.println("ERROR: Arguments do not match parameter type.");
+                    System.exit(2);
+                }
+            }
+        }
+        else { //Variadric functions. Do not require checking of argument changeability and data type.
+            ArrayList<ParameterNode> functionCallParameterArray = inputFunctionCallNode.getParameterArray();
+            for (int i = 0; i < functionCallParameterArray.size(); i++) { 
+                ParameterNode currentFunctionCallParameterNode = functionCallParameterArray.get(i);
+                VariableNode.variableType variableReferencedByFunctionCallType = null;
+                if (currentFunctionCallParameterNode.getChangeable() == false && currentFunctionCallParameterNode.getExpression() != null) {
+                    Node functionCallArgumentExpression = currentFunctionCallParameterNode.getExpression();
+                    if (functionCallArgumentExpression instanceof BooleanCompareNode) {
+                        BooleanCompareNode booleanCompareNodeArgument = (BooleanCompareNode) functionCallArgumentExpression;
+                        BooleanDataType newBooleanArgument = booleanCompareNodeFunction(inputLocalVariableMap, booleanCompareNodeArgument);
+                        functionCallArgumentArray.add(newBooleanArgument);
+                    }
+                    else if (functionCallArgumentExpression instanceof IntegerNode) {
+                        IntegerNode integerNodeArgument = (IntegerNode) functionCallArgumentExpression;
+                        IntegerDataType newIntegerArgument = new IntegerDataType(integerNodeArgument.getValue(), false);
+                        functionCallArgumentArray.add(newIntegerArgument);
+                    }
+                    else if (functionCallArgumentExpression instanceof RealNode) {
+                        RealNode realNodeArgument = (RealNode) functionCallArgumentExpression;
+                        RealDataType newRealArgument = new RealDataType(realNodeArgument.getValue(), false);
+                        functionCallArgumentArray.add(newRealArgument);
+                    }
+                    else if (functionCallArgumentExpression instanceof BooleanNode) {
+                        BooleanNode booleanNodeArgument = (BooleanNode) functionCallArgumentExpression;
+                        BooleanDataType newBooleanArgument = new BooleanDataType(booleanNodeArgument.getValue(), false);
+                        functionCallArgumentArray.add(newBooleanArgument);
+                    }
+                    else if (functionCallArgumentExpression instanceof CharacterNode) {
+                        CharacterNode characterNodeArgument = (CharacterNode) functionCallArgumentExpression;
+                        CharacterDataType newCharacterArgument = new CharacterDataType(characterNodeArgument.getValue(), false);
+                        functionCallArgumentArray.add(newCharacterArgument);
+                    }
+                    else if (functionCallArgumentExpression instanceof StringNode) {
+                        StringNode stringNodeArgument = (StringNode) functionCallArgumentExpression;
+                        StringDataType newStringArgument = new StringDataType(stringNodeArgument.getValue(), false);
+                        functionCallArgumentArray.add(newStringArgument);
+                    }
+                    else if (functionCallArgumentExpression instanceof VariableReferenceNode) {
+                        VariableReferenceNode newVariableReferenceNode = (VariableReferenceNode) functionCallArgumentExpression;
+                        InterpreterDataType referencedVariable = VariableReferenceNodeFunction(inputLocalVariableMap, newVariableReferenceNode);
+                        if (referencedVariable instanceof IntegerDataType) {
+                            IntegerDataType newIntArgument = (IntegerDataType) referencedVariable;
+                            functionCallArgumentArray.add(newIntArgument);
+                        }
+                        else if (referencedVariable instanceof RealDataType) {
+                            RealDataType newRealArgument = (RealDataType) referencedVariable;
+                            functionCallArgumentArray.add(newRealArgument);
+                        }
+                        else if (referencedVariable instanceof BooleanDataType) {
+                            BooleanDataType newBoolArgument = (BooleanDataType) referencedVariable;
+                            functionCallArgumentArray.add(newBoolArgument);
+                        }
+                        else if (referencedVariable instanceof CharacterDataType) {
+                            CharacterDataType newCharArgument = (CharacterDataType) referencedVariable;
+                            functionCallArgumentArray.add(newCharArgument);
+                        }
+                        else if (referencedVariable instanceof StringDataType) {
+                            StringDataType newStringArgument = (StringDataType) referencedVariable;
+                            functionCallArgumentArray.add(newStringArgument);
+                        }
+                        else if (referencedVariable instanceof ArrayDataType) {
+                            ArrayDataType newArrayArgument = (ArrayDataType) referencedVariable;
+                            functionCallArgumentArray.add(newArrayArgument);
+                        }
+                    }
+                    else if (functionCallArgumentExpression instanceof MathOpNode) {
+                        MathOpNode mathOpNodeArgument = (MathOpNode) functionCallArgumentExpression;
+                        InterpreterDataType mathOpNodeData = MathOpNodeFunction(inputLocalVariableMap, mathOpNodeArgument);
+                        if (mathOpNodeData instanceof IntegerDataType) {
+                            IntegerDataType newIntegerArgument = (IntegerDataType) mathOpNodeData;
+                            functionCallArgumentArray.add(newIntegerArgument);
+                        }
+                        else if (mathOpNodeData instanceof RealDataType) {
+                            RealDataType newRealArgument = (RealDataType) mathOpNodeData;
+                            functionCallArgumentArray.add(newRealArgument);
+                        }
+                        else if (mathOpNodeData instanceof StringDataType) {
+                            StringDataType newStringArgument = (StringDataType) mathOpNodeData;
+                            functionCallArgumentArray.add(newStringArgument);
+                        }
+                        else {
+                            System.out.println("ERROR: Unrecognized data type retrieved from expression within function call argument");
+                            System.exit(5);
+                        }
+                    }
+                }
+                else {
+                    String functionCallVariableName = currentFunctionCallParameterNode.getName();
+                    if (!inputLocalVariableMap.containsKey(functionCallVariableName)) {
+                        System.out.println("ERROR: Variable referenced in function call not found.");
+                        System.exit(3);
+                    }
+                    InterpreterDataType variableReferencedByFunctionCall = inputLocalVariableMap.get(functionCallVariableName);
+                    if (variableReferencedByFunctionCall instanceof IntegerDataType) {
+                        IntegerDataType newIntArgument = (IntegerDataType) variableReferencedByFunctionCall;
+                        functionCallArgumentArray.add(newIntArgument);
+                    }
+                    else if (variableReferencedByFunctionCall instanceof RealDataType) {
+                        RealDataType newRealArgument = (RealDataType) variableReferencedByFunctionCall;
+                        functionCallArgumentArray.add(newRealArgument);
+                    }
+                    else if (variableReferencedByFunctionCall instanceof BooleanDataType) {
+                        BooleanDataType newBoolArgument = (BooleanDataType) variableReferencedByFunctionCall;
+                        functionCallArgumentArray.add(newBoolArgument);
+                    }
+                    else if (variableReferencedByFunctionCall instanceof CharacterDataType) {
+                        CharacterDataType newCharArgument = (CharacterDataType) variableReferencedByFunctionCall;
+                        functionCallArgumentArray.add(newCharArgument);
+                    }
+                    else if (variableReferencedByFunctionCall instanceof StringDataType) {
+                        StringDataType newStringArgument = (StringDataType) variableReferencedByFunctionCall;
+                        functionCallArgumentArray.add(newStringArgument);
+                    }
+                    else if (variableReferencedByFunctionCall instanceof ArrayDataType) {
+                        ArrayDataType newArrayArgument = (ArrayDataType) variableReferencedByFunctionCall;
+                        functionCallArgumentArray.add(newArrayArgument);
+                    }
+                    else {
+                        System.out.println("ERROR: Data type of variable referenced in function call not found.");
+                        System.exit(4);
+                    }
+                }
+            }
+        }
+        return functionCallArgumentArray;
+    }
+
     private Node expression(HashMap<String, InterpreterDataType> inputLocalVariableMap, Node inputNode) {
         if (inputNode instanceof MathOpNode) {
             MathOpNode currentMathOpNode = (MathOpNode) inputNode;
@@ -459,6 +766,12 @@ public class Interpreter {
         }
     }
 
+    private void functionCallNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, FunctionCallNode inputFunctionCallNode) throws SyntaxErrorException {
+        ArrayList<InterpreterDataType> functionCallArgumentArray = new ArrayList<InterpreterDataType>();
+        functionCallArgumentArray = collectFunctionCallArguments(inputLocalVariableMap, inputFunctionCallNode);
+        // HERE!!!! CHECKING FOR CORRECT PARAMETER AMOUNT/TYPE/CHANGEABILITY IS COMPLETE! Now we have a interpreterDataType array with function call arguments
+    }
+
     private void ifNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, IfNode inputIfNode) throws SyntaxErrorException {
         BooleanCompareNode ifNodeConditionNode = inputIfNode.getCondition();
         BooleanDataType ifNodeCondition = booleanCompareNodeFunction(inputLocalVariableMap, ifNodeConditionNode);
@@ -498,6 +811,8 @@ public class Interpreter {
                 }
                 else if (inputStatementArray.get(i) instanceof FunctionCallNode) {
                     System.out.println("TEST IN LINE 315 of INTERPRETER");
+                    FunctionCallNode newFunctionCallNode = (FunctionCallNode) inputStatementArray.get(i);
+                    functionCallNodeFunction(inputLocalVariableMap, newFunctionCallNode);
                 }
                 else if (inputStatementArray.get(i) instanceof IfNode) {
                     IfNode newIfNode = (IfNode) inputStatementArray.get(i);
@@ -540,8 +855,11 @@ public class Interpreter {
         ArrayList<VariableNode> parameterArray = inputFunctionNode.getParameterArray();
         ArrayList<VariableNode> variableArray = inputFunctionNode.getVariableArray();
         ArrayList<StatementNode> statementArray = inputFunctionNode.getStatementArray();
-        addArrayToVariableMap(localVariableMap, parameterArray, true);
-        addArrayToVariableMap(localVariableMap, variableArray, false);
+        /*The problem is that this function below is adding all of the parameters from custom and built in functions to the variable map.
+         * We need to keep track of the parameters, 
+         */
+        addVariableArrayToVariableMap(localVariableMap, parameterArray, true);
+        addVariableArrayToVariableMap(localVariableMap, variableArray, false);
         interpretBlock(localVariableMap, statementArray);
     }
 

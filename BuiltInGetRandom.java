@@ -3,8 +3,12 @@ import java.util.Random;
 
 public class BuiltInGetRandom extends FunctionNode {
 
+    VariableNode resultIntParameter = new VariableNode("resultInteger", VariableNode.variableType.INTEGER, true);
+    static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
+    
     public BuiltInGetRandom() {
-        super("getrandom", null, null, null);
+        super("getrandom", parameterArray, null, null);
+        parameterArray.add(resultIntParameter);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

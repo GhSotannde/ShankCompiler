@@ -2,8 +2,14 @@ import java.util.ArrayList;
 
 public class BuiltInIntegerToReal extends FunctionNode {
 
+    VariableNode intParameter = new VariableNode("someInteger", VariableNode.variableType.INTEGER, false);
+    VariableNode resultFloatParameter = new VariableNode("someReal", VariableNode.variableType.REAL, true);
+    static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
+    
     public BuiltInIntegerToReal() {
-        super("integertoreal", null, null, null);
+        super("integertoreal", parameterArray, null, null);
+        parameterArray.add(intParameter);
+        parameterArray.add(resultFloatParameter);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

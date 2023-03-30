@@ -565,7 +565,7 @@ public class Parser {
                             Node newVariableNode = getTargetNode(); //Adds complex variable references to parameter list
                             if (newVariableNode instanceof VariableReferenceNode) {
                                 VariableReferenceNode newVariableReferenceNode = (VariableReferenceNode) newVariableNode;
-                                ParameterNode newParameterNode = new ParameterNode(newVariableReferenceNode);
+                                ParameterNode newParameterNode = new ParameterNode(newVariableReferenceNode, true);
                                 parameterArray.add(newParameterNode);
                             } 
                             else
@@ -582,7 +582,7 @@ public class Parser {
                             if (peek(0).getToken() == Token.tokenType.IDENTIFIER) {
                                 currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
                                 VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(currentToken.getValue());
-                                ParameterNode newParameterNode = new ParameterNode(newVariableReferenceNode);
+                                ParameterNode newParameterNode = new ParameterNode(newVariableReferenceNode, false);
                                 parameterArray.add(newParameterNode);
                             }
                         }

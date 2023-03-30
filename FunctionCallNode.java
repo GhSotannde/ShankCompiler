@@ -10,6 +10,14 @@ public class FunctionCallNode extends StatementNode {
         parameterArray = inputParameterArray;
     }
 
+    public String getName() {
+        return functionName;
+    }
+
+    public ArrayList<ParameterNode> getParameterArray() {
+        return parameterArray;
+    }
+
     public String ToString() {
         String str = "\nFunctionCallNode(\n Name: " + functionName + "\n Parameters:\n";
         for (int i = 0; i < parameterArray.size() ; i++) {

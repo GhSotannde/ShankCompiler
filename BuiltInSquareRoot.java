@@ -3,8 +3,14 @@ import java.lang.Math;
 
 public class BuiltInSquareRoot extends FunctionNode {
 
+    VariableNode floatParameter = new VariableNode("someFloat", VariableNode.variableType.REAL, false);
+    VariableNode resultFloatParameter = new VariableNode("result", VariableNode.variableType.REAL, true);
+    static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
+    
     public BuiltInSquareRoot() {
-        super("squareroot", null, null, null);
+        super("squareroot", parameterArray, null, null);
+        parameterArray.add(floatParameter);
+        parameterArray.add(resultFloatParameter);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

@@ -2,8 +2,12 @@ import java.util.ArrayList;
 
 public class BuiltInEnd extends FunctionNode {
 
+    VariableNode arrayParameter = new VariableNode("someArray", VariableNode.variableType.ARRAY, true);
+    static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
+    
     public BuiltInEnd() {
-        super("end", null, null, null);
+        super("end", parameterArray, null, null);
+        parameterArray.add(arrayParameter);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

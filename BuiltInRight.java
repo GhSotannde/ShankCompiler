@@ -2,8 +2,16 @@ import java.util.ArrayList;
 
 public class BuiltInRight extends FunctionNode {
 
+    VariableNode stringParameter = new VariableNode("someString", VariableNode.variableType.STRING, false);
+    VariableNode intParameter = new VariableNode("length", VariableNode.variableType.INTEGER, false);
+    VariableNode resultStringParameter = new VariableNode("resultString", VariableNode.variableType.STRING, true);
+    static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
+    
     public BuiltInRight() {
-        super("right", null, null, null);
+        super("right", parameterArray, null, null);
+        parameterArray.add(stringParameter);
+        parameterArray.add(intParameter);
+        parameterArray.add(resultStringParameter);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

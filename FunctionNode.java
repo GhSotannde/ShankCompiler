@@ -14,8 +14,8 @@ public class FunctionNode extends Node {
         statementArray = inputStatementArray;
     }
 
-    private boolean isVariadic() {
-        boolean result = (name == "Read" || name == "Write") ? true : false;
+    public boolean isVariadic() {
+        boolean result = (name == "read" || name == "write") ? true : false;
         return result;
     }
 

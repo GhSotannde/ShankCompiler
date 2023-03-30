@@ -2,15 +2,34 @@ public class ParameterNode extends StatementNode {
     
     private VariableReferenceNode varIdentifier = null;
     private Node expression = null;
+    private boolean isChangeable;
 
-    public ParameterNode(VariableReferenceNode inputVarIdentifier) {
+    public ParameterNode(VariableReferenceNode inputVarIdentifier, boolean inputIsChangeable) {
         varIdentifier = inputVarIdentifier;
+        isChangeable = inputIsChangeable;
         expression = null;
     }
 
     public ParameterNode(Node inputExpression) {
         expression = inputExpression;
         varIdentifier = null;
+        isChangeable = false;
+    }
+
+    public boolean getChangeable() {
+        return isChangeable;
+    }
+
+    public VariableReferenceNode getVarIdentifier() {
+        return varIdentifier;
+    }
+
+    public Node getExpression() {
+        return expression;
+    }
+
+    public String getName() {
+        return varIdentifier.getName();
     }
 
     public String ToString() {
