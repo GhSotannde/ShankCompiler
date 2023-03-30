@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class BuiltInWrite extends FunctionNode {
 
     public BuiltInWrite() {
-        super("Write", null, null, null);
+        super("write", null, null, null);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

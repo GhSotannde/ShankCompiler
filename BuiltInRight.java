@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class BuiltInRight extends FunctionNode {
 
     public BuiltInRight() {
-        super("Right", null, null, null);
+        super("right", null, null, null);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

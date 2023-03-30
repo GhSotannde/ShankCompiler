@@ -4,8 +4,8 @@ public class ArrayDataType extends InterpreterDataType {
     
     private ArrayList<InterpreterDataType> data = new ArrayList<InterpreterDataType>();
     private boolean isChangeable;
-    private int startIndex;
-    private int endIndex;
+    private int startIndex = 0;
+    private int endIndex = 0;
     public enum arrayDataType { REAL, INTEGER, CHARACTER, STRING, BOOLEAN }
     private arrayDataType type;
 
@@ -28,6 +28,14 @@ public class ArrayDataType extends InterpreterDataType {
 
     public ArrayList<InterpreterDataType> getData() {
         return data;
+    }
+
+    public int getStartIndex() {
+        return startIndex;
+    }
+
+    public int getEndIndex() {
+        return endIndex;
     }
 
     public boolean isChangeable() {

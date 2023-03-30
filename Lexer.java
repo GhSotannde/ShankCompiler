@@ -81,7 +81,6 @@ public class Lexer {
         knownWords.put("for", Token.tokenType.FOR);
         knownWords.put("from", Token.tokenType.FROM);
         knownWords.put("to", Token.tokenType.TO);
-        knownWords.put("write", Token.tokenType.WRITE);
         knownWords.put("real", Token.tokenType.REAL);
         knownWords.put("boolean", Token.tokenType.BOOLEAN);
         knownWords.put("character", Token.tokenType.CHARACTER);
@@ -96,16 +95,6 @@ public class Lexer {
         knownWords.put("not", Token.tokenType.NOT);
         knownWords.put("and", Token.tokenType.AND);
         knownWords.put("or", Token.tokenType.OR);
-        knownWords.put("read", Token.tokenType.READ);
-        knownWords.put("left", Token.tokenType.LEFT);
-        knownWords.put("right", Token.tokenType.RIGHT);
-        knownWords.put("substring", Token.tokenType.SUBSTRING);
-        knownWords.put("squareroot", Token.tokenType.SQUAREROOT);
-        knownWords.put("getrandom", Token.tokenType.GETRANDOM);
-        knownWords.put("integertoreal", Token.tokenType.INTEGERTOREAL);
-        knownWords.put("realtointeger", Token.tokenType.REALTOINTEGER);
-        knownWords.put("start", Token.tokenType.START);
-        knownWords.put("end", Token.tokenType.END);
         knownWords.put("mod", Token.tokenType.MOD);
         knownWords.put("true", Token.tokenType.TRUE);
         knownWords.put("false", Token.tokenType.FALSE);

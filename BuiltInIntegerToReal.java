@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class BuiltInIntegerToReal extends FunctionNode {
 
     public BuiltInIntegerToReal() {
-        super("IntegerToReal", null, null, null);
+        super("integertoreal", null, null, null);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

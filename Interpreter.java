@@ -312,7 +312,7 @@ public class Interpreter {
                     forNodeFunction(inputLocalVariableMap, newForNode);
                 }
                 else if (inputStatementArray.get(i) instanceof FunctionCallNode) {
-                    
+                    System.out.println("TEST IN LINE 315 of INTERPRETER");
                 }
                 else if (inputStatementArray.get(i) instanceof IfNode) {
                     IfNode newIfNode = (IfNode) inputStatementArray.get(i);

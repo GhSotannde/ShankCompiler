@@ -38,31 +38,7 @@ public class Shank {
 
         ProgramNode programNode = (ProgramNode) parseData.parse();
 
-        //System.out.println(programNode.ToString()); //Prints out node tree created by parser
-
-        BuiltInWrite builtInWrite = new BuiltInWrite();
-        BuiltInLeft builtInLeft = new BuiltInLeft();
-        BuiltInRight builtInRight = new BuiltInRight();
-        BuiltInSubstring builtInSubstring = new BuiltInSubstring();
-        BuiltInSquareRoot builtInSquareRoot = new BuiltInSquareRoot();
-        BuiltInGetRandom builtInGetRandom = new BuiltInGetRandom();
-        BuiltInIntegerToReal builtInIntegerToReal = new BuiltInIntegerToReal();
-        BuiltInRealToInteger builtInRealToInteger = new BuiltInRealToInteger();
-        BuiltInStart builtInStart = new BuiltInStart();
-        BuiltInEnd builtInEnd = new BuiltInEnd();
-        BuiltInRead builtInRead = new BuiltInRead();
-
-        programNode.addToFunctionMap(builtInWrite);
-        programNode.addToFunctionMap(builtInLeft);
-        programNode.addToFunctionMap(builtInRight);
-        programNode.addToFunctionMap(builtInSubstring);
-        programNode.addToFunctionMap(builtInSquareRoot);
-        programNode.addToFunctionMap(builtInGetRandom);
-        programNode.addToFunctionMap(builtInIntegerToReal);
-        programNode.addToFunctionMap(builtInRealToInteger);
-        programNode.addToFunctionMap(builtInStart);
-        programNode.addToFunctionMap(builtInEnd);
-        programNode.addToFunctionMap(builtInRead);
+        System.out.println(programNode.ToString()); //Prints out node tree created by parser
 
         Interpreter interpreter = new Interpreter(programNode.getFunctionMap());
     }

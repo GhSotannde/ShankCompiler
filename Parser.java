@@ -454,7 +454,9 @@ public class Parser {
 
     private Node getTargetNode() throws SyntaxErrorException {
         String targetName;
-        if (tokenArray.size() > 0 && programNode.isAFunction(peek(0).getValue()))
+        if (peek(0).getValue() == null)
+            return null;
+        if (tokenArray.size() > 0 && (programNode.isAFunction(peek(0).getValue()) || programNode.isAFunction(peek(0).getValue().toLowerCase())))
             return null;
         Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
         targetName = (currentToken != null) ? currentToken.getValue() : null;
@@ -550,7 +552,9 @@ public class Parser {
     }
 
     private FunctionCallNode parseFunctionCalls() throws SyntaxErrorException {
-        if (tokenArray.size() > 0 && programNode.isAFunction(peek(0).getValue())) { //Checks if current token's value is the name of a declared function
+        if (peek(0).getValue() == null)
+            return null;
+        if (tokenArray.size() > 0 && (programNode.isAFunction(peek(0).getValue()) || programNode.isAFunction(peek(0).getValue().toLowerCase()))) { //Checks if current token's value is the name of a declared function
             Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
             if (currentToken != null) {
                 String functionName = currentToken.getValue();
@@ -573,6 +577,14 @@ public class Parser {
                         if (newExpression != null) {
                             ParameterNode newParameterNode = new ParameterNode(newExpression);
                             parameterArray.add(newParameterNode);
+                        }
+                        else {
+                            if (peek(0).getToken() == Token.tokenType.IDENTIFIER) {
+                                currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+                                VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(currentToken.getValue());
+                                ParameterNode newParameterNode = new ParameterNode(newVariableReferenceNode);
+                                parameterArray.add(newParameterNode);
+                            }
                         }
                     }
                     currentToken = matchAndRemove(Token.tokenType.COMMA);
@@ -732,6 +744,10 @@ public class Parser {
         if (assignmentStatement != null) {
             return assignmentStatement;
         }
+        FunctionCallNode functionCallStatement = parseFunctionCalls();
+        if (functionCallStatement != null) {
+            return functionCallStatement;
+        }
         IfNode ifStatement = parseIf(false); //False indicates that this is looking for an IF statement and not an ELSIF statement
         if (ifStatement != null) {
             return ifStatement;
@@ -747,10 +763,6 @@ public class Parser {
         ForNode forStatement = parseFor();
         if (forStatement != null) {
             return forStatement;
-        }
-        FunctionCallNode functionCallStatement = parseFunctionCalls();
-        if (functionCallStatement != null) {
-            return functionCallStatement;
         }
         return null;
     }

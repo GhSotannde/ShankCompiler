@@ -4,7 +4,7 @@ import java.util.Random;
 public class BuiltInGetRandom extends FunctionNode {
 
     public BuiltInGetRandom() {
-        super("GetRandom", null, null, null);
+        super("getrandom", null, null, null);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

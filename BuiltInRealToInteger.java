@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class BuiltInRealToInteger extends FunctionNode {
 
     public BuiltInRealToInteger() {
-        super("RealToInteger", null, null, null);
+        super("realtointeger", null, null, null);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class BuiltInSubstring extends FunctionNode {
 
     public BuiltInSubstring() {
-        super("Substring", null, null, null);
+        super("substring", null, null, null);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

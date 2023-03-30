@@ -4,7 +4,7 @@ import java.lang.Math;
 public class BuiltInSquareRoot extends FunctionNode {
 
     public BuiltInSquareRoot() {
-        super("SquareRoot", null, null, null);
+        super("squareroot", null, null, null);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {
