@@ -9,6 +9,191 @@ public class Interpreter {
         }
     }
 
+    private void addArrayToVariableMap(HashMap<String, InterpreterDataType> inputLocalVariableMap, ArrayList<VariableNode> inputArray, boolean inputIsParameterArray) {
+        if (inputIsParameterArray) {
+            if (inputArray != null) {
+                for (int i = 0; i < inputArray.size(); i++) {
+                    VariableNode currentVariableNode = inputArray.get(i);
+                    String name = currentVariableNode.getName();
+                    switch (currentVariableNode.getType()) {
+                        case INTEGER:
+                            IntegerDataType newIntegerData = new IntegerDataType(0, currentVariableNode.getChangeable());
+                            inputLocalVariableMap.put(name, newIntegerData);
+                            break;
+                        case REAL:
+                            RealDataType newRealData = new RealDataType(0, currentVariableNode.getChangeable());
+                            inputLocalVariableMap.put(name, newRealData);
+                            break;
+                        case CHARACTER:
+                            CharacterDataType newCharData = new CharacterDataType(' ', currentVariableNode.getChangeable());
+                            inputLocalVariableMap.put(name, newCharData);
+                            break;
+                        case STRING:
+                            StringDataType newStringData = new StringDataType("", currentVariableNode.getChangeable());
+                            inputLocalVariableMap.put(name, newStringData);
+                            break;
+                        case BOOLEAN:
+                            BooleanDataType newBooleanData = new BooleanDataType(false, currentVariableNode.getChangeable());
+                            inputLocalVariableMap.put(name, newBooleanData);
+                            break;
+                        case ARRAY:
+                            int startIndex = currentVariableNode.getIntFrom();
+                            int endIndex = currentVariableNode.getIntTo();
+                            ArrayDataType newArrayData = null;
+                            switch (currentVariableNode.getArrayType()) {
+                                case INTEGER:
+                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.INTEGER, startIndex, endIndex, currentVariableNode.getChangeable());
+                                    break;
+                                case REAL:
+                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.REAL, startIndex, endIndex, currentVariableNode.getChangeable());
+                                    break;
+                                case CHARACTER:
+                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.CHARACTER, startIndex, endIndex, currentVariableNode.getChangeable());
+                                    break;
+                                case BOOLEAN:
+                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.BOOLEAN, startIndex, endIndex, currentVariableNode.getChangeable());
+                                    break;
+                                case STRING:
+                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.STRING, startIndex, endIndex, currentVariableNode.getChangeable());
+                                    break;
+                                default:
+                                    System.out.println("Error: Array type not detected.");
+                                    System.exit(1);
+                            }
+                            inputLocalVariableMap.put(name, newArrayData);
+                            break;
+                        default:
+                            System.out.println("ERROR: Variable type not detected.");
+                            System.exit(0);
+                            break;
+                    }
+                }
+            }
+        }
+        else {
+            if (inputArray != null) {
+                for (int i = 0; i < inputArray.size(); i++) {
+                    VariableNode currentVariableNode = inputArray.get(i);
+                    String name = currentVariableNode.getName();
+                    if (currentVariableNode.getChangeable() == true) { //Variable
+                        switch (currentVariableNode.getType()) {
+                            case INTEGER:
+                                IntegerDataType newIntegerData = new IntegerDataType(0, true);
+                                inputLocalVariableMap.put(name, newIntegerData);
+                                break;
+                            case REAL:
+                                RealDataType newRealData = new RealDataType(0, true);
+                                inputLocalVariableMap.put(name, newRealData);
+                                break;
+                            case CHARACTER:
+                                CharacterDataType newCharData = new CharacterDataType(' ', true);
+                                inputLocalVariableMap.put(name, newCharData);
+                                break;
+                            case STRING:
+                                StringDataType newStringData = new StringDataType("", true);
+                                inputLocalVariableMap.put(name, newStringData);
+                                break;
+                            case BOOLEAN:
+                                BooleanDataType newBooleanData = new BooleanDataType(false, true);
+                                inputLocalVariableMap.put(name, newBooleanData);
+                                break;
+                            case ARRAY:
+                                int startIndex = currentVariableNode.getIntFrom();
+                                int endIndex = currentVariableNode.getIntTo();
+                                ArrayDataType newArrayData = null;
+                                switch (currentVariableNode.getArrayType()) {
+                                    case INTEGER:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.INTEGER, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    case REAL:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.REAL, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    case CHARACTER:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.CHARACTER, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    case BOOLEAN:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.BOOLEAN, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    case STRING:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.STRING, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    default:
+                                        System.out.println("Error: Array type not detected.");
+                                        System.exit(1);
+                                }
+                                inputLocalVariableMap.put(name, newArrayData);
+                                break;
+                            default:
+                                System.out.println("ERROR: Variable type not detected.");
+                                System.exit(0);
+                                break;
+                        }
+                    }
+                    else { //Constant
+                        switch (currentVariableNode.getType()) {
+                            case INTEGER:
+                                IntegerNode newIntNode = (IntegerNode) currentVariableNode.getValue();
+                                IntegerDataType newIntegerData = new IntegerDataType(newIntNode.getValue(), false);
+                                inputLocalVariableMap.put(name, newIntegerData);
+                                break;
+                            case REAL:
+                                RealNode newRealNode = (RealNode) currentVariableNode.getValue();
+                                RealDataType newRealData = new RealDataType(newRealNode.getValue(), false);
+                                inputLocalVariableMap.put(name, newRealData);
+                                break;
+                            case CHARACTER:
+                                CharacterNode newCharNode = (CharacterNode) currentVariableNode.getValue();
+                                CharacterDataType newCharData = new CharacterDataType(newCharNode.getValue(), false);
+                                inputLocalVariableMap.put(name, newCharData);
+                                break;
+                            case STRING:
+                                StringNode newStringNode = (StringNode) currentVariableNode.getValue();
+                                StringDataType newStringData = new StringDataType(newStringNode.getValue(), false);
+                                inputLocalVariableMap.put(name, newStringData);
+                                break;
+                            case BOOLEAN:
+                                BooleanNode newBooleanNode = (BooleanNode) currentVariableNode.getValue();
+                                BooleanDataType newBooleanData = new BooleanDataType(newBooleanNode.getValue(), false);
+                                inputLocalVariableMap.put(name, newBooleanData);
+                                break;
+                            case ARRAY:
+                                int startIndex = currentVariableNode.getIntFrom();
+                                int endIndex = currentVariableNode.getIntTo();
+                                ArrayDataType newArrayData = null;
+                                switch (currentVariableNode.getArrayType()) {
+                                    case INTEGER:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.INTEGER, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    case REAL:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.REAL, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    case CHARACTER:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.CHARACTER, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    case BOOLEAN:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.BOOLEAN, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    case STRING:
+                                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.STRING, startIndex, endIndex, currentVariableNode.getChangeable());
+                                        break;
+                                    default:
+                                        System.out.println("Error: Array type not detected.");
+                                        System.exit(1);
+                                }
+                                inputLocalVariableMap.put(name, newArrayData);
+                                break;
+                            default:
+                                System.out.println("ERROR: Variable type not detected.");
+                                System.exit(0);
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+
     private void AssignmentNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, AssignmentNode inputAssignmentNode) {
         AssignmentNode currentAssignmentNode = inputAssignmentNode;
         String assignmentTarget = currentAssignmentNode.getTarget().getName();
@@ -352,127 +537,11 @@ public class Interpreter {
 
     private void interpretFunction(FunctionNode inputFunctionNode) throws SyntaxErrorException {
         HashMap<String, InterpreterDataType> localVariableMap = new HashMap<String, InterpreterDataType>();
+        ArrayList<VariableNode> parameterArray = inputFunctionNode.getParameterArray();
         ArrayList<VariableNode> variableArray = inputFunctionNode.getVariableArray();
         ArrayList<StatementNode> statementArray = inputFunctionNode.getStatementArray();
-        if (variableArray != null) {
-            for (int i = 0; i < variableArray.size(); i++) {
-                VariableNode currentVariableNode = variableArray.get(i);
-                String name = currentVariableNode.getName();
-                if (currentVariableNode.getChangeable() == true) { //Variable
-                    switch (currentVariableNode.getType()) {
-                        case INTEGER:
-                            IntegerDataType newIntegerData = new IntegerDataType(0, true);
-                            localVariableMap.put(name, newIntegerData);
-                            break;
-                        case REAL:
-                            RealDataType newRealData = new RealDataType(0, true);
-                            localVariableMap.put(name, newRealData);
-                            break;
-                        case CHARACTER:
-                            CharacterDataType newCharData = new CharacterDataType(' ', true);
-                            localVariableMap.put(name, newCharData);
-                            break;
-                        case STRING:
-                            StringDataType newStringData = new StringDataType(" ", true);
-                            localVariableMap.put(name, newStringData);
-                            break;
-                        case BOOLEAN:
-                            BooleanDataType newBooleanData = new BooleanDataType(false, true);
-                            localVariableMap.put(name, newBooleanData);
-                            break;
-                        case ARRAY:
-                            int startIndex = currentVariableNode.getIntFrom();
-                            int endIndex = currentVariableNode.getIntTo();
-                            ArrayDataType newArrayData = null;
-                            switch (currentVariableNode.getArrayType()) {
-                                case INTEGER:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.INTEGER, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                case REAL:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.REAL, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                case CHARACTER:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.CHARACTER, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                case BOOLEAN:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.BOOLEAN, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                case STRING:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.STRING, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                default:
-                                    System.out.println("Error: Array type not detected.");
-                                    System.exit(1);
-                            }
-                            localVariableMap.put(name, newArrayData);
-                            break;
-                        default:
-                            System.out.println("ERROR: Variable type not detected.");
-                            System.exit(0);
-                            break;
-                    }
-                }
-                else { //Constant
-                    switch (currentVariableNode.getType()) {
-                        case INTEGER:
-                            IntegerNode newIntNode = (IntegerNode) currentVariableNode.getValue();
-                            IntegerDataType newIntegerData = new IntegerDataType(newIntNode.getValue(), false);
-                            localVariableMap.put(name, newIntegerData);
-                            break;
-                        case REAL:
-                            RealNode newRealNode = (RealNode) currentVariableNode.getValue();
-                            RealDataType newRealData = new RealDataType(newRealNode.getValue(), false);
-                            localVariableMap.put(name, newRealData);
-                            break;
-                        case CHARACTER:
-                            CharacterNode newCharNode = (CharacterNode) currentVariableNode.getValue();
-                            CharacterDataType newCharData = new CharacterDataType(newCharNode.getValue(), false);
-                            localVariableMap.put(name, newCharData);
-                            break;
-                        case STRING:
-                            StringNode newStringNode = (StringNode) currentVariableNode.getValue();
-                            StringDataType newStringData = new StringDataType(newStringNode.getValue(), false);
-                            localVariableMap.put(name, newStringData);
-                            break;
-                        case BOOLEAN:
-                            BooleanNode newBooleanNode = (BooleanNode) currentVariableNode.getValue();
-                            BooleanDataType newBooleanData = new BooleanDataType(newBooleanNode.getValue(), false);
-                            localVariableMap.put(name, newBooleanData);
-                            break;
-                        case ARRAY:
-                            int startIndex = currentVariableNode.getIntFrom();
-                            int endIndex = currentVariableNode.getIntTo();
-                            ArrayDataType newArrayData = null;
-                            switch (currentVariableNode.getArrayType()) {
-                                case INTEGER:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.INTEGER, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                case REAL:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.REAL, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                case CHARACTER:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.CHARACTER, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                case BOOLEAN:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.BOOLEAN, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                case STRING:
-                                    newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.STRING, startIndex, endIndex, currentVariableNode.getChangeable());
-                                    break;
-                                default:
-                                    System.out.println("Error: Array type not detected.");
-                                    System.exit(1);
-                            }
-                            localVariableMap.put(name, newArrayData);
-                            break;
-                        default:
-                            System.out.println("ERROR: Variable type not detected.");
-                            System.exit(0);
-                            break;
-                    }
-                }
-            }
-        }
+        addArrayToVariableMap(localVariableMap, parameterArray, true);
+        addArrayToVariableMap(localVariableMap, variableArray, false);
         interpretBlock(localVariableMap, statementArray);
     }
 

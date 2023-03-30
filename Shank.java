@@ -38,7 +38,7 @@ public class Shank {
 
         ProgramNode programNode = (ProgramNode) parseData.parse();
 
-        System.out.println(programNode.ToString()); //Prints out node tree created by parser
+        //System.out.println(programNode.ToString()); //Prints out node tree created by parser
 
         Interpreter interpreter = new Interpreter(programNode.getFunctionMap());
     }

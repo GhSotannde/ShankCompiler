@@ -76,6 +76,10 @@ public class FunctionNode extends Node {
         return name;
     }
 
+    public ArrayList<VariableNode> getParameterArray() {
+        return parameterArray;
+    }
+
     public ArrayList<VariableNode> getVariableArray() {
         return variableArray;
     }
