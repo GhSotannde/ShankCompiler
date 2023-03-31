@@ -8,6 +8,7 @@ public class MathOpNode extends StatementNode {
     private int intValue;
     private String stringValue = null;
     private boolean isReal;
+    private boolean isInteger;
     
     public MathOpNode() {
     }
@@ -42,6 +43,7 @@ public class MathOpNode extends StatementNode {
 
     public void setValue(int inputValue) {
         intValue = inputValue;
+        isInteger = true;
     }
 
     public int getIntValue() {
@@ -79,6 +81,10 @@ public class MathOpNode extends StatementNode {
 
     public boolean isReal() {
         return isReal;
+    }
+
+    public boolean isInteger() {
+        return isInteger;
     }
 
   

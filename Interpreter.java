@@ -206,7 +206,170 @@ public class Interpreter {
             System.out.println("ERROR: Cannot change the value of a constant.");
             System.exit(17);
         }
-        if (assignmentValue instanceof IntegerNode) {
+        if (currentAssignmentNode.getTarget().getIndex() != null) {
+            if (inputLocalVariableMap.get(assignmentTarget) instanceof ArrayDataType) {
+                ArrayDataType array = (ArrayDataType) inputLocalVariableMap.get(assignmentTarget);
+                if (assignmentValue instanceof IntegerNode && array.getArrayType() == ArrayDataType.arrayDataType.INTEGER) {
+                    IntegerNode intAssignmentValue = (IntegerNode) assignmentValue;
+                    int intValue = intAssignmentValue.getValue();
+                    IntegerDataType newIntegerData = new IntegerDataType(intValue, false);
+                    if (currentAssignmentNode.getTarget().getIndex() instanceof IntegerNode) {
+                        IntegerNode arrayIndexNode = (IntegerNode) currentAssignmentNode.getTarget().getIndex();
+                        int arrayIndex = arrayIndexNode.getValue();
+                        array.setIndex(arrayIndex, newIntegerData);
+                    }
+                    else if (currentAssignmentNode.getTarget().getIndex() instanceof VariableReferenceNode) {
+                        VariableReferenceNode variableReferenceIndex = (VariableReferenceNode) currentAssignmentNode.getTarget().getIndex();
+                        if (inputLocalVariableMap.containsKey(variableReferenceIndex.getName())) {
+                            InterpreterDataType referencedData = inputLocalVariableMap.get(variableReferenceIndex.getName());
+                            if (referencedData instanceof IntegerDataType) {
+                                IntegerDataType indexData = (IntegerDataType) referencedData;
+                                int index = indexData.getData();
+                                array.setIndex(index, newIntegerData);
+                            }
+                            else {
+                                System.out.println("ERROR: Index provided for array is of an incorrect data type.");
+                                System.exit(20);
+                            }
+                        }
+                        else {
+                            System.out.println("ERROR: Variable referenced in array index not found.");
+                            System.exit(19);
+                        }
+                    }
+                    inputLocalVariableMap.put(assignmentTarget, array);             
+                }
+                else if (assignmentValue instanceof RealNode && array.getArrayType() == ArrayDataType.arrayDataType.REAL) {
+                    RealNode realAssignmentValue = (RealNode) assignmentValue;
+                    float realValue = realAssignmentValue.getValue();
+                    RealDataType newRealData = new RealDataType(realValue, false);
+                    if (currentAssignmentNode.getTarget().getIndex() instanceof IntegerNode) {
+                        IntegerNode arrayIndexNode = (IntegerNode) currentAssignmentNode.getTarget().getIndex();
+                        int arrayIndex = arrayIndexNode.getValue();
+                        array.setIndex(arrayIndex, newRealData);
+                    }
+                    else if (currentAssignmentNode.getTarget().getIndex() instanceof VariableReferenceNode) {
+                        VariableReferenceNode variableReferenceIndex = (VariableReferenceNode) currentAssignmentNode.getTarget().getIndex();
+                        if (inputLocalVariableMap.containsKey(variableReferenceIndex.getName())) {
+                            InterpreterDataType referencedData = inputLocalVariableMap.get(variableReferenceIndex.getName());
+                            if (referencedData instanceof IntegerDataType) {
+                                IntegerDataType indexData = (IntegerDataType) referencedData;
+                                int index = indexData.getData();
+                                array.setIndex(index, newRealData);
+                            }
+                            else {
+                                System.out.println("ERROR: Index provided for array is of an incorrect data type.");
+                                System.exit(20);
+                            }
+                        }
+                        else {
+                            System.out.println("ERROR: Variable referenced in array index not found.");
+                            System.exit(19);
+                        }
+                    }
+                    inputLocalVariableMap.put(assignmentTarget, array);
+                }
+                else if (assignmentValue instanceof CharacterNode && array.getArrayType() == ArrayDataType.arrayDataType.CHARACTER) {
+                    CharacterNode characterAssignmentValue = (CharacterNode) assignmentValue;
+                    char characterValue = characterAssignmentValue.getValue();
+                    CharacterDataType newCharacterData = new CharacterDataType(characterValue, false);
+                    if (currentAssignmentNode.getTarget().getIndex() instanceof IntegerNode) {
+                        IntegerNode arrayIndexNode = (IntegerNode) currentAssignmentNode.getTarget().getIndex();
+                        int arrayIndex = arrayIndexNode.getValue();
+                        array.setIndex(arrayIndex, newCharacterData);
+                    }
+                    else if (currentAssignmentNode.getTarget().getIndex() instanceof VariableReferenceNode) {
+                        VariableReferenceNode variableReferenceIndex = (VariableReferenceNode) currentAssignmentNode.getTarget().getIndex();
+                        if (inputLocalVariableMap.containsKey(variableReferenceIndex.getName())) {
+                            InterpreterDataType referencedData = inputLocalVariableMap.get(variableReferenceIndex.getName());
+                            if (referencedData instanceof IntegerDataType) {
+                                IntegerDataType indexData = (IntegerDataType) referencedData;
+                                int index = indexData.getData();
+                                array.setIndex(index, newCharacterData);
+                            }
+                            else {
+                                System.out.println("ERROR: Index provided for array is of an incorrect data type.");
+                                System.exit(20);
+                            }
+                        }
+                        else {
+                            System.out.println("ERROR: Variable referenced in array index not found.");
+                            System.exit(19);
+                        }
+                    }
+                    inputLocalVariableMap.put(assignmentTarget, array);
+                }
+                else if (assignmentValue instanceof BooleanNode && array.getArrayType() == ArrayDataType.arrayDataType.BOOLEAN) {
+                    BooleanNode booleanAssignmentValue = (BooleanNode) assignmentValue;
+                    boolean booleanValue = booleanAssignmentValue.getValue();
+                    BooleanDataType newBooleanData = new BooleanDataType(booleanValue, false);
+                    if (currentAssignmentNode.getTarget().getIndex() instanceof IntegerNode) {
+                        IntegerNode arrayIndexNode = (IntegerNode) currentAssignmentNode.getTarget().getIndex();
+                        int arrayIndex = arrayIndexNode.getValue();
+                        array.setIndex(arrayIndex, newBooleanData);
+                    }
+                    else if (currentAssignmentNode.getTarget().getIndex() instanceof VariableReferenceNode) {
+                        VariableReferenceNode variableReferenceIndex = (VariableReferenceNode) currentAssignmentNode.getTarget().getIndex();
+                        if (inputLocalVariableMap.containsKey(variableReferenceIndex.getName())) {
+                            InterpreterDataType referencedData = inputLocalVariableMap.get(variableReferenceIndex.getName());
+                            if (referencedData instanceof IntegerDataType) {
+                                IntegerDataType indexData = (IntegerDataType) referencedData;
+                                int index = indexData.getData();
+                                array.setIndex(index, newBooleanData);
+                            }
+                            else {
+                                System.out.println("ERROR: Index provided for array is of an incorrect data type.");
+                                System.exit(20);
+                            }
+                        }
+                        else {
+                            System.out.println("ERROR: Variable referenced in array index not found.");
+                            System.exit(19);
+                        }
+                    }
+                    inputLocalVariableMap.put(assignmentTarget, array);
+                }
+                else if (assignmentValue instanceof StringNode && array.getArrayType() == ArrayDataType.arrayDataType.STRING) {
+                    StringNode stringAssignmentValue = (StringNode) assignmentValue;
+                    String stringValue = stringAssignmentValue.getValue();
+                    StringDataType newStringData = new StringDataType(stringValue, false);
+                    if (currentAssignmentNode.getTarget().getIndex() instanceof IntegerNode) {
+                        IntegerNode arrayIndexNode = (IntegerNode) currentAssignmentNode.getTarget().getIndex();
+                        int arrayIndex = arrayIndexNode.getValue();
+                        array.setIndex(arrayIndex, newStringData);
+                    }
+                    else if (currentAssignmentNode.getTarget().getIndex() instanceof VariableReferenceNode) {
+                        VariableReferenceNode variableReferenceIndex = (VariableReferenceNode) currentAssignmentNode.getTarget().getIndex();
+                        if (inputLocalVariableMap.containsKey(variableReferenceIndex.getName())) {
+                            InterpreterDataType referencedData = inputLocalVariableMap.get(variableReferenceIndex.getName());
+                            if (referencedData instanceof IntegerDataType) {
+                                IntegerDataType indexData = (IntegerDataType) referencedData;
+                                int index = indexData.getData();
+                                array.setIndex(index, newStringData);
+                            }
+                            else {
+                                System.out.println("ERROR: Index provided for array is of an incorrect data type.");
+                                System.exit(20);
+                            }
+                        }
+                        else {
+                            System.out.println("ERROR: Variable referenced in array index not found.");
+                            System.exit(19);
+                        }
+                    }
+                    inputLocalVariableMap.put(assignmentTarget, array);
+                }
+                else {
+                    System.out.println("ERROR: Assignment data type does not match array data type.");
+                    System.exit(18);
+                }
+            }
+            else {
+                System.out.println("ERROR: Index given for non-array data type.");
+                System.exit(18);
+            }
+        }
+        else if (assignmentValue instanceof IntegerNode) {
             IntegerNode currentIntegerNode = (IntegerNode) assignmentValue;
             IntegerDataType newIntegerData = new IntegerDataType(currentIntegerNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
             inputLocalVariableMap.put(assignmentTarget, newIntegerData); //Add new Integer data to the variable map, with the assignment target as its variable name
@@ -516,7 +679,6 @@ public class Interpreter {
             ArrayList<ParameterNode> functionCallParameterArray = inputFunctionCallNode.getParameterArray();
             for (int i = 0; i < functionCallParameterArray.size(); i++) { 
                 ParameterNode currentFunctionCallParameterNode = functionCallParameterArray.get(i);
-                VariableNode.variableType variableReferencedByFunctionCallType = null;
                 if (currentFunctionCallParameterNode.getChangeable() == false && currentFunctionCallParameterNode.getExpression() != null) {
                     Node functionCallArgumentExpression = currentFunctionCallParameterNode.getExpression();
                     if (functionCallArgumentExpression instanceof BooleanCompareNode) {
@@ -769,7 +931,9 @@ public class Interpreter {
     private void functionCallNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, FunctionCallNode inputFunctionCallNode) throws SyntaxErrorException {
         ArrayList<InterpreterDataType> functionCallArgumentArray = new ArrayList<InterpreterDataType>();
         functionCallArgumentArray = collectFunctionCallArguments(inputLocalVariableMap, inputFunctionCallNode);
-        // HERE!!!! CHECKING FOR CORRECT PARAMETER AMOUNT/TYPE/CHANGEABILITY IS COMPLETE! Now we have a interpreterDataType array with function call arguments
+        functionMap.get(inputFunctionCallNode.getName()).setArgumentArray(functionCallArgumentArray);
+        interpretFunction(functionMap.get(inputFunctionCallNode.getName()));
+        // ~~~~~~~~~~~~~~~~~~~~~~HERE!!!! CHECKING FOR CORRECT PARAMETER AMOUNT/TYPE/CHANGEABILITY IS COMPLETE! Now we have a interpreterDataType array with function call arguments
     }
 
     private void ifNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, IfNode inputIfNode) throws SyntaxErrorException {
@@ -810,7 +974,6 @@ public class Interpreter {
                     forNodeFunction(inputLocalVariableMap, newForNode);
                 }
                 else if (inputStatementArray.get(i) instanceof FunctionCallNode) {
-                    System.out.println("TEST IN LINE 315 of INTERPRETER");
                     FunctionCallNode newFunctionCallNode = (FunctionCallNode) inputStatementArray.get(i);
                     functionCallNodeFunction(inputLocalVariableMap, newFunctionCallNode);
                 }
@@ -855,9 +1018,6 @@ public class Interpreter {
         ArrayList<VariableNode> parameterArray = inputFunctionNode.getParameterArray();
         ArrayList<VariableNode> variableArray = inputFunctionNode.getVariableArray();
         ArrayList<StatementNode> statementArray = inputFunctionNode.getStatementArray();
-        /*The problem is that this function below is adding all of the parameters from custom and built in functions to the variable map.
-         * We need to keep track of the parameters, 
-         */
         addVariableArrayToVariableMap(localVariableMap, parameterArray, true);
         addVariableArrayToVariableMap(localVariableMap, variableArray, false);
         interpretBlock(localVariableMap, statementArray);

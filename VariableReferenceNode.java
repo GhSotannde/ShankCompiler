@@ -16,6 +16,29 @@ public class VariableReferenceNode extends StatementNode{
         return name;
     }
 
+    public Node getIndex() {
+        if (arrayIndexExpression instanceof IntegerNode) {
+            IntegerNode intNodeIndex = (IntegerNode) arrayIndexExpression;
+            return intNodeIndex;
+        }
+        else if (arrayIndexExpression instanceof MathOpNode) {
+            MathOpNode mathOpNodeIndex = (MathOpNode) arrayIndexExpression;
+            if (mathOpNodeIndex.isInteger()) {
+                IntegerNode intNodeIndex = new IntegerNode(mathOpNodeIndex.getIntValue());
+                return intNodeIndex;
+            }
+            else {
+                System.out.println("ERROR: Incorrect data type given for array index.");
+                System.exit(0);
+            }
+        }
+        else if (arrayIndexExpression instanceof VariableReferenceNode) {
+            VariableReferenceNode newVariableReferenceNode = (VariableReferenceNode) arrayIndexExpression;
+            return newVariableReferenceNode;
+        }
+        return null;
+    }
+
     public String ToString() {
         String str = "VariableReferenceNode(Name:" + name;
         // Will call the ToString method for all nested expressions within array index

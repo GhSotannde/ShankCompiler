@@ -48,6 +48,62 @@ public class Parser {
         return programNode;
     }
 
+    private void addConstantToArray(ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
+        int negativeMultiplier;
+        Token currentToken;
+        do {
+            currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+            negativeMultiplier = 1;
+            if (currentToken != null) {
+                String functionName = currentToken.getValue();
+                if (matchAndRemove(Token.tokenType.COMPARISONEQUAL) != null) {
+                    currentToken = matchAndRemove(Token.tokenType.MINUS);
+                    //If a minus sign is detected in front of a number, will multiply detected number by -1
+                    if (currentToken != null) {
+                        negativeMultiplier = -1;
+                    }
+                    switch (peek(0).getToken()) { //Searches for the constant type and adds the constant to the variable node array
+                        case REAL:
+                            currentToken = matchAndRemove(Token.tokenType.REAL);
+                            float realValue = Float.parseFloat(currentToken.getValue());
+                            RealNode newRealNode = new RealNode(realValue * negativeMultiplier);
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.REAL, false, newRealNode));
+                            break;
+                        case INTEGER:
+                            currentToken = matchAndRemove(Token.tokenType.INTEGER);
+                            int intValue = Integer.parseInt(currentToken.getValue());
+                            IntegerNode newIntegerNode = new IntegerNode((int) intValue * negativeMultiplier);
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.INTEGER, false, newIntegerNode));
+                            break;
+                        case CHARACTERLITERAL:
+                            currentToken = matchAndRemove(Token.tokenType.CHARACTERLITERAL);
+                            CharacterNode newCharacterNode = new CharacterNode(currentToken.getValue().charAt(0));
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.CHARACTER, false, newCharacterNode));
+                            break;
+                        case STRINGLITERAL:
+                            currentToken = matchAndRemove(Token.tokenType.STRINGLITERAL);
+                            StringNode newStringNode = new StringNode(currentToken.getValue());
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.STRING, false, newStringNode));
+                            break;
+                        case TRUE:
+                            currentToken = matchAndRemove(Token.tokenType.TRUE);
+                            BooleanNode newBooleanTrueNode = new BooleanNode(true);
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.BOOLEAN, false, newBooleanTrueNode));
+                            break;
+                        case FALSE:
+                            currentToken = matchAndRemove(Token.tokenType.FALSE);
+                            BooleanNode newBooleanFalseNode = new BooleanNode(false);
+                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.BOOLEAN, false, newBooleanFalseNode));
+                            break;
+                        default:
+                            throw new SyntaxErrorException(tokenArray.get(0));
+                    }
+                } else throw new SyntaxErrorException(tokenArray.get(0));
+            } else throw new SyntaxErrorException(tokenArray.get(0));
+        currentToken = matchAndRemove(Token.tokenType.COMMA); //If a comma follows the data, another constant should exist
+        } while (currentToken != null);
+    }
+
     private void addVariableNodesToArray(boolean inputChangeable, ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
         ArrayList<String> variableNameArray = new ArrayList<String>(); //Used to store multiple variable declarations that are on the same line
         Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
@@ -152,62 +208,6 @@ public class Parser {
             } else throw new SyntaxErrorException(tokenArray.get(0));
         } else throw new SyntaxErrorException(tokenArray.get(0));
     }
-
-    private void addConstantToArray(ArrayList<VariableNode> inputVariableNodeArray) throws SyntaxErrorException {
-        int negativeMultiplier;
-        Token currentToken;
-        do {
-            currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
-            negativeMultiplier = 1;
-            if (currentToken != null) {
-                String functionName = currentToken.getValue();
-                if (matchAndRemove(Token.tokenType.COMPARISONEQUAL) != null) {
-                    currentToken = matchAndRemove(Token.tokenType.MINUS);
-                    //If a minus sign is detected in front of a number, will multiply detected number by -1
-                    if (currentToken != null) {
-                        negativeMultiplier = -1;
-                    }
-                    switch (peek(0).getToken()) { //Searches for the constant type and adds the constant to the variable node array
-                        case REAL:
-                            currentToken = matchAndRemove(Token.tokenType.REAL);
-                            float realValue = Float.parseFloat(currentToken.getValue());
-                            RealNode newRealNode = new RealNode(realValue * negativeMultiplier);
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.REAL, false, newRealNode));
-                            break;
-                        case INTEGER:
-                            currentToken = matchAndRemove(Token.tokenType.INTEGER);
-                            int intValue = Integer.parseInt(currentToken.getValue());
-                            IntegerNode newIntegerNode = new IntegerNode((int) intValue * negativeMultiplier);
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.INTEGER, false, newIntegerNode));
-                            break;
-                        case CHARACTERLITERAL:
-                            currentToken = matchAndRemove(Token.tokenType.CHARACTERLITERAL);
-                            CharacterNode newCharacterNode = new CharacterNode(currentToken.getValue().charAt(0));
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.CHARACTER, false, newCharacterNode));
-                            break;
-                        case STRINGLITERAL:
-                            currentToken = matchAndRemove(Token.tokenType.STRINGLITERAL);
-                            StringNode newStringNode = new StringNode(currentToken.getValue());
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.STRING, false, newStringNode));
-                            break;
-                        case TRUE:
-                            currentToken = matchAndRemove(Token.tokenType.TRUE);
-                            BooleanNode newBooleanTrueNode = new BooleanNode(true);
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.BOOLEAN, false, newBooleanTrueNode));
-                            break;
-                        case FALSE:
-                            currentToken = matchAndRemove(Token.tokenType.FALSE);
-                            BooleanNode newBooleanFalseNode = new BooleanNode(false);
-                            inputVariableNodeArray.add(new VariableNode(functionName, VariableNode.variableType.BOOLEAN, false, newBooleanFalseNode));
-                            break;
-                        default:
-                            throw new SyntaxErrorException(tokenArray.get(0));
-                    }
-                } else throw new SyntaxErrorException(tokenArray.get(0));
-            } else throw new SyntaxErrorException(tokenArray.get(0));
-        currentToken = matchAndRemove(Token.tokenType.COMMA); //If a comma follows the data, another constant should exist
-        } while (currentToken != null);
-    }
     
     private AssignmentNode assignment() throws SyntaxErrorException {
         Node targetNode = getTargetNode();
@@ -272,7 +272,7 @@ public class Parser {
                                         matchAndRemove(Token.tokenType.BOOLEAN);
                                         matchAndRemove(Token.tokenType.STRING);
                                         for (int i = 0; i < inputNameArray.size(); i++) {
-                                            inputVariableNodeArray.add(new VariableNode(inputNameArray.get(i), arrayType, from, to, VariableNode.variableType.ARRAY));
+                                            inputVariableNodeArray.add(new VariableNode(inputNameArray.get(i), from, to, arrayType));
                                         }
                                     } else throw new SyntaxErrorException(tokenArray.get(0));
                                 } else throw new SyntaxErrorException(tokenArray.get(0));

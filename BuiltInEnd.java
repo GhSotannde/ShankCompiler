@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class BuiltInEnd extends FunctionNode {
 
-    VariableNode arrayParameter = new VariableNode("someArray", VariableNode.variableType.ARRAY, true);
+    VariableNode arrayParameter = new VariableNode("someArray", 0, 0, VariableNode.variableType.INTEGER);
     static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
     
     public BuiltInEnd() {
