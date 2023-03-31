@@ -168,26 +168,6 @@ public class VariableNode extends Node {
         return realTo;
     }
 
-    public float[] getRealArray() {
-        return realArray;
-    }
-
-    public int[] getIntArray() {
-        return intArray;
-    }
-
-    public boolean[] getBoolArray() {
-        return boolArray;
-    }
-
-    public String[] getStringArray() {
-        return stringArray;
-    }
-
-    public char[] getCharArray() {
-        return charArray;
-    }
-
     public int getHasTypeLimit() {
         return hasTypeLimit;
     }

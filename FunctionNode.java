@@ -36,6 +36,10 @@ public class FunctionNode extends Node {
         return name;
     }
 
+    public ArrayList<InterpreterDataType> getArgumentArray() {
+        return argumentArray;
+    }
+
     public ArrayList<VariableNode> getParameterArray() {
         return parameterArray;
     }

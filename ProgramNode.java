@@ -1,7 +1,7 @@
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class ProgramNode extends Node {
-    private HashMap<String, FunctionNode> functionMap = new HashMap<String, FunctionNode>();
+    private LinkedHashMap<String, FunctionNode> functionMap = new LinkedHashMap<String, FunctionNode>();
 
     private BuiltInWrite builtInWrite = new BuiltInWrite();
     private BuiltInLeft builtInLeft = new BuiltInLeft();
@@ -45,7 +45,7 @@ public class ProgramNode extends Node {
         return functionMap.containsKey(inputString);
     }
 
-    public HashMap<String, FunctionNode> getFunctionMap() {
+    public LinkedHashMap<String, FunctionNode> getFunctionMap() {
         return functionMap;
     }
 }

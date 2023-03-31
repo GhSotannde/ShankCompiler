@@ -2,17 +2,18 @@ import java.util.*;
 
 public class Interpreter {
 
-    private HashMap<String, FunctionNode> functionMap;
+    private LinkedHashMap<String, FunctionNode> functionMap;
 
-    public Interpreter(HashMap<String, FunctionNode> inputFunctionMap) throws SyntaxErrorException {
+    public Interpreter(LinkedHashMap<String, FunctionNode> inputFunctionMap) throws SyntaxErrorException {
         functionMap = inputFunctionMap;
-        Collection<FunctionNode> functionArray = inputFunctionMap.values();
+        Collection<FunctionNode> functionArray = functionMap.values();
         for (FunctionNode function : functionArray) {
-            interpretFunction(function);
+            LinkedHashMap<String, InterpreterDataType> localVariableMap = new LinkedHashMap<String, InterpreterDataType>();
+            interpretFunction(localVariableMap, function);
         }
     }
-
-    private void addVariableArrayToVariableMap(HashMap<String, InterpreterDataType> inputLocalVariableMap, ArrayList<VariableNode> inputArray, boolean inputIsParameterArray) {
+    // ####################   addVariableArrayToVariableMap(inputLocalVariableMap, parameterArray, true);
+    private void addVariableArrayToVariableMap(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, ArrayList<VariableNode> inputArray, boolean inputIsParameterArray) {
         if (inputIsParameterArray) {
             if (inputArray != null) {
                 for (int i = 0; i < inputArray.size(); i++) {
@@ -198,13 +199,42 @@ public class Interpreter {
         }
     }
 
-    private void AssignmentNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, AssignmentNode inputAssignmentNode) {
+    private void AssignmentNodeFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, AssignmentNode inputAssignmentNode) throws SyntaxErrorException {
         AssignmentNode currentAssignmentNode = inputAssignmentNode;
         String assignmentTarget = currentAssignmentNode.getTarget().getName();
         Node assignmentValue = currentAssignmentNode.getValue();
         if (!(inputLocalVariableMap.get(assignmentTarget).isChangeable())) { //System exits and gives error message if user attempts to alter a constant
             System.out.println("ERROR: Cannot change the value of a constant.");
             System.exit(17);
+        }
+        if (assignmentValue instanceof VariableReferenceNode) {
+            VariableReferenceNode variableReferenceNode = (VariableReferenceNode) assignmentValue;
+            InterpreterDataType variableReferenceData = VariableReferenceNodeFunction(inputLocalVariableMap, variableReferenceNode);
+            if (variableReferenceData instanceof IntegerDataType) {
+                IntegerDataType integerData = (IntegerDataType) variableReferenceData;
+                IntegerNode integerNode = new IntegerNode(integerData.getData());
+                assignmentValue = integerNode;
+            }
+            else if (variableReferenceData instanceof StringDataType) {
+                StringDataType stringData = (StringDataType) variableReferenceData;
+                StringNode stringNode = new StringNode(stringData.getData());
+                assignmentValue = stringNode;
+            }
+            else if (variableReferenceData instanceof RealDataType) {
+                RealDataType realData = (RealDataType) variableReferenceData;
+                RealNode realNode = new RealNode(realData.getData());
+                assignmentValue = realNode;
+            }
+            else if (variableReferenceData instanceof BooleanDataType) {
+                BooleanDataType booleanData = (BooleanDataType) variableReferenceData;
+                BooleanNode booleanNode = new BooleanNode(booleanData.getData());
+                assignmentValue = booleanNode;
+            }
+            else if (variableReferenceData instanceof CharacterDataType) {
+                CharacterDataType characterData = (CharacterDataType) variableReferenceData;
+                CharacterNode characterNode = new CharacterNode(characterData.getData());
+                assignmentValue = characterNode;
+            }
         }
         if (currentAssignmentNode.getTarget().getIndex() != null) {
             if (inputLocalVariableMap.get(assignmentTarget) instanceof ArrayDataType) {
@@ -423,7 +453,7 @@ public class Interpreter {
         }
     }
 
-    private BooleanDataType booleanCompareNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, BooleanCompareNode inputBooleanCompareNode) {
+    private BooleanDataType booleanCompareNodeFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, BooleanCompareNode inputBooleanCompareNode) {
         Node leftChild = expression(inputLocalVariableMap, inputBooleanCompareNode.getLeftChild()); //Run both children through expression to simplify any nodes down to a basic data type
         Node rightChild = expression(inputLocalVariableMap, inputBooleanCompareNode.getRightChild());
         boolean value = false;
@@ -499,7 +529,7 @@ public class Interpreter {
         return newBooleanData;
     }
 
-    private ArrayList<InterpreterDataType> collectFunctionCallArguments(HashMap<String, InterpreterDataType> inputLocalVariableMap, FunctionCallNode inputFunctionCallNode) throws SyntaxErrorException {
+    private ArrayList<InterpreterDataType> collectFunctionCallArguments(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, FunctionCallNode inputFunctionCallNode) throws SyntaxErrorException {
         ArrayList<InterpreterDataType> functionCallArgumentArray = new ArrayList<InterpreterDataType>();
         String functionName = inputFunctionCallNode.getName().toLowerCase();
         if (!functionMap.containsKey(functionName)) {
@@ -801,7 +831,7 @@ public class Interpreter {
         return functionCallArgumentArray;
     }
 
-    private Node expression(HashMap<String, InterpreterDataType> inputLocalVariableMap, Node inputNode) {
+    private Node expression(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, Node inputNode) {
         if (inputNode instanceof MathOpNode) {
             MathOpNode currentMathOpNode = (MathOpNode) inputNode;
             Node leftChild = expression(inputLocalVariableMap, currentMathOpNode.getLeftChild()); //Recursively calls expression in order to simplify nested MathOpNodes
@@ -902,7 +932,7 @@ public class Interpreter {
         return null;
     }
 
-    private void forNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, ForNode inputForNode) throws SyntaxErrorException {
+    private void forNodeFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, ForNode inputForNode) throws SyntaxErrorException {
         Node fromNode = expression(inputLocalVariableMap, inputForNode.getFrom()); //Simplifies possibly complex From node expression
         Node toNode = expression(inputLocalVariableMap, inputForNode.getTo()); //Does the same for To node
         if (!(fromNode instanceof IntegerNode && toNode instanceof IntegerNode)) { //For node From and To values must be expressed as integers
@@ -928,15 +958,15 @@ public class Interpreter {
         }
     }
 
-    private void functionCallNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, FunctionCallNode inputFunctionCallNode) throws SyntaxErrorException {
+    private void functionCallNodeFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, FunctionCallNode inputFunctionCallNode) throws SyntaxErrorException {
         ArrayList<InterpreterDataType> functionCallArgumentArray = new ArrayList<InterpreterDataType>();
         functionCallArgumentArray = collectFunctionCallArguments(inputLocalVariableMap, inputFunctionCallNode);
         functionMap.get(inputFunctionCallNode.getName()).setArgumentArray(functionCallArgumentArray);
-        interpretFunction(functionMap.get(inputFunctionCallNode.getName()));
+        interpretFunction(inputLocalVariableMap, functionMap.get(inputFunctionCallNode.getName()));
         // ~~~~~~~~~~~~~~~~~~~~~~HERE!!!! CHECKING FOR CORRECT PARAMETER AMOUNT/TYPE/CHANGEABILITY IS COMPLETE! Now we have a interpreterDataType array with function call arguments
     }
 
-    private void ifNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, IfNode inputIfNode) throws SyntaxErrorException {
+    private void ifNodeFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, IfNode inputIfNode) throws SyntaxErrorException {
         BooleanCompareNode ifNodeConditionNode = inputIfNode.getCondition();
         BooleanDataType ifNodeCondition = booleanCompareNodeFunction(inputLocalVariableMap, ifNodeConditionNode);
         while (ifNodeCondition.getData() == false) { //Continues through linked list of if, elsif nodes until a condition is true
@@ -950,7 +980,7 @@ public class Interpreter {
             interpretBlock(inputLocalVariableMap, inputIfNode.getStatements());
     }
 
-    private void interpretBlock(HashMap<String, InterpreterDataType> inputLocalVariableMap, ArrayList<StatementNode> inputStatementArray) throws SyntaxErrorException {
+    private void interpretBlock(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, ArrayList<StatementNode> inputStatementArray) throws SyntaxErrorException {
         if (inputStatementArray != null) {
             for (int i = 0; i < inputStatementArray.size(); i++) {
                 if (inputStatementArray.get(i) instanceof AssignmentNode) {
@@ -1013,17 +1043,31 @@ public class Interpreter {
         }
     }
 
-    private void interpretFunction(FunctionNode inputFunctionNode) throws SyntaxErrorException {
-        HashMap<String, InterpreterDataType> localVariableMap = new HashMap<String, InterpreterDataType>();
+    private void interpretFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, FunctionNode inputFunctionNode) throws SyntaxErrorException {
         ArrayList<VariableNode> parameterArray = inputFunctionNode.getParameterArray();
         ArrayList<VariableNode> variableArray = inputFunctionNode.getVariableArray();
         ArrayList<StatementNode> statementArray = inputFunctionNode.getStatementArray();
-        addVariableArrayToVariableMap(localVariableMap, parameterArray, true);
-        addVariableArrayToVariableMap(localVariableMap, variableArray, false);
-        interpretBlock(localVariableMap, statementArray);
+        // ~~~~~~~~~~~~~~~~~~~ GOOD UNTIL HERE! a = 1, b = 2, c = 0
+        addVariableArrayToVariableMap(inputLocalVariableMap, parameterArray, true); //~~~~~~~~~~~~~~THE PROBLEM MUST BE IN HERE.################################
+        addVariableArrayToVariableMap(inputLocalVariableMap, variableArray, false);  //~~~~~~~~~~Parameter array's values are not being transferred correctly
+        if (inputLocalVariableMap.containsKey("a")) {
+            System.out.println(inputLocalVariableMap.get("a").ToString());
+        }
+        if (inputLocalVariableMap.containsKey("b")) {
+            System.out.println(inputLocalVariableMap.get("b").ToString());
+        }
+        if (inputLocalVariableMap.containsKey("c")) {
+            System.out.println(inputLocalVariableMap.get("c").ToString());
+        }
+        //~~~~~~~~~~~~~~~~~~~ BAD BAD BAD. All Values are 0 in the variableMap
+        interpretBlock(inputLocalVariableMap, statementArray);
+        /* if (inputLocalVariableMap.containsKey("names")) {
+            ArrayDataType names = (ArrayDataType) inputLocalVariableMap.get("names");
+            System.out.println(names.getDataAtIndex(1).ToString());
+        } */
     }
 
-    private InterpreterDataType MathOpNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, MathOpNode inputMathOpNode) throws SyntaxErrorException {
+    private InterpreterDataType MathOpNodeFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, MathOpNode inputMathOpNode) throws SyntaxErrorException {
         Node leftChildNode = expression(inputLocalVariableMap, inputMathOpNode.getLeftChild());
         Node rightChildNode = expression(inputLocalVariableMap, inputMathOpNode.getRightChild());
         if (leftChildNode instanceof StringNode && rightChildNode instanceof StringNode) { //Can only perform operations on data of the same type
@@ -1044,7 +1088,7 @@ public class Interpreter {
             return null;
     }
 
-    private void RepeatNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, RepeatNode inputRepeatNode) throws SyntaxErrorException {
+    private void RepeatNodeFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, RepeatNode inputRepeatNode) throws SyntaxErrorException {
         BooleanDataType booleanCompare = booleanCompareNodeFunction(inputLocalVariableMap, inputRepeatNode.getCondition());
         do { //Repeat Until loop runs once before first boolean check
             interpretBlock(inputLocalVariableMap, inputRepeatNode.getStatements());
@@ -1052,7 +1096,7 @@ public class Interpreter {
         } while (booleanCompare.getData() == false);
     }
 
-    private InterpreterDataType VariableReferenceNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, VariableReferenceNode inputVariableReferenceNode) throws SyntaxErrorException {
+    private InterpreterDataType VariableReferenceNodeFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, VariableReferenceNode inputVariableReferenceNode) throws SyntaxErrorException {
         InterpreterDataType variableMapKeyValue = inputLocalVariableMap.get(inputVariableReferenceNode.getName());
         if (variableMapKeyValue == null) {
             System.out.println("ERROR: Referenced variable not declared.");
@@ -1061,7 +1105,7 @@ public class Interpreter {
         return variableMapKeyValue;
     }
 
-    private void WhileNodeFunction(HashMap<String, InterpreterDataType> inputLocalVariableMap, WhileNode inputWhileNode) throws SyntaxErrorException {
+    private void WhileNodeFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, WhileNode inputWhileNode) throws SyntaxErrorException {
         BooleanDataType booleanCompare = booleanCompareNodeFunction(inputLocalVariableMap, inputWhileNode.getCondition());
         while (booleanCompare.getData() == true) {
             interpretBlock(inputLocalVariableMap, inputWhileNode.getStatements());
