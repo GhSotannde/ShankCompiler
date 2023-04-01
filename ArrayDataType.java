@@ -64,6 +64,10 @@ public class ArrayDataType extends InterpreterDataType {
         return data;
     }
 
+    public void setData(ArrayList<InterpreterDataType> inputArray) {
+        data = inputArray;
+    }
+
     public int getStartIndex() {
         return startIndex;
     }
@@ -72,12 +76,21 @@ public class ArrayDataType extends InterpreterDataType {
         return endIndex;
     }
 
+    public void setRange(int inputStartIndex, int inputEndIndex) {
+        startIndex = inputStartIndex;
+        endIndex = inputEndIndex;
+    }
+
     public arrayDataType getArrayType() {
         return type;
     }
 
     public InterpreterDataType getDataAtIndex(int inputIndex) {
-        return data.get(inputIndex);
+        if (data.get(inputIndex) != null)
+            return data.get(inputIndex);
+        System.out.println("ERROR: Value at array index is null.");
+        System.exit(0);
+        return null;
     }
 
     public void setIndex(int inputIndex, InterpreterDataType inputData) {

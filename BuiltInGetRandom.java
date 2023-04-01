@@ -7,7 +7,7 @@ public class BuiltInGetRandom extends FunctionNode {
     static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
     
     public BuiltInGetRandom() {
-        super("getrandom", parameterArray, null, null);
+        super("getrandom", parameterArray, null, null, null, true);
         parameterArray.add(resultIntParameter);
     }
 

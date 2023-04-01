@@ -7,7 +7,7 @@ public class BuiltInRealToInteger extends FunctionNode {
     static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
     
     public BuiltInRealToInteger() {
-        super("realtointeger", parameterArray, null, null);
+        super("realtointeger", parameterArray, null, null, null, true);
         parameterArray.add(realParameter);
         parameterArray.add(resultIntParameter);
     }

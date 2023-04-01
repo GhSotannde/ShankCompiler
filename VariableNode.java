@@ -72,7 +72,7 @@ public class VariableNode extends Node {
         }
     }
 
-    public void setArray(int inputIndex, Node inputNode, variableType inputVariableType) {
+    public void setArrayValueAtIndex(int inputIndex, Node inputNode, variableType inputVariableType) {
         switch (inputVariableType) {
             case INTEGER:
                 IntegerNode newIntegerNode = (IntegerNode) inputNode;
@@ -108,22 +108,32 @@ public class VariableNode extends Node {
     public Node getArrayValueAtIndex(int inputIndex, variableType inputType) {
         switch (inputType) {
             case REAL :
+                if (realArray.length <= inputIndex)
+                    return null;
                 float realValue = realArray[inputIndex];
                 RealNode arrayRealNode = new RealNode(realValue);
                 return arrayRealNode;
             case INTEGER :
+                if (intArray.length <= inputIndex)
+                    return null;
                 int intValue = intArray[inputIndex];
                 IntegerNode arrayIntNode = new IntegerNode(intValue);
                 return arrayIntNode;
             case STRING :
+                if (stringArray.length <= inputIndex)
+                    return null;
                 String stringValue = stringArray[inputIndex];
                 StringNode arrayStringNode = new StringNode(stringValue);
                 return arrayStringNode;
             case CHARACTER :
+                if (charArray.length <= inputIndex)
+                    return null;
                 Character characterValue = charArray[inputIndex];
                 CharacterNode arrayCharacterNode = new CharacterNode(characterValue);
                 return arrayCharacterNode;
             case BOOLEAN :
+                if (boolArray.length <= inputIndex)
+                    return null;
                 boolean booleanValue = boolArray[inputIndex];
                 BooleanNode arrayBooleanNode = new BooleanNode(booleanValue);
                 return arrayBooleanNode;

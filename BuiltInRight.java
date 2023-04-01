@@ -8,7 +8,7 @@ public class BuiltInRight extends FunctionNode {
     static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
     
     public BuiltInRight() {
-        super("right", parameterArray, null, null);
+        super("right", parameterArray, null, null, null, true);
         parameterArray.add(stringParameter);
         parameterArray.add(intParameter);
         parameterArray.add(resultStringParameter);

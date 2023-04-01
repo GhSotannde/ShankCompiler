@@ -2,17 +2,20 @@ import java.util.ArrayList;
 
 public class FunctionNode extends Node {
     private String name;
+    private boolean isBuiltIn = false;
     private ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
     private ArrayList<VariableNode> variableArray = new ArrayList<VariableNode>();
     private ArrayList<StatementNode> statementArray = new ArrayList<StatementNode>();
     private ArrayList<InterpreterDataType> argumentArray = new ArrayList<InterpreterDataType>();
 
     public FunctionNode(String inputName, ArrayList<VariableNode> inputParameterArray,
-    ArrayList<VariableNode> inputVariableArray, ArrayList<StatementNode> inputStatementArray) {
+    ArrayList<VariableNode> inputVariableArray, ArrayList<StatementNode> inputStatementArray, ArrayList<InterpreterDataType> inputArgumentArray, boolean inputIsBuiltIn) {
         name = inputName;
         parameterArray = inputParameterArray;
         variableArray = inputVariableArray;
         statementArray = inputStatementArray;
+        argumentArray = inputArgumentArray;
+        isBuiltIn = inputIsBuiltIn;
     }
 
     public boolean isVariadic() {
@@ -52,9 +55,60 @@ public class FunctionNode extends Node {
         return statementArray;
     }
 
+    public boolean isBuiltIn() {
+        return (isBuiltIn) ? true : false;
+    }
+
     public void setArgumentArray(ArrayList<InterpreterDataType> inputArgumentArray) {
         argumentArray = inputArgumentArray;
         updateParameterVariables();
+    }
+
+    public void updateArgumentVariables(ArrayList<InterpreterDataType> inputNewArgumentArray) {
+        if (argumentArray != null) {
+            for (int i = 0; i < argumentArray.size(); i++) {
+                if (argumentArray.get(i) instanceof IntegerDataType) {
+                    IntegerDataType integerArgument = (IntegerDataType) argumentArray.get(i);
+                    IntegerDataType newIntegerArgument = (IntegerDataType) inputNewArgumentArray.get(i);
+                    integerArgument.setData(newIntegerArgument.getData());
+                    argumentArray.set(i, integerArgument);
+                }
+                else if (argumentArray.get(i) instanceof RealDataType) {
+                    RealDataType realArgument = (RealDataType) argumentArray.get(i);
+                    RealDataType newRealArgument = (RealDataType) inputNewArgumentArray.get(i);
+                    realArgument.setData(newRealArgument.getData());
+                    argumentArray.set(i, realArgument);
+                }
+                else if (argumentArray.get(i) instanceof BooleanDataType) {
+                    BooleanDataType booleanArgument = (BooleanDataType) argumentArray.get(i);
+                    BooleanDataType newBooleanArgument = (BooleanDataType) inputNewArgumentArray.get(i);
+                    booleanArgument.setData(newBooleanArgument.getData());
+                    argumentArray.set(i, booleanArgument);
+                }
+                else if (argumentArray.get(i) instanceof StringDataType) {
+                    StringDataType stringArgument = (StringDataType) argumentArray.get(i);
+                    StringDataType newStringArgument = (StringDataType) inputNewArgumentArray.get(i);
+                    stringArgument.setData(newStringArgument.getData());
+                    argumentArray.set(i, stringArgument);
+                }
+                else if (argumentArray.get(i) instanceof CharacterDataType) {
+                    CharacterDataType characterArgument = (CharacterDataType) argumentArray.get(i);
+                    CharacterDataType newCharacterArgument = (CharacterDataType) inputNewArgumentArray.get(i);
+                    characterArgument.setData(newCharacterArgument.getData());
+                    argumentArray.set(i, characterArgument);
+                }
+                else if (argumentArray.get(i) instanceof ArrayDataType) {
+                    ArrayDataType arrayArgument = (ArrayDataType) argumentArray.get(i);
+                    ArrayDataType newArrayArgument = (ArrayDataType) inputNewArgumentArray.get(i);
+                    arrayArgument.setData(newArrayArgument.getData());
+                    argumentArray.set(i, arrayArgument);
+                }
+                else {
+                    System.out.println("ERROR: Unknown data type found in function.");
+                    System.exit(7);
+                }
+            }
+        }
     }
 
     private String ToStringParameterArray() {
@@ -99,74 +153,76 @@ public class FunctionNode extends Node {
     }
 
     private void updateParameterVariables() {
-        for (int i = 0; i < argumentArray.size(); i++) {
-            if (argumentArray.get(i) instanceof IntegerDataType) {
-                IntegerDataType integerArgument = (IntegerDataType) argumentArray.get(i);
-                IntegerNode integerArgumentToNode = new IntegerNode(integerArgument.getData());
-                parameterArray.get(i).setValue(integerArgumentToNode);
-            }
-            else if (argumentArray.get(i) instanceof RealDataType) {
-                RealDataType realArgument = (RealDataType) argumentArray.get(i);
-                RealNode realArgumentToNode = new RealNode(realArgument.getData());
-                parameterArray.get(i).setValue(realArgumentToNode);
-            }
-            else if (argumentArray.get(i) instanceof BooleanDataType) {
-                BooleanDataType booleanArgument = (BooleanDataType) argumentArray.get(i);
-                BooleanNode booleanArgumentToNode = new BooleanNode(booleanArgument.getData());
-                parameterArray.get(i).setValue(booleanArgumentToNode);
-            }
-            else if (argumentArray.get(i) instanceof StringDataType) {
-                StringDataType stringArgument = (StringDataType) argumentArray.get(i);
-                StringNode stringArgumentToNode = new StringNode(stringArgument.getData());
-                parameterArray.get(i).setValue(stringArgumentToNode);
-            }
-            else if (argumentArray.get(i) instanceof CharacterDataType) {
-                CharacterDataType characterArgument = (CharacterDataType) argumentArray.get(i);
-                CharacterNode characterArgumentToNode = new CharacterNode(characterArgument.getData());
-                parameterArray.get(i).setValue(characterArgumentToNode);
-            }
-            else if (argumentArray.get(i) instanceof ArrayDataType) {
-                ArrayDataType arrayArgument = (ArrayDataType) argumentArray.get(i);
-                int start = arrayArgument.getStartIndex();
-                int end = arrayArgument.getEndIndex();
-                ArrayList<InterpreterDataType> arrayArgumentArray = arrayArgument.getData();
-                VariableNode parameter = parameterArray.get(i);
-                parameter.setRange(start, end);
-                for (int j = 0; j < arrayArgumentArray.size(); j++) {
-                    if (arrayArgumentArray.get(j) instanceof IntegerDataType) {
-                        IntegerDataType integerArgument = (IntegerDataType) arrayArgumentArray.get(i);
-                        IntegerNode integerArgumentToNode = new IntegerNode(integerArgument.getData());
-                        parameter.setArray(j, integerArgumentToNode, VariableNode.variableType.INTEGER);
-                    }
-                    else if (arrayArgumentArray.get(j) instanceof RealDataType) {
-                        RealDataType realArgument = (RealDataType) arrayArgumentArray.get(i);
-                        RealNode realArgumentToNode = new RealNode(realArgument.getData());
-                        parameter.setArray(j, realArgumentToNode, VariableNode.variableType.REAL);
-                    }
-                    else if (arrayArgumentArray.get(j) instanceof BooleanDataType) {
-                        BooleanDataType booleanArgument = (BooleanDataType) arrayArgumentArray.get(i);
-                        BooleanNode booleanArgumentToNode = new BooleanNode(booleanArgument.getData());
-                        parameter.setArray(j, booleanArgumentToNode, VariableNode.variableType.BOOLEAN);
-                    }
-                    else if (arrayArgumentArray.get(j) instanceof StringDataType) {
-                        StringDataType stringArgument = (StringDataType) arrayArgumentArray.get(i);
-                        StringNode stringArgumentToNode = new StringNode(stringArgument.getData());
-                        parameter.setArray(j, stringArgumentToNode, VariableNode.variableType.STRING);
-                    }
-                    else if (arrayArgumentArray.get(j) instanceof CharacterDataType) {
-                        CharacterDataType characterArgument = (CharacterDataType) arrayArgumentArray.get(i);
-                        CharacterNode characterArgumentToNode = new CharacterNode(characterArgument.getData());
-                        parameter.setArray(j, characterArgumentToNode, VariableNode.variableType.CHARACTER);
-                    }
-                    else {
-                        System.out.println("ERROR: Unknown data type found in argument array.");
-                        System.exit(6);
+        if (argumentArray != null & parameterArray != null) {
+            for (int i = 0; i < argumentArray.size(); i++) {
+                if (argumentArray.get(i) instanceof IntegerDataType) {
+                    IntegerDataType integerArgument = (IntegerDataType) argumentArray.get(i);
+                    IntegerNode integerArgumentToNode = new IntegerNode(integerArgument.getData());
+                    parameterArray.get(i).setValue(integerArgumentToNode);
+                }
+                else if (argumentArray.get(i) instanceof RealDataType) {
+                    RealDataType realArgument = (RealDataType) argumentArray.get(i);
+                    RealNode realArgumentToNode = new RealNode(realArgument.getData());
+                    parameterArray.get(i).setValue(realArgumentToNode);
+                }
+                else if (argumentArray.get(i) instanceof BooleanDataType) {
+                    BooleanDataType booleanArgument = (BooleanDataType) argumentArray.get(i);
+                    BooleanNode booleanArgumentToNode = new BooleanNode(booleanArgument.getData());
+                    parameterArray.get(i).setValue(booleanArgumentToNode);
+                }
+                else if (argumentArray.get(i) instanceof StringDataType) {
+                    StringDataType stringArgument = (StringDataType) argumentArray.get(i);
+                    StringNode stringArgumentToNode = new StringNode(stringArgument.getData());
+                    parameterArray.get(i).setValue(stringArgumentToNode);
+                }
+                else if (argumentArray.get(i) instanceof CharacterDataType) {
+                    CharacterDataType characterArgument = (CharacterDataType) argumentArray.get(i);
+                    CharacterNode characterArgumentToNode = new CharacterNode(characterArgument.getData());
+                    parameterArray.get(i).setValue(characterArgumentToNode);
+                }
+                else if (argumentArray.get(i) instanceof ArrayDataType) {
+                    ArrayDataType arrayArgument = (ArrayDataType) argumentArray.get(i);
+                    int start = arrayArgument.getStartIndex();
+                    int end = arrayArgument.getEndIndex();
+                    ArrayList<InterpreterDataType> arrayArgumentArray = arrayArgument.getData();
+                    VariableNode parameter = parameterArray.get(i);
+                    parameter.setRange(start, end);
+                    for (int j = 0; j < arrayArgumentArray.size(); j++) {
+                        if (arrayArgumentArray.get(j) instanceof IntegerDataType) {
+                            IntegerDataType integerArgument = (IntegerDataType) arrayArgumentArray.get(i);
+                            IntegerNode integerArgumentToNode = new IntegerNode(integerArgument.getData());
+                            parameter.setArrayValueAtIndex(j, integerArgumentToNode, VariableNode.variableType.INTEGER);
+                        }
+                        else if (arrayArgumentArray.get(j) instanceof RealDataType) {
+                            RealDataType realArgument = (RealDataType) arrayArgumentArray.get(i);
+                            RealNode realArgumentToNode = new RealNode(realArgument.getData());
+                            parameter.setArrayValueAtIndex(j, realArgumentToNode, VariableNode.variableType.REAL);
+                        }
+                        else if (arrayArgumentArray.get(j) instanceof BooleanDataType) {
+                            BooleanDataType booleanArgument = (BooleanDataType) arrayArgumentArray.get(i);
+                            BooleanNode booleanArgumentToNode = new BooleanNode(booleanArgument.getData());
+                            parameter.setArrayValueAtIndex(j, booleanArgumentToNode, VariableNode.variableType.BOOLEAN);
+                        }
+                        else if (arrayArgumentArray.get(j) instanceof StringDataType) {
+                            StringDataType stringArgument = (StringDataType) arrayArgumentArray.get(i);
+                            StringNode stringArgumentToNode = new StringNode(stringArgument.getData());
+                            parameter.setArrayValueAtIndex(j, stringArgumentToNode, VariableNode.variableType.STRING);
+                        }
+                        else if (arrayArgumentArray.get(j) instanceof CharacterDataType) {
+                            CharacterDataType characterArgument = (CharacterDataType) arrayArgumentArray.get(i);
+                            CharacterNode characterArgumentToNode = new CharacterNode(characterArgument.getData());
+                            parameter.setArrayValueAtIndex(j, characterArgumentToNode, VariableNode.variableType.CHARACTER);
+                        }
+                        else {
+                            System.out.println("ERROR: Unknown data type found in argument array.");
+                            System.exit(6);
+                        }
                     }
                 }
-            }
-            else {
-                System.out.println("ERROR: Unknown data type found in function.");
-                System.exit(7);
+                else {
+                    System.out.println("ERROR: Unknown data type found in function.");
+                    System.exit(7);
+                }
             }
         }
     }

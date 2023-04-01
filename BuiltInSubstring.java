@@ -9,7 +9,7 @@ public class BuiltInSubstring extends FunctionNode {
     static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
     
     public BuiltInSubstring() {
-        super("substring", parameterArray, null, null);
+        super("substring", parameterArray, null, null, null, true);
         parameterArray.add(stringParameter);
         parameterArray.add(intParameter);
         parameterArray.add(secondIntParameter);

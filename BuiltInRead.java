@@ -4,7 +4,7 @@ import java.util.Scanner;
 public class BuiltInRead extends FunctionNode {
 
     public BuiltInRead() {
-        super("read", null, null, null);
+        super("read", null, null, null, null, true);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {

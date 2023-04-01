@@ -3,16 +3,15 @@ import java.util.ArrayList;
 public class BuiltInWrite extends FunctionNode {
 
     public BuiltInWrite() {
-        super("write", null, null, null);
+        super("write", null, null, null, null, true);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {
-        System.out.print("Write: ");
         for (int i = 0; i < inputData.size() ; i++) {
             InterpreterDataType arg = inputData.get(i);
             if (inputData.get(i) instanceof ArrayDataType) { //Searches for data type of argument and prints accordingly
-                String str = "Array[";
                 ArrayDataType array = (ArrayDataType) inputData.get(i);
+                String str = "Array[";
                 ArrayList<InterpreterDataType> arrayData = array.getData();
                 for (int j = 0; j < arrayData.size(); j++) {
                     str += arrayData.get(j) + ", ";
@@ -47,6 +46,6 @@ public class BuiltInWrite extends FunctionNode {
                 }
             }
         }
-        System.out.print("\n\n");
+        System.out.print("\n");
     }
 }

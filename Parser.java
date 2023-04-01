@@ -442,7 +442,7 @@ public class Parser {
                     if (currentToken == null)
                         throw new SyntaxErrorException(tokenArray.get(0));
                     ArrayList<StatementNode> statementNodeArray = statements(); //Records statements
-                    FunctionNode functionNode = new FunctionNode(functionName, parameterArray, variableArray, statementNodeArray);
+                    FunctionNode functionNode = new FunctionNode(functionName, parameterArray, variableArray, statementNodeArray, null, false);
                     return functionNode;
                 }
                 throw new SyntaxErrorException(tokenArray.get(0));

@@ -6,7 +6,7 @@ public class BuiltInStart extends FunctionNode {
     static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
     
     public BuiltInStart() {
-        super("start", parameterArray, null, null);
+        super("start", parameterArray, null, null, null, true);
         parameterArray.add(arrayParameter);
     }
 

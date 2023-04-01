@@ -6,7 +6,7 @@ public class BuiltInEnd extends FunctionNode {
     static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
     
     public BuiltInEnd() {
-        super("end", parameterArray, null, null);
+        super("end", parameterArray, null, null, null, true);
         parameterArray.add(arrayParameter);
     }
 

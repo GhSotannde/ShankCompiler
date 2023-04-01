@@ -7,7 +7,7 @@ public class BuiltInIntegerToReal extends FunctionNode {
     static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
     
     public BuiltInIntegerToReal() {
-        super("integertoreal", parameterArray, null, null);
+        super("integertoreal", parameterArray, null, null, null, true);
         parameterArray.add(intParameter);
         parameterArray.add(resultFloatParameter);
     }

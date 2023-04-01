@@ -8,7 +8,7 @@ public class BuiltInSquareRoot extends FunctionNode {
     static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
     
     public BuiltInSquareRoot() {
-        super("squareroot", parameterArray, null, null);
+        super("squareroot", parameterArray, null, null, null, true);
         parameterArray.add(floatParameter);
         parameterArray.add(resultFloatParameter);
     }

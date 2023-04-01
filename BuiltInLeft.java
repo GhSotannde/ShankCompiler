@@ -8,7 +8,7 @@ public class BuiltInLeft extends FunctionNode {
     static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
     
     public BuiltInLeft() {
-        super("left", parameterArray, null, null);
+        super("left", parameterArray, null, null, null, true);
         parameterArray.add(stringParameter);
         parameterArray.add(intParameter);
         parameterArray.add(resultStringParameter);
