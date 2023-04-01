@@ -23,20 +23,17 @@ public class VariableReferenceNode extends StatementNode{
         }
         else if (arrayIndexExpression instanceof MathOpNode) {
             MathOpNode mathOpNodeIndex = (MathOpNode) arrayIndexExpression;
-            if (mathOpNodeIndex.isInteger()) {
-                IntegerNode intNodeIndex = new IntegerNode(mathOpNodeIndex.getIntValue());
-                return intNodeIndex;
-            }
-            else {
-                System.out.println("ERROR: Incorrect data type given for array index.");
-                System.exit(0);
-            }
+            return mathOpNodeIndex;
         }
         else if (arrayIndexExpression instanceof VariableReferenceNode) {
             VariableReferenceNode newVariableReferenceNode = (VariableReferenceNode) arrayIndexExpression;
             return newVariableReferenceNode;
         }
         return null;
+    }
+
+    public void setIndex(IntegerNode inputIntegerNode) {
+        arrayIndexExpression = inputIntegerNode;
     }
 
     public String ToString() {
