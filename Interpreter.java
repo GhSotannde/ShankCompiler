@@ -372,23 +372,23 @@ public class Interpreter {
                 if (assignmentValue instanceof MathOpNode) {
                     MathOpNode mathOpNode = (MathOpNode) assignmentValue;
                     InterpreterDataType mathOpExpressionResultData = MathOpNodeFunction(inputLocalVariableMap, mathOpNode);
-                    if (mathOpExpressionResultData instanceof IntegerDataType) {
+                    if (mathOpExpressionResultData instanceof IntegerDataType && array.getArrayType() == ArrayDataType.arrayDataType.INTEGER) {
                         IntegerDataType integerData = (IntegerDataType) mathOpExpressionResultData;
                         array.setIndex(arrayIndex, integerData);
                         inputLocalVariableMap.put(assignmentTarget, array);
                     }
-                    else if (mathOpExpressionResultData instanceof RealDataType) {
+                    else if (mathOpExpressionResultData instanceof RealDataType && array.getArrayType() == ArrayDataType.arrayDataType.REAL) {
                         RealDataType realData = (RealDataType) mathOpExpressionResultData;
                         array.setIndex(arrayIndex, realData);
                         inputLocalVariableMap.put(assignmentTarget, array);
                     }
-                    else if (mathOpExpressionResultData instanceof StringDataType) {
+                    else if (mathOpExpressionResultData instanceof StringDataType && array.getArrayType() == ArrayDataType.arrayDataType.STRING) {
                         StringDataType stringData = (StringDataType) mathOpExpressionResultData;
                         array.setIndex(arrayIndex, stringData);
                         inputLocalVariableMap.put(assignmentTarget, array);
                     }
                     else {
-                        System.out.println("ERROR: Expression assigned to variable returned an unrecognized data type.");
+                        System.out.println("ERROR: Expression assigned to index is of an incorrect data type.");
                         System.exit(23);
                     }
                 }
