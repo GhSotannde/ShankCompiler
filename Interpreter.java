@@ -950,7 +950,7 @@ public class Interpreter {
                 else if (currentMathOpNode.getType() == MathOpNode.operationType.MULTIPLY)
                     value = leftIntChild.getValue() * rightIntChild.getValue();
                 else if (currentMathOpNode.getType() == MathOpNode.operationType.SUBTRACT)
-                    value = leftIntChild.getValue() / rightIntChild.getValue();
+                    value = leftIntChild.getValue() - rightIntChild.getValue();
                 else {
                     System.out.println("ERROR: Incorrect operator given for math operation.");
                     System.exit(8);
@@ -971,7 +971,7 @@ public class Interpreter {
                 else if (currentMathOpNode.getType() == MathOpNode.operationType.MULTIPLY)
                     value = leftRealChild.getValue() * rightRealChild.getValue();
                 else if (currentMathOpNode.getType() == MathOpNode.operationType.SUBTRACT)
-                    value = leftRealChild.getValue() / rightRealChild.getValue();
+                    value = leftRealChild.getValue() - rightRealChild.getValue();
                 else {
                     System.out.println("ERROR: Incorrect operator given for math operation.");
                     System.exit(9);

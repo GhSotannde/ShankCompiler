@@ -316,7 +316,6 @@ public class Parser {
                 else if (rightNode instanceof StringNode && !(leftNode instanceof VariableReferenceNode))
                     throw new SyntaxErrorException(tokenArray.get(0));
             }
-                
             newMathOpNode = createMathOpNode(MathOpNode.operationType.ADD, leftNode, rightNode);
         }
         else if (matchAndRemove(Token.tokenType.MINUS) != null) {
