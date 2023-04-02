@@ -369,7 +369,30 @@ public class Interpreter {
                         System.exit(19);
                     }
                 }
-                if (assignmentValue instanceof IntegerNode && array.getArrayType() == ArrayDataType.arrayDataType.INTEGER) {
+                if (assignmentValue instanceof MathOpNode) {
+                    MathOpNode mathOpNode = (MathOpNode) assignmentValue;
+                    InterpreterDataType mathOpExpressionResultData = MathOpNodeFunction(inputLocalVariableMap, mathOpNode);
+                    if (mathOpExpressionResultData instanceof IntegerDataType) {
+                        IntegerDataType integerData = (IntegerDataType) mathOpExpressionResultData;
+                        array.setIndex(arrayIndex, integerData);
+                        inputLocalVariableMap.put(assignmentTarget, array);
+                    }
+                    else if (mathOpExpressionResultData instanceof RealDataType) {
+                        RealDataType realData = (RealDataType) mathOpExpressionResultData;
+                        array.setIndex(arrayIndex, realData);
+                        inputLocalVariableMap.put(assignmentTarget, array);
+                    }
+                    else if (mathOpExpressionResultData instanceof StringDataType) {
+                        StringDataType stringData = (StringDataType) mathOpExpressionResultData;
+                        array.setIndex(arrayIndex, stringData);
+                        inputLocalVariableMap.put(assignmentTarget, array);
+                    }
+                    else {
+                        System.out.println("ERROR: Expression assigned to variable returned an unrecognized data type.");
+                        System.exit(23);
+                    }
+                }
+                else if (assignmentValue instanceof IntegerNode && array.getArrayType() == ArrayDataType.arrayDataType.INTEGER) {
                     IntegerNode intAssignmentValue = (IntegerNode) assignmentValue;
                     int intValue = intAssignmentValue.getValue();
                     IntegerDataType newIntegerData = new IntegerDataType(intValue, false);

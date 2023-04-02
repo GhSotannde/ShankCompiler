@@ -11,7 +11,6 @@ public class BuiltInRead extends FunctionNode {
         Scanner sc = new Scanner(System.in);
         for (InterpreterDataType arg : inputData) {
             if (arg.isChangeable() == true) { //Calls Scanner depending on data type of argument
-                System.out.println("Read:\n");
                 if (arg instanceof IntegerDataType) {
                     IntegerDataType intArg = (IntegerDataType) arg;
                     System.out.println("Enter Integer Value: ");
