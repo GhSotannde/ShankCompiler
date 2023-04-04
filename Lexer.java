@@ -21,40 +21,6 @@ public class Lexer {
         initializeKeys();
     }
 
-    public void lex(String inputString) throws SyntaxErrorException {
-        if (exceptionSwitch == 1) { //Terminates program if exception was thrown by previous execution of lex method
-            System.exit(0);
-        }
-        stringIndex = 0;
-        inputStringLength = inputString.length();
-        if (inputStringLength == 0) {
-            checkIndentLevel(inputString);
-            tokenArray.add(new Token());
-            tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.ENDOFLINE);
-            tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
-            tokenArrayIndex++;
-            lineNumber++;
-        }
-        else {
-            checkForComment(inputString);
-            checkIndentLevel(inputString);
-            startState(inputString);
-            lineNumber++;
-        }   
-        
-    }
-
-    public void printLexer() {
-        for (int i = 0; i < tokenArrayIndex; i++) {
-            if (tokenArray.get(i).getToken() != Token.tokenType.ENDOFLINE) {
-                System.out.printf("%d: %s (%s)\n", tokenArray.get(i).getLineNumber(), tokenArray.get(i).getToken(), tokenArray.get(i).getValue());
-            }
-            else {
-                System.out.printf("%d: %s\n", tokenArray.get(i).getLineNumber(), tokenArray.get(i).getToken());
-            }
-        }
-    }
-
     public void addLastLineDedents() {
         lineNumber++;
         for (int i = 0; i < previousIndentationLevel; i++) {
@@ -69,35 +35,56 @@ public class Lexer {
         return tokenArray;
     }
 
-    private void initializeKeys() {
-        knownWords.put("while", Token.tokenType.WHILE);
-        knownWords.put("define", Token.tokenType.DEFINE);
-        knownWords.put("array", Token.tokenType.ARRAY);
-        knownWords.put("of", Token.tokenType.OF);
-        knownWords.put("string", Token.tokenType.STRING);
-        knownWords.put("constants", Token.tokenType.CONSTANTS);
-        knownWords.put("variables", Token.tokenType.VARIABLES);
-        knownWords.put("integer", Token.tokenType.INTEGER);
-        knownWords.put("for", Token.tokenType.FOR);
-        knownWords.put("from", Token.tokenType.FROM);
-        knownWords.put("to", Token.tokenType.TO);
-        knownWords.put("real", Token.tokenType.REAL);
-        knownWords.put("boolean", Token.tokenType.BOOLEAN);
-        knownWords.put("character", Token.tokenType.CHARACTER);
-        knownWords.put("var", Token.tokenType.VAR);
-        knownWords.put("if", Token.tokenType.IF);
-        knownWords.put("then", Token.tokenType.THEN);
-        knownWords.put("mod", Token.tokenType.MOD);
-        knownWords.put("elsif", Token.tokenType.ELSIF);
-        knownWords.put("else", Token.tokenType.ELSE);
-        knownWords.put("repeat", Token.tokenType.REPEAT);
-        knownWords.put("until", Token.tokenType.UNTIL);
-        knownWords.put("not", Token.tokenType.NOT);
-        knownWords.put("and", Token.tokenType.AND);
-        knownWords.put("or", Token.tokenType.OR);
-        knownWords.put("mod", Token.tokenType.MOD);
-        knownWords.put("true", Token.tokenType.TRUE);
-        knownWords.put("false", Token.tokenType.FALSE);
+    public void lex(String inputString) throws SyntaxErrorException {
+        if (exceptionSwitch == 1) { //Terminates program if exception was thrown by previous execution of lex method
+            System.exit(0);
+        }
+        stringIndex = 0;
+        inputStringLength = inputString.length();
+        if (commentSwitch != 1) {
+            if (inputStringLength == 0) {
+                checkIndentLevel(inputString);
+                tokenArray.add(new Token());
+                tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.ENDOFLINE);
+                tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
+                tokenArrayIndex++;
+                lineNumber++;
+            }
+            else {
+                checkForComment(inputString);
+                checkIndentLevel(inputString);
+                startState(inputString);
+                lineNumber++;
+            }   
+        }
+        else {
+            checkForComment(inputString);
+            lineNumber++;
+        }
+        
+        
+    }
+
+    public void printLexer() {
+        for (int i = 0; i < tokenArrayIndex; i++) {
+            if (tokenArray.get(i).getToken() != Token.tokenType.ENDOFLINE) {
+                System.out.printf("%d: %s (%s)\n", tokenArray.get(i).getLineNumber(), tokenArray.get(i).getToken(), tokenArray.get(i).getValue());
+            }
+            else {
+                System.out.printf("%d: %s\n", tokenArray.get(i).getLineNumber(), tokenArray.get(i).getToken());
+            }
+        }
+    }
+
+    private void checkForComment(String inputString) {
+        if (commentSwitch == 1) { //Allows multiline commenting
+            while (stringIndex < inputStringLength && inputString.charAt(stringIndex) != '}') {
+                stringIndex++;
+                if (stringIndex < inputStringLength && inputString.charAt(stringIndex) == '}') { 
+                    commentSwitch = 0;
+                }
+            }
+        }
     }
 
     private void checkIndentLevel(String inputString) throws SyntaxErrorException {
@@ -148,39 +135,46 @@ public class Lexer {
         }
     }
 
-    private void checkForComment(String inputString) {
-        if (commentSwitch == 1) { //Allows multiline commenting
-            while (stringIndex < inputStringLength && inputString.charAt(stringIndex) != '}') {
-                stringIndex++;
-                if (stringIndex < inputStringLength && inputString.charAt(stringIndex) == '}') { 
-                    commentSwitch = 0;
-                }
-            }
-        }
-    }
-
-    private void startState(String inputString) throws SyntaxErrorException {
+    private void createStringLiteral(String inputString) throws SyntaxErrorException {
         stringValue = "";
-        if (stringIndex >= inputStringLength) {
-            tokenArray.add(new Token());
-            tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.ENDOFLINE);
+        while (stringIndex < inputStringLength && inputString.charAt(stringIndex) != '"') {
+            stringValue += inputString.charAt(stringIndex);
+            stringIndex++;
+        }
+        if (stringIndex >= inputStringLength) { 
+                exceptionSwitch = 1;
+                tokenArray.add(new Token());
+                tokenArray.get(tokenArrayIndex).setToken((Token.tokenType.UNTERMINATEDSTRING));
+                tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
+                tokenArray.get(tokenArrayIndex).setValue(stringValue);
+                throw new SyntaxErrorException(tokenArray.get(tokenArrayIndex));
+        }
+        tokenArray.add(new Token());
+        tokenArray.get(tokenArrayIndex).setValue(stringValue);
+        if (stringValue.length() == 1) { 
+            tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.CHARACTERLITERAL);
             tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
-            tokenArrayIndex++;
-        }
-        else if (Character.isLetter(inputString.charAt(stringIndex))) {
-            identifierState(inputString);
-        }
-        else if (inputString.charAt(stringIndex) == '.') {
-            decimalState(inputString);
-        }
-        else if (Character.isDigit(inputString.charAt(stringIndex))) {
-            numberState(inputString);
         }
         else {
-            searchPunctuation(inputString);
-            stringIndex++;
-            startState(inputString);
+            tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.STRINGLITERAL);
+            tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
         }
+        tokenArrayIndex++;
+    }
+
+    private void decimalState(String inputString) throws SyntaxErrorException {
+        stringValue += inputString.charAt(stringIndex);
+        stringIndex++;
+        while (stringIndex < inputStringLength && Character.isDigit(inputString.charAt(stringIndex))) {
+            stringValue += inputString.charAt(stringIndex);
+            stringIndex++;
+        }
+        tokenArray.add(new Token());
+        tokenArray.get(tokenArrayIndex).setValue(stringValue);
+        tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.REAL);
+        tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
+        tokenArrayIndex++;
+        startState(inputString);
     }
 
     private void identifierState(String inputString) throws SyntaxErrorException {
@@ -207,19 +201,35 @@ public class Lexer {
         startState(inputString);
     }
 
-    private void decimalState(String inputString) throws SyntaxErrorException {
-        stringValue += inputString.charAt(stringIndex);
-        stringIndex++;
-        while (stringIndex < inputStringLength && Character.isDigit(inputString.charAt(stringIndex))) {
-            stringValue += inputString.charAt(stringIndex);
-            stringIndex++;
-        }
-        tokenArray.add(new Token());
-        tokenArray.get(tokenArrayIndex).setValue(stringValue);
-        tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.REAL);
-        tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
-        tokenArrayIndex++;
-        startState(inputString);
+    private void initializeKeys() {
+        knownWords.put("while", Token.tokenType.WHILE);
+        knownWords.put("define", Token.tokenType.DEFINE);
+        knownWords.put("array", Token.tokenType.ARRAY);
+        knownWords.put("of", Token.tokenType.OF);
+        knownWords.put("string", Token.tokenType.STRING);
+        knownWords.put("constants", Token.tokenType.CONSTANTS);
+        knownWords.put("variables", Token.tokenType.VARIABLES);
+        knownWords.put("integer", Token.tokenType.INTEGER);
+        knownWords.put("for", Token.tokenType.FOR);
+        knownWords.put("from", Token.tokenType.FROM);
+        knownWords.put("to", Token.tokenType.TO);
+        knownWords.put("real", Token.tokenType.REAL);
+        knownWords.put("boolean", Token.tokenType.BOOLEAN);
+        knownWords.put("character", Token.tokenType.CHARACTER);
+        knownWords.put("var", Token.tokenType.VAR);
+        knownWords.put("if", Token.tokenType.IF);
+        knownWords.put("then", Token.tokenType.THEN);
+        knownWords.put("mod", Token.tokenType.MOD);
+        knownWords.put("elsif", Token.tokenType.ELSIF);
+        knownWords.put("else", Token.tokenType.ELSE);
+        knownWords.put("repeat", Token.tokenType.REPEAT);
+        knownWords.put("until", Token.tokenType.UNTIL);
+        knownWords.put("not", Token.tokenType.NOT);
+        knownWords.put("and", Token.tokenType.AND);
+        knownWords.put("or", Token.tokenType.OR);
+        knownWords.put("mod", Token.tokenType.MOD);
+        knownWords.put("true", Token.tokenType.TRUE);
+        knownWords.put("false", Token.tokenType.FALSE);
     }
 
     private void numberState(String inputString) throws SyntaxErrorException {
@@ -391,30 +401,27 @@ public class Lexer {
         }
     }
 
-    private void createStringLiteral(String inputString) throws SyntaxErrorException {
+    private void startState(String inputString) throws SyntaxErrorException {
         stringValue = "";
-        while (stringIndex < inputStringLength && inputString.charAt(stringIndex) != '"') {
-            stringValue += inputString.charAt(stringIndex);
-            stringIndex++;
-        }
-        if (stringIndex >= inputStringLength) { 
-                exceptionSwitch = 1;
-                tokenArray.add(new Token());
-                tokenArray.get(tokenArrayIndex).setToken((Token.tokenType.UNTERMINATEDSTRING));
-                tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
-                tokenArray.get(tokenArrayIndex).setValue(stringValue);
-                throw new SyntaxErrorException(tokenArray.get(tokenArrayIndex));
-        }
-        tokenArray.add(new Token());
-        tokenArray.get(tokenArrayIndex).setValue(stringValue);
-        if (stringValue.length() == 1) { 
-            tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.CHARACTERLITERAL);
+        if (stringIndex >= inputStringLength) {
+            tokenArray.add(new Token());
+            tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.ENDOFLINE);
             tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
+            tokenArrayIndex++;
+        }
+        else if (Character.isLetter(inputString.charAt(stringIndex))) {
+            identifierState(inputString);
+        }
+        else if (inputString.charAt(stringIndex) == '.') {
+            decimalState(inputString);
+        }
+        else if (Character.isDigit(inputString.charAt(stringIndex))) {
+            numberState(inputString);
         }
         else {
-            tokenArray.get(tokenArrayIndex).setToken(Token.tokenType.STRINGLITERAL);
-            tokenArray.get(tokenArrayIndex).setLineNumber(lineNumber);
+            searchPunctuation(inputString);
+            stringIndex++;
+            startState(inputString);
         }
-        tokenArrayIndex++;
     }
 }
