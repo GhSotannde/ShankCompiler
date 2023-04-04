@@ -588,7 +588,7 @@ public class Interpreter {
                 ParameterNode currentFunctionCallParameterNode = functionCallParameterArray.get(i);
                 VariableNode currentReferencedFunctionParameterNode = referencedFunctionParameterArray.get(i);
                 VariableNode.variableType variableReferencedByFunctionCallType = null;
-                if (currentReferencedFunctionParameterNode.getChangeable() == currentFunctionCallParameterNode.getChangeable()) {
+                if ((currentReferencedFunctionParameterNode.getChangeable() == currentFunctionCallParameterNode.getChangeable()) || currentReferencedFunctionParameterNode.getType() == VariableNode.variableType.ARRAY) {
                     if (currentFunctionCallParameterNode.getChangeable() == false && currentFunctionCallParameterNode.getExpression() != null) {
                         Node functionCallArgumentExpression = currentFunctionCallParameterNode.getExpression();
                         if (functionCallArgumentExpression instanceof BooleanCompareNode) {

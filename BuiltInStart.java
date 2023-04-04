@@ -3,18 +3,21 @@ import java.util.ArrayList;
 public class BuiltInStart extends FunctionNode {
 
     VariableNode arrayParameter = new VariableNode("someArray", 0, 0, VariableNode.variableType.INTEGER);
+    VariableNode integerParameter = new VariableNode("someInteger", VariableNode.variableType.INTEGER, true);
     static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
     
     public BuiltInStart() {
         super("start", parameterArray, null, null, null, true);
         parameterArray.add(arrayParameter);
+        parameterArray.add(integerParameter);
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {
-        if (inputData.size() == 1 && inputData.get(0) instanceof ArrayDataType && inputData.get(0).isChangeable() == true) {
+        if (inputData.size() == 2 && inputData.get(0) instanceof ArrayDataType && inputData.get(1) instanceof IntegerDataType && inputData.get(1).isChangeable() == true) {
             ArrayDataType inputArray = (ArrayDataType) inputData.get(0);
-            IntegerDataType startIndex = new IntegerDataType(inputArray.getStartIndex(), false);
-            inputData.set(0, startIndex);
+            IntegerDataType inputInteger = (IntegerDataType) inputData.get(1);
+            inputInteger.setData(inputArray.getStartIndex());
+            inputData.set(1, inputInteger);
         }
         else {
             System.out.println("Error: Incorrect arguments for Start function.");

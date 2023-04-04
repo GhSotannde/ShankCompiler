@@ -151,7 +151,6 @@ public class Lexer {
     private void checkForComment(String inputString) {
         if (commentSwitch == 1) { //Allows multiline commenting
             while (stringIndex < inputStringLength && inputString.charAt(stringIndex) != '}') {
-                System.out.print(inputString.charAt(stringIndex));
                 stringIndex++;
                 if (stringIndex < inputStringLength && inputString.charAt(stringIndex) == '}') { 
                     commentSwitch = 0;

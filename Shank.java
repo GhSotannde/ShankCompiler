@@ -40,6 +40,10 @@ public class Shank {
 
         //System.out.println(programNode.ToString()); //Prints out node tree created by parser
 
+        SemanticAnalysis semanticAnalysis = new SemanticAnalysis();
+
+        semanticAnalysis.CheckAssignment(programNode);
+
         Interpreter interpreter = new Interpreter(programNode.getFunctionMap());
     }
 }

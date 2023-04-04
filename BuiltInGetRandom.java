@@ -15,7 +15,7 @@ public class BuiltInGetRandom extends FunctionNode {
         if (inputData.size() == 1 && inputData.get(0) instanceof IntegerDataType && inputData.get(0).isChangeable() == true) { //Checks for correct arguments
             Random rand = new Random();
             IntegerDataType resultIntegerData = (IntegerDataType) inputData.get(0);
-            int resultInteger = rand.nextInt(100); //Returns random number between 0 and 99
+            int resultInteger = rand.nextInt(101); //Returns random number between 0 and 100
             resultIntegerData.setData(resultInteger);
             inputData.set(0, resultIntegerData);
         }
