@@ -357,39 +357,47 @@ public class Parser {
         if (matchAndRemove(Token.tokenType.MINUS) != null) {
             negativeMultiplier = -1;
         }
-        newToken = matchAndRemove(Token.tokenType.INTEGER);
-        if (newToken != null) {
+        if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.IDENTIFIER) {
+            if (functionVariables.containsKey(peek(0).getValue())) {
+                newToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+                VariableNode variable = functionVariables.get(newToken.getValue());
+                VariableReferenceNode variableReferenceNode = new VariableReferenceNode(newToken.getValue(), variable);
+                return variableReferenceNode;
+            }
+        }
+        else if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.INTEGER) {
+            newToken = matchAndRemove(Token.tokenType.INTEGER);
             int numberValue = Integer.parseInt(newToken.getValue());
             IntegerNode newIntegerNode = new IntegerNode(numberValue * negativeMultiplier);
             return newIntegerNode;
         }
-        newToken = matchAndRemove(Token.tokenType.REAL);
-        if (newToken != null) {
+        else if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.REAL) {
+            newToken = matchAndRemove(Token.tokenType.REAL);
             float numberValue = Float.parseFloat(newToken.getValue());
             RealNode newRealNode = new RealNode(numberValue * negativeMultiplier);
             return newRealNode;
         }
-        newToken = matchAndRemove(Token.tokenType.STRINGLITERAL);
-        if (newToken != null) {
+        else if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.STRINGLITERAL) {
+            newToken = matchAndRemove(Token.tokenType.STRINGLITERAL);
             StringNode newStringNode = new StringNode(newToken.getValue());
             return newStringNode;
         }
-        newToken = matchAndRemove(Token.tokenType.CHARACTERLITERAL);
-        if (newToken != null) {
+        else if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.CHARACTERLITERAL) {
+            newToken = matchAndRemove(Token.tokenType.CHARACTERLITERAL);
             CharacterNode newCharacterNode = new CharacterNode(newToken.getValue().charAt(0));
             return newCharacterNode;
         }
-        newToken = matchAndRemove(Token.tokenType.TRUE);
-        if (newToken != null) {
+        else if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.TRUE) {
+            newToken = matchAndRemove(Token.tokenType.TRUE);
             BooleanNode newBooleanNode = new BooleanNode(true);
             return newBooleanNode;
         }
-        newToken = matchAndRemove(Token.tokenType.FALSE);
-        if (newToken != null) {
+        else if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.FALSE) {
+            newToken = matchAndRemove(Token.tokenType.FALSE);
             BooleanNode newBooleanNode = new BooleanNode(false);
             return newBooleanNode;
         }
-        if (matchAndRemove(Token.tokenType.LEFTPARENTHESES) != null) {
+        else if (matchAndRemove(Token.tokenType.LEFTPARENTHESES) != null) {
             Node currentNode = boolCompare(); // If a left parentheses is detected, will check for a boolean statement
             if (currentNode instanceof IntegerNode) {
                 currentNode = (IntegerNode) currentNode;
@@ -427,10 +435,6 @@ public class Parser {
                     throw new SyntaxErrorException(tokenArray.get(0));
             }
             return null;
-        }
-        if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.IDENTIFIER) {
-            Node variableNode = getTargetNode();
-            return variableNode;
         }
         return null;
     }
@@ -760,7 +764,7 @@ public class Parser {
     private StatementNode statement() throws SyntaxErrorException {
         AssignmentNode assignmentStatement = assignment();
         if (assignmentStatement != null) {
-            programNode.addToAssignmentNodeArray(assignmentStatement);
+            programNode.addToAssignmentNodeArray(assignmentStatement); //Collects assignment statements to be used for semantic analysis
             return assignmentStatement;
         }
         FunctionCallNode functionCallStatement = parseFunctionCalls();

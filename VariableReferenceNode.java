@@ -11,15 +11,11 @@ public class VariableReferenceNode extends StatementNode{
         type = inputReferencedNode.getType();
     }
 
-    public VariableReferenceNode(String inputName, Node inputArrayIndexExpression, VariableNode inputReferencedNode) {
+    public VariableReferenceNode(String inputName, Node inputArrayIndexExpression, VariableNode inputReferencedNode) { //For values at array index
         name = inputName;
         arrayIndexExpression = inputArrayIndexExpression;
         referencedVariableNode = inputReferencedNode;
         type = inputReferencedNode.getArrayType();
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Node getIndex() {
@@ -38,12 +34,16 @@ public class VariableReferenceNode extends StatementNode{
         return null;
     }
 
-    public VariableNode.variableType getType() {
-        return type;
+    public String getName() {
+        return name;
     }
 
     public VariableNode getReferencedVariable() {
         return referencedVariableNode;
+    }
+
+    public VariableNode.variableType getType() {
+        return type;
     }
 
     public void setIndex(IntegerNode inputIntegerNode) {

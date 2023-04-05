@@ -18,23 +18,6 @@ public class FunctionNode extends Node {
         isBuiltIn = inputIsBuiltIn;
     }
 
-    public boolean isVariadic() {
-        boolean result = (name == "read" || name == "write") ? true : false;
-        return result;
-    }
-
-    public String ToString() {
-        String str = "Function Name: " + name + "\n\n";
-        if (parameterArray != null)
-            str += ToStringParameterArray();
-        if (variableArray != null)
-            str += ToStringVariableArray();
-        if (statementArray != null)
-            str += ToStringStatementArray();
-        str += "\n";
-        return str;
-    }
-
     public String getName() {
         return name;
     }
@@ -59,12 +42,30 @@ public class FunctionNode extends Node {
         return (isBuiltIn) ? true : false;
     }
 
+    public boolean isVariadic() {
+        boolean result = (name == "read" || name == "write") ? true : false;
+        return result;
+    }
+
     public void setArgumentArray(ArrayList<InterpreterDataType> inputArgumentArray) {
         argumentArray = inputArgumentArray;
         updateParameterVariables();
     }
 
+    public String ToString() {
+        String str = "Function Name: " + name + "\n\n";
+        if (parameterArray != null)
+            str += ToStringParameterArray();
+        if (variableArray != null)
+            str += ToStringVariableArray();
+        if (statementArray != null)
+            str += ToStringStatementArray();
+        str += "\n";
+        return str;
+    }
+
     public void updateArgumentVariables(ArrayList<InterpreterDataType> inputNewArgumentArray) {
+        // Copies changed parameter variables back to appropriate argument variables after function execution
         if (argumentArray != null) {
             for (int i = 0; i < argumentArray.size(); i++) {
                 if (argumentArray.get(i) instanceof IntegerDataType) {
@@ -100,7 +101,7 @@ public class FunctionNode extends Node {
                 else if (argumentArray.get(i) instanceof ArrayDataType) {
                     ArrayDataType arrayArgument = (ArrayDataType) argumentArray.get(i);
                     ArrayDataType newArrayArgument = (ArrayDataType) inputNewArgumentArray.get(i);
-                    arrayArgument.setData(newArrayArgument.getData());
+                    arrayArgument.setArray(newArrayArgument.getArray());
                     argumentArray.set(i, arrayArgument);
                 }
                 else {
@@ -130,7 +131,7 @@ public class FunctionNode extends Node {
             if (node.getValue() != null) {
                 str += " = " + node.getValue().ToString();
             }
-            if (node.getHasTypeLimit() == 1) { //If == 1, node has type limit and needs to print accordingly
+            if (node.getHasTypeLimit() == true) {
                 if (node.getType() == VariableNode.variableType.REAL) {
                     str += " From " + node.getRealFrom() + " To " + node.getRealTo();
                 }
@@ -153,6 +154,7 @@ public class FunctionNode extends Node {
     }
 
     private void updateParameterVariables() {
+        // Copies argument variables given in function call to matching parameter variables
         if (argumentArray != null & parameterArray != null) {
             for (int i = 0; i < argumentArray.size(); i++) {
                 if (argumentArray.get(i) instanceof IntegerDataType) {
@@ -184,9 +186,9 @@ public class FunctionNode extends Node {
                     ArrayDataType arrayArgument = (ArrayDataType) argumentArray.get(i);
                     int start = arrayArgument.getStartIndex();
                     int end = arrayArgument.getEndIndex();
-                    ArrayList<InterpreterDataType> arrayArgumentArray = arrayArgument.getData();
+                    ArrayList<InterpreterDataType> arrayArgumentArray = arrayArgument.getArray();
                     VariableNode parameter = parameterArray.get(i);
-                    parameter.setRange(start, end);
+                    parameter.setArraySize(start, end);
                     for (int j = 0; j < arrayArgumentArray.size(); j++) {
                         if (arrayArgumentArray.get(j) instanceof IntegerDataType) {
                             IntegerDataType integerArgument = (IntegerDataType) arrayArgumentArray.get(i);
@@ -225,8 +227,5 @@ public class FunctionNode extends Node {
                 }
             }
         }
-    }
-
-
-    
+    }   
 }

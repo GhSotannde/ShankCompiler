@@ -4,8 +4,8 @@ public class VariableNode extends Node {
     private variableType type;
     private variableType arrayType;
     private Node value = null;
-    private boolean isChangeable; //1 if changeable, 0 if not
-    private int hasTypeLimit = 0; // 1 if has type limit, 0 if not
+    private boolean isChangeable;
+    private boolean hasTypeLimit;
     private int initialSetSwitch = 0;
     private int intFrom;
     private int intTo;
@@ -37,7 +37,7 @@ public class VariableNode extends Node {
         intFrom = inputFrom;
         intTo = inputTo;
         isChangeable = true;
-        hasTypeLimit = 1;
+        hasTypeLimit = true;
         realArray = new float[inputTo - inputFrom];
         intArray = new int[inputTo - inputFrom];
         boolArray = new boolean[inputTo - inputFrom];
@@ -51,7 +51,7 @@ public class VariableNode extends Node {
         intFrom = inputFrom;
         intTo = inputTo;
         isChangeable = true;
-        hasTypeLimit = 1;
+        hasTypeLimit = true;
     }
 
     public VariableNode(String inputName, variableType inputType, float inputRealFrom, float inputRealTo) { //For real ranges
@@ -60,52 +60,10 @@ public class VariableNode extends Node {
         realFrom = inputRealFrom;
         realTo = inputRealTo;
         isChangeable = true;
-        hasTypeLimit = 1;
+        hasTypeLimit = true;
     }
 
-    public void setValue(Node inputValue) { //Only works once for constants
-        if (isChangeable == true)
-            value = inputValue;
-        if (isChangeable == false && initialSetSwitch == 0) {
-            value = inputValue;
-            initialSetSwitch = 1;
-        }
-    }
-
-    public void setArrayValueAtIndex(int inputIndex, Node inputNode, variableType inputVariableType) {
-        switch (inputVariableType) {
-            case INTEGER:
-                IntegerNode newIntegerNode = (IntegerNode) inputNode;
-                int newInteger = newIntegerNode.getValue();
-                intArray[inputIndex] = newInteger;
-                break;
-            case REAL:
-                RealNode newRealNode = (RealNode) inputNode;
-                float newReal = newRealNode.getValue();
-                realArray[inputIndex] = newReal;
-                break;
-            case STRING:
-                StringNode newStringNode = (StringNode) inputNode;
-                String newString = newStringNode.getValue();
-                stringArray[inputIndex] = newString;
-                break;
-            case CHARACTER:
-                CharacterNode newCharacterNode = (CharacterNode) inputNode;
-                char newCharacter = newCharacterNode.getValue();
-                charArray[inputIndex] = newCharacter;
-                break;
-            case BOOLEAN:
-                BooleanNode newBooleanNode = (BooleanNode) inputNode;
-                boolean newBoolean = newBooleanNode.getValue();
-                boolArray[inputIndex] = newBoolean;
-                break;
-            default :
-                System.out.println("ERROR: Incorrect data type given in argument array.");
-                System.exit(0);
-        }
-    }
-
-    public Node getArrayValueAtIndex(int inputIndex, variableType inputType) {
+    public Node getArrayValueAtIndex(int inputIndex, variableType inputType) { //For adding parameters to the variable map
         switch (inputType) {
             case REAL :
                 if (realArray.length <= inputIndex)
@@ -142,24 +100,16 @@ public class VariableNode extends Node {
         }
     }
 
-    public Node getValue() {
-        return value;
-    }
-
-    public variableType getType() {
-        return type;
-    }
-
     public variableType getArrayType() {
         return arrayType;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public boolean getChangeable() {
         return isChangeable;
+    }
+
+    public boolean getHasTypeLimit() {
+        return hasTypeLimit;
     }
 
     public int getIntFrom() {
@@ -170,6 +120,10 @@ public class VariableNode extends Node {
         return intTo;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public float getRealFrom() {
         return realFrom;
     }
@@ -178,11 +132,15 @@ public class VariableNode extends Node {
         return realTo;
     }
 
-    public int getHasTypeLimit() {
-        return hasTypeLimit;
+    public variableType getType() {
+        return type;
     }
 
-    public void setRange(int inputStart, int inputEnd) {
+    public Node getValue() {
+        return value;
+    }
+
+    public void setArraySize(int inputStart, int inputEnd) {
         intFrom = inputStart;
         intTo = inputEnd;
         realArray = new float[intTo - intFrom];
@@ -191,10 +149,50 @@ public class VariableNode extends Node {
         stringArray = new String[intTo - intFrom];
         charArray = new char[intTo - intFrom];
     }
+
+    public void setArrayValueAtIndex(int inputIndex, Node inputNode, variableType inputVariableType) { // For updating parameters
+        switch (inputVariableType) {
+            case INTEGER:
+                IntegerNode newIntegerNode = (IntegerNode) inputNode;
+                int newInteger = newIntegerNode.getValue();
+                intArray[inputIndex] = newInteger;
+                break;
+            case REAL:
+                RealNode newRealNode = (RealNode) inputNode;
+                float newReal = newRealNode.getValue();
+                realArray[inputIndex] = newReal;
+                break;
+            case STRING:
+                StringNode newStringNode = (StringNode) inputNode;
+                String newString = newStringNode.getValue();
+                stringArray[inputIndex] = newString;
+                break;
+            case CHARACTER:
+                CharacterNode newCharacterNode = (CharacterNode) inputNode;
+                char newCharacter = newCharacterNode.getValue();
+                charArray[inputIndex] = newCharacter;
+                break;
+            case BOOLEAN:
+                BooleanNode newBooleanNode = (BooleanNode) inputNode;
+                boolean newBoolean = newBooleanNode.getValue();
+                boolArray[inputIndex] = newBoolean;
+                break;
+            default :
+                System.out.println("ERROR: Incorrect data type given in argument array.");
+                System.exit(0);
+        }
+    }
+
+    public void setValue(Node inputValue) { 
+        if (isChangeable == true)
+            value = inputValue;
+        if (isChangeable == false && initialSetSwitch == 0) { //Only works once for constants
+            value = inputValue;
+            initialSetSwitch = 1;
+        }
+    }
     
     public String ToString() {
         return "VariableNode(" + name + "," + type + ")";
     }
-    
-    
 }

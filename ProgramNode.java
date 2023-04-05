@@ -31,16 +31,24 @@ public class ProgramNode extends Node {
         addToFunctionMap(builtInRead);
     }
 
-    public void addToFunctionMap(FunctionNode inputFunctionNode) {
-        functionMap.put(inputFunctionNode.getName(), inputFunctionNode);
-    }
-
     public void addToAssignmentNodeArray(AssignmentNode inputAssignmentNode) {
         assignmentNodeArray.add(inputAssignmentNode);
     }
 
+    public void addToFunctionMap(FunctionNode inputFunctionNode) {
+        functionMap.put(inputFunctionNode.getName(), inputFunctionNode);
+    }
+
     public ArrayList<AssignmentNode> getAssignmentNodeArray() {
         return assignmentNodeArray;
+    }
+
+    public LinkedHashMap<String, FunctionNode> getFunctionMap() {
+        return functionMap;
+    }
+
+    public boolean isAFunction(String inputString) {
+        return functionMap.containsKey(inputString);
     }
 
     public String ToString() {
@@ -49,13 +57,5 @@ public class ProgramNode extends Node {
             str += functionMap.get(key).ToString() + "\n\n";
         }
         return str;
-    }
-
-    public boolean isAFunction(String inputString) {
-        return functionMap.containsKey(inputString);
-    }
-
-    public LinkedHashMap<String, FunctionNode> getFunctionMap() {
-        return functionMap;
     }
 }

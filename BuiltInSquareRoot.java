@@ -3,6 +3,7 @@ import java.lang.Math;
 
 public class BuiltInSquareRoot extends FunctionNode {
 
+    // Fills parameter array with default parameters in order to compare type and variability to future arguments
     VariableNode floatParameter = new VariableNode("someFloat", VariableNode.variableType.REAL, false);
     VariableNode resultFloatParameter = new VariableNode("result", VariableNode.variableType.REAL, true);
     static ArrayList<VariableNode> parameterArray = new ArrayList<VariableNode>();
@@ -14,6 +15,7 @@ public class BuiltInSquareRoot extends FunctionNode {
     }
 
     public void execute(ArrayList<InterpreterDataType> inputData) {
+        // Checks for correct arguments
         if (inputData.size() == 2 && inputData.get(0) instanceof RealDataType && inputData.get(1) instanceof RealDataType && inputData.get(1).isChangeable() == true) {
             RealDataType someFloatData = (RealDataType) inputData.get(0);
             RealDataType resultData = (RealDataType) inputData.get(1);

@@ -9,6 +9,14 @@ public class WhileNode extends StatementNode {
         condition = inputCondition;
         statements = inputStatementArray;
     }
+    
+    public BooleanCompareNode getCondition() {
+        return condition;
+    }
+
+    public ArrayList<StatementNode> getStatements() {
+        return statements;
+    }
 
     public String ToString() {
         String str = "\nWhileNode(\n Condition: ";
@@ -19,13 +27,5 @@ public class WhileNode extends StatementNode {
         }
         str += "\n)";
         return str;
-    }
-    
-    public BooleanCompareNode getCondition() {
-        return condition;
-    }
-
-    public ArrayList<StatementNode> getStatements() {
-        return statements;
     }
 }

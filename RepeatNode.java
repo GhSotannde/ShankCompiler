@@ -10,6 +10,14 @@ public class RepeatNode extends StatementNode {
         statements = inputStatementArray;
     }
 
+    public BooleanCompareNode getCondition() {
+        return condition;
+    }
+
+    public ArrayList<StatementNode> getStatements() {
+        return statements;
+    }
+
     public String ToString() {
         String str = "\nRepeatNode(\n Condition: ";
         str += condition.ToString() + "\n Statements:\n";
@@ -19,14 +27,5 @@ public class RepeatNode extends StatementNode {
         }
         str += "\n)";
         return str;
-    } 
-
-    public BooleanCompareNode getCondition() {
-        return condition;
     }
-
-    public ArrayList<StatementNode> getStatements() {
-        return statements;
-    }
-
 }

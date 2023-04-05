@@ -29,7 +29,7 @@ public class SemanticAnalysis {
     }
 
     private VariableNode.variableType getLeftSideType(AssignmentNode inputAssignmentNode) {
-        if (inputAssignmentNode.getTarget().getReferencedVariable().getChangeable() == false) {
+        if (inputAssignmentNode.getTarget().getReferencedVariable().getChangeable() == false) { //Checks for constants
             String variableName = inputAssignmentNode.getTarget().getName();
             System.out.println("Variable '" + variableName +"' is a constant and cannot be changed.");
             System.exit(3);
@@ -38,24 +38,24 @@ public class SemanticAnalysis {
     }
 
     private VariableNode.variableType getRightSideType(AssignmentNode inputAssignmentNode) {
-        Node rightSideNode = inputAssignmentNode.getValue();
-        if (rightSideNode instanceof MathOpNode) {
-            MathOpNode rightSideMathOpNode = (MathOpNode) rightSideNode;
-            return rightSideMathOpNode.getDataType();
+        Node value = inputAssignmentNode.getValue();
+        if (value instanceof MathOpNode) {
+            MathOpNode mathOpNodeValue = (MathOpNode) value;
+            return mathOpNodeValue.getDataType();
         }
-        else if (rightSideNode instanceof IntegerNode) {
+        else if (value instanceof IntegerNode) {
             return VariableNode.variableType.INTEGER;
         }
-        else if (rightSideNode instanceof RealNode) {
+        else if (value instanceof RealNode) {
             return VariableNode.variableType.REAL;
         }
-        else if (rightSideNode instanceof BooleanNode) {
+        else if (value instanceof BooleanNode) {
             return VariableNode.variableType.BOOLEAN;
         }
-        else if (rightSideNode instanceof StringNode) {
+        else if (value instanceof StringNode) {
             return VariableNode.variableType.STRING;
         }
-        else if (rightSideNode instanceof CharacterNode) {
+        else if (value instanceof CharacterNode) {
             return VariableNode.variableType.CHARACTER;
         }
         return null;

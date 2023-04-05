@@ -9,7 +9,7 @@ import java.util.List;
 public class Shank {
     public static void main(String[] args) throws IOException, SyntaxErrorException {
 
-        if (args.length != 1) {
+        if (args.length != 1) { //User must provide file to be read
             System.out.println("Inappropriate number of arguments.");
             System.exit(0);
         }
@@ -30,7 +30,7 @@ public class Shank {
             }
         });
 
-        lexData.addLastLineDedents();
+        lexData.addLastLineDedents(); //Adds appropriate amount of dedents at end of lexical token list in case file ends with an indented line
 
         //lexData.printLexer(); //Prints out all tokens collected by lexer
 

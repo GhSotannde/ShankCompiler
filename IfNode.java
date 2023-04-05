@@ -12,7 +12,7 @@ public class IfNode extends StatementNode {
         nextIf = inputNextIf;
     }
 
-    public IfNode(ArrayList<StatementNode> inputStatementArray) {
+    public IfNode(ArrayList<StatementNode> inputStatementArray) { // For else statements that have no conditions
         statements = inputStatementArray;
     }
 
@@ -22,12 +22,12 @@ public class IfNode extends StatementNode {
         return condition;
     }
 
-    public ArrayList<StatementNode> getStatements() {
-        return statements;
-    }
-
     public IfNode getNextIf() {
         return nextIf;
+    }
+
+    public ArrayList<StatementNode> getStatements() {
+        return statements;
     }
 
     public String ToString() {

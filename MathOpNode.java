@@ -14,42 +14,8 @@ public class MathOpNode extends StatementNode {
         right = inputRight;
     }
 
-    public String ToString() {
-        String str = "";
-        if (type != null) {
-            str = "MathOpNode(" + type;
-            if (left != null && left instanceof Node) {
-                str += ", " + left.ToString();
-            }
-            else {
-                str += ", NULL";
-            }
-            if (right != null && right instanceof Node) {
-                str += ", " + right.ToString();
-            }
-            else {
-                str += ", NULL";
-            }
-            str += ")";
-            return str;
-        }
-        return "";
-    }
-
-    public Node getLeftChild() {
-        return left;
-    }
-
-    public Node getRightChild() {
-        return right;
-    }
-
-    public operationType getType() {
-        return type;
-    }
-
-    public VariableNode.variableType getDataType() {
-        VariableNode.variableType leftSideType = null;
+    public VariableNode.variableType getDataType() { // Returns data type bases on left and right child of math op node.
+        VariableNode.variableType leftSideType = null; // Data type is used for semantic analysis
         VariableNode.variableType rightSideType = null;
         if (left instanceof VariableReferenceNode || right instanceof VariableReferenceNode) {
             if (left instanceof VariableReferenceNode && right instanceof VariableReferenceNode) {
@@ -127,5 +93,39 @@ public class MathOpNode extends StatementNode {
             System.exit(3);
         }
         return null;
+    }
+
+    public Node getLeftChild() {
+        return left;
+    }
+
+    public Node getRightChild() {
+        return right;
+    }
+
+    public operationType getType() {
+        return type;
+    }
+
+    public String ToString() {
+        String str = "";
+        if (type != null) {
+            str = "MathOpNode(" + type;
+            if (left != null && left instanceof Node) {
+                str += ", " + left.ToString();
+            }
+            else {
+                str += ", NULL";
+            }
+            if (right != null && right instanceof Node) {
+                str += ", " + right.ToString();
+            }
+            else {
+                str += ", NULL";
+            }
+            str += ")";
+            return str;
+        }
+        return "";
     }
 }

@@ -20,16 +20,16 @@ public class ParameterNode extends StatementNode {
         return isChangeable;
     }
 
-    public VariableReferenceNode getVarIdentifier() {
-        return varIdentifier;
-    }
-
     public Node getExpression() {
         return expression;
     }
 
     public String getName() {
         return varIdentifier.getName();
+    }
+
+    public VariableReferenceNode getVarIdentifier() {
+        return varIdentifier;
     }
 
     public String ToString() {

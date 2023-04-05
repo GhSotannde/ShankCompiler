@@ -13,16 +13,8 @@ public class Token {
     public Token() {
     }
 
-    public void setValue(String inputValue) {
-        value = inputValue;
-    }
-
-    public void setToken(tokenType inputToken) {
-        type = inputToken;
-    }
-
-    public void setLineNumber(int inputLineNumber) {
-        lineNumber = inputLineNumber;
+    public int getLineNumber() {
+        return lineNumber;
     }
 
     public tokenType getToken() {
@@ -33,7 +25,15 @@ public class Token {
         return value;
     }
 
-    public int getLineNumber() {
-        return lineNumber;
+    public void setLineNumber(int inputLineNumber) {
+        lineNumber = inputLineNumber;
+    }
+
+    public void setToken(tokenType inputToken) {
+        type = inputToken;
+    }
+
+    public void setValue(String inputValue) {
+        value = inputValue;
     }
 }

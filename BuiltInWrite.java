@@ -12,7 +12,7 @@ public class BuiltInWrite extends FunctionNode {
             if (inputData.get(i) instanceof ArrayDataType) { //Searches for data type of argument and prints accordingly
                 ArrayDataType array = (ArrayDataType) inputData.get(i);
                 String str = "Array[";
-                ArrayList<InterpreterDataType> arrayData = array.getData();
+                ArrayList<InterpreterDataType> arrayData = array.getArray();
                 for (int j = 0; j < arrayData.size(); j++) {
                     str += arrayData.get(j) + ", ";
                 }
@@ -30,7 +30,10 @@ public class BuiltInWrite extends FunctionNode {
                 }
                 else if (arg instanceof StringDataType) {
                     StringDataType stringArg = (StringDataType) arg;
-                    System.out.print(stringArg.getData() + " ");
+                    if (stringArg.getData().charAt(0) == '\\' && stringArg.getData().charAt(1) == 'n')
+                        System.out.print("\n");
+                    else
+                        System.out.print(stringArg.getData() + " ");
                 }
                 else if (arg instanceof CharacterDataType) {
                     CharacterDataType charArg = (CharacterDataType) arg;
@@ -46,6 +49,5 @@ public class BuiltInWrite extends FunctionNode {
                 }
             }
         }
-        System.out.print("\n");
     }
 }

@@ -10,10 +10,6 @@ public class BooleanCompareNode extends StatementNode {
     right = inputRight;
     }
 
-    public String ToString() {
-        return "BooleanCompareNode(\n  Type: " + type + "\n  Left: " + left.ToString() + "\n  Right: " + right.ToString() + "\n)";
-    }
-
     public Node getLeftChild() {
         return left;
     }
@@ -25,5 +21,8 @@ public class BooleanCompareNode extends StatementNode {
     public comparisonType getType() {
         return type;
     }
-    
+
+    public String ToString() {
+        return "BooleanCompareNode(\n  Type: " + type + "\n  Left: " + left.ToString() + "\n  Right: " + right.ToString() + "\n)";
+    }
 }
