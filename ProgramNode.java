@@ -1,7 +1,9 @@
 import java.util.LinkedHashMap;
+import java.util.ArrayList;
 
 public class ProgramNode extends Node {
     private LinkedHashMap<String, FunctionNode> functionMap = new LinkedHashMap<String, FunctionNode>();
+    private ArrayList<AssignmentNode> assignmentNodeArray = new ArrayList<AssignmentNode>();
 
     private BuiltInWrite builtInWrite = new BuiltInWrite();
     private BuiltInLeft builtInLeft = new BuiltInLeft();
@@ -31,6 +33,14 @@ public class ProgramNode extends Node {
 
     public void addToFunctionMap(FunctionNode inputFunctionNode) {
         functionMap.put(inputFunctionNode.getName(), inputFunctionNode);
+    }
+
+    public void addToAssignmentNodeArray(AssignmentNode inputAssignmentNode) {
+        assignmentNodeArray.add(inputAssignmentNode);
+    }
+
+    public ArrayList<AssignmentNode> getAssignmentNodeArray() {
+        return assignmentNodeArray;
     }
 
     public String ToString() {

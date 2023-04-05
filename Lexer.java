@@ -61,8 +61,6 @@ public class Lexer {
             checkForComment(inputString);
             lineNumber++;
         }
-        
-        
     }
 
     public void printLexer() {

@@ -1,7 +1,9 @@
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class Parser {
     private ArrayList<Token> tokenArray = new ArrayList<Token>();
+    private LinkedHashMap<String, VariableNode> functionVariables = new LinkedHashMap<String, VariableNode>();
     
     private Token newToken = new Token();
 
@@ -41,6 +43,7 @@ public class Parser {
                 if (newNode != null) {
                     FunctionNode functionNode = (FunctionNode) newNode;
                     programNode.addToFunctionMap(functionNode);
+                    functionVariables.clear();
                 }
             }
             endOfLineNode = expectEndsOfLine();
@@ -371,6 +374,11 @@ public class Parser {
             StringNode newStringNode = new StringNode(newToken.getValue());
             return newStringNode;
         }
+        newToken = matchAndRemove(Token.tokenType.CHARACTERLITERAL);
+        if (newToken != null) {
+            CharacterNode newCharacterNode = new CharacterNode(newToken.getValue().charAt(0));
+            return newCharacterNode;
+        }
         newToken = matchAndRemove(Token.tokenType.TRUE);
         if (newToken != null) {
             BooleanNode newBooleanNode = new BooleanNode(true);
@@ -437,6 +445,12 @@ public class Parser {
                     ArrayList<VariableNode> parameterArray = parameterDeclarations(); //Records parameters
                     ArrayList<VariableNode> variableArray = new ArrayList<VariableNode>();
                     variableArray = variableDeclarations(variableArray); //Records variables 
+                    for (VariableNode variable : parameterArray) {
+                        functionVariables.put(variable.getName(), variable);
+                    }
+                    for (VariableNode variable : variableArray) {
+                        functionVariables.put(variable.getName(), variable);
+                    }
                     currentToken = expectEndsOfLine();
                     if (currentToken == null)
                         throw new SyntaxErrorException(tokenArray.get(0));
@@ -465,7 +479,8 @@ public class Parser {
                 throw new SyntaxErrorException(tokenArray.get(0));
             }
             matchAndRemove(Token.tokenType.RIGHTBRACKET);
-            VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(targetName, arrayIndex);
+            VariableNode referencedVariable = functionVariables.get(targetName);
+            VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(targetName, arrayIndex, referencedVariable);
             return newVariableReferenceNode;
         }
         Node expressionNode = expression();
@@ -473,7 +488,8 @@ public class Parser {
             return expressionNode;
         }
         else if (expressionNode == null && currentToken != null) {
-            VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(targetName);
+            VariableNode referencedVariable = functionVariables.get(targetName);
+            VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(targetName, referencedVariable);
             return newVariableReferenceNode;
         }
         else {
@@ -524,10 +540,12 @@ public class Parser {
                         throw new SyntaxErrorException(tokenArray.get(0));
                     if (matchAndRemove(Token.tokenType.RIGHTBRACKET) == null)
                         throw new SyntaxErrorException(tokenArray.get(0));
-                    integerVariableNode = new VariableReferenceNode(targetName, arrayIndex);
+                    VariableNode referencedVariable = functionVariables.get(targetName);
+                    integerVariableNode = new VariableReferenceNode(targetName, arrayIndex, referencedVariable);
                 }
                 else {
-                    integerVariableNode = new VariableReferenceNode(targetName);
+                    VariableNode referencedVariable = functionVariables.get(targetName);
+                    integerVariableNode = new VariableReferenceNode(targetName, referencedVariable);
                 }
                 if (matchAndRemove(Token.tokenType.FROM) != null) {
                     Node fromExpression = expression(); // From/To can be any expression
@@ -580,7 +598,8 @@ public class Parser {
                         else {
                             if (peek(0).getToken() == Token.tokenType.IDENTIFIER) {
                                 currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
-                                VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(currentToken.getValue());
+                                VariableNode referencedVariable = functionVariables.get(currentToken.getValue());
+                                VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(currentToken.getValue(), referencedVariable);
                                 ParameterNode newParameterNode = new ParameterNode(newVariableReferenceNode, false);
                                 parameterArray.add(newParameterNode);
                             }
@@ -741,6 +760,7 @@ public class Parser {
     private StatementNode statement() throws SyntaxErrorException {
         AssignmentNode assignmentStatement = assignment();
         if (assignmentStatement != null) {
+            programNode.addToAssignmentNodeArray(assignmentStatement);
             return assignmentStatement;
         }
         FunctionCallNode functionCallStatement = parseFunctionCalls();

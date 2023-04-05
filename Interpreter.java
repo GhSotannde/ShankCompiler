@@ -1048,14 +1048,18 @@ public class Interpreter {
         IntegerNode toIntNode = (IntegerNode) toNode;
         int fromValue = fromIntNode.getValue();
         int toValue = toIntNode.getValue();
+        if (fromValue > toValue) {
+            System.out.println("ERROR: Starting index given for FOR loop is greater than ending index.");
+            System.exit(24);
+        }
         IntegerDataType fromData = new IntegerDataType(fromValue, true);
         String integerVariableName = inputForNode.getIntegerVariable().getName();
         inputLocalVariableMap.put(integerVariableName, fromData); //Stores integer variable back into variable map initialized with From value
         InterpreterDataType integerVariableData = inputLocalVariableMap.get(integerVariableName);
         IntegerDataType integerVariableIntegerData = (IntegerDataType) integerVariableData;
-        while (integerVariableIntegerData.getData() != toValue) { //For loop continues, until integer value is equal to To value
+        while (integerVariableIntegerData.getData() <= toValue) { //For loop continues, until integer value is equal to To value
             interpretBlock(inputLocalVariableMap, inputForNode.getStatements());
-            integerVariableIntegerData = new IntegerDataType(integerVariableIntegerData.getData() + 1, true); //Integer variables increments by one on each iteration of loop
+            integerVariableIntegerData.setData(integerVariableIntegerData.getData()+1); //Integer variables increments by one on each iteration of loop
         }
     }
 
