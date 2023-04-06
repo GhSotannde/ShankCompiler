@@ -476,7 +476,7 @@ public class Interpreter {
             }
             else {
                 IntegerDataType newIntegerData = new IntegerDataType(currentIntegerNode.getValue(), assignmentVariable.isChangeable());
-                inputLocalVariableMap.put(assignmentTarget, newIntegerData); //Add new Integer data to the variable map, with the assignment target as its variable name
+                inputLocalVariableMap.put(assignmentTarget, newIntegerData);
             }
             
         }
@@ -488,7 +488,7 @@ public class Interpreter {
                 if (referencedIntegerData.hasTypeLimit()) {
                     if (currentIntegerNode.getValue() >= referencedIntegerData.getTypeLimitFrom() && currentIntegerNode.getValue() <= referencedIntegerData.getTypeLimitTo()) {
                         IntegerDataType newIntegerData = new IntegerDataType(currentIntegerNode.getValue(), assignmentVariable.isChangeable(), referencedIntegerData.getTypeLimitFrom(), referencedIntegerData.getTypeLimitTo());
-                        inputLocalVariableMap.put(assignmentTarget, newIntegerData); //Add new Integer data to the variable map, with the assignment target as its variable name
+                        inputLocalVariableMap.put(assignmentTarget, newIntegerData); 
                     }
                     else {
                         System.out.println("ERROR: Assignment value outside of type limit range.");
@@ -497,7 +497,7 @@ public class Interpreter {
                 }
                 else {
                     IntegerDataType newIntegerData = new IntegerDataType(currentIntegerNode.getValue(), assignmentVariable.isChangeable());
-                    inputLocalVariableMap.put(assignmentTarget, newIntegerData); //Add new Integer data to the variable map, with the assignment target as its variable name
+                    inputLocalVariableMap.put(assignmentTarget, newIntegerData); 
                 }
             }
             else if (newNode instanceof RealNode) {
@@ -515,7 +515,7 @@ public class Interpreter {
                 }
                 else {
                     RealDataType newRealData = new RealDataType(currentRealNode.getValue(), assignmentVariable.isChangeable());
-                    inputLocalVariableMap.put(assignmentTarget, newRealData); //Add new Real data to the variable map, with the assignment target as its variable name
+                    inputLocalVariableMap.put(assignmentTarget, newRealData);
                 }
             }
             else if (newNode instanceof StringNode) {
@@ -533,7 +533,7 @@ public class Interpreter {
                 }
                 else {
                     StringDataType newStringData = new StringDataType(currentStringNode.getValue(), assignmentVariable.isChangeable());
-                    inputLocalVariableMap.put(assignmentTarget, newStringData); //Add new String data to the variable map, with the assignment target as its variable name
+                    inputLocalVariableMap.put(assignmentTarget, newStringData);
                 }
             }
             else {
@@ -547,7 +547,7 @@ public class Interpreter {
                 if (referencedRealData.hasTypeLimit()) {
                     if (currentRealNode.getValue() >= referencedRealData.getTypeLimitFrom() && currentRealNode.getValue() <= referencedRealData.getTypeLimitTo()) {
                         RealDataType newRealData = new RealDataType(currentRealNode.getValue(), assignmentVariable.isChangeable(), referencedRealData.getTypeLimitFrom(), referencedRealData.getTypeLimitTo());
-                        inputLocalVariableMap.put(assignmentTarget, newRealData); //Add new Real data to the variable map, with the assignment target as its variable name
+                        inputLocalVariableMap.put(assignmentTarget, newRealData);
                     }
                     else {
                         System.out.println("ERROR: Assignment value outside of type limit range.");
@@ -556,7 +556,7 @@ public class Interpreter {
                 }
                 else {
                     RealDataType newRealData = new RealDataType(currentRealNode.getValue(), assignmentVariable.isChangeable());
-                    inputLocalVariableMap.put(assignmentTarget, newRealData); //Add new Real data to the variable map, with the assignment target as its variable name
+                    inputLocalVariableMap.put(assignmentTarget, newRealData);
                 }
         }
         else if (assignmentValue instanceof CharacterNode) {
@@ -570,7 +570,7 @@ public class Interpreter {
                 if (referencedStringData.hasTypeLimit()) {
                     if (currentStringNode.getValue().length() >= referencedStringData.getTypeLimitFrom() && currentStringNode.getValue().length() <= referencedStringData.getTypeLimitTo()) {
                         StringDataType newStringData = new StringDataType(currentStringNode.getValue(), assignmentVariable.isChangeable(), referencedStringData.getTypeLimitFrom(), referencedStringData.getTypeLimitTo());
-                        inputLocalVariableMap.put(assignmentTarget, newStringData); //Add new String data to the variable map, with the assignment target as its variable name
+                        inputLocalVariableMap.put(assignmentTarget, newStringData);
                     }
                     else {
                         System.out.println("ERROR: Assignment value outside of type limit range.");
@@ -579,7 +579,7 @@ public class Interpreter {
                 }
                 else {
                     StringDataType newStringData = new StringDataType(currentStringNode.getValue(), assignmentVariable.isChangeable());
-                    inputLocalVariableMap.put(assignmentTarget, newStringData); //Add new String data to the variable map, with the assignment target as its variable name
+                    inputLocalVariableMap.put(assignmentTarget, newStringData);
                 }
         }
         else if (assignmentValue instanceof BooleanNode) {
