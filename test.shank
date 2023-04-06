@@ -1,0 +1,20 @@
+define add (a,b : integer; var c:integer) 
+    c:=a+b
+
+define smart (x,y : integer; var sum : real)
+variables names, games : array from 0 to 5 of integer 
+variables typeLimitInt : string from 3 to 6
+variables i,j,k : integer
+variables myString : string
+constants myName = "Byron ", d = " ", x = 0, yourName = "Julia"
+    i := 0
+    for i from 0 to 15
+        if i mod 15 = 0 then
+            write "FizzBuzz "
+        elsif i mod 3 = 0 then
+            write "Fizz "
+        elsif i mod 5 = 0 then 
+            write "Buzz "
+        else
+            write i, " "
+    write "\n"
