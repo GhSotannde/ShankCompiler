@@ -11,7 +11,7 @@ public class VariableReferenceNode extends StatementNode{
         type = inputReferencedNode.getType();
     }
 
-    public VariableReferenceNode(String inputName, Node inputArrayIndexExpression, VariableNode inputReferencedNode) { //For values at array index
+    public VariableReferenceNode(String inputName, VariableNode inputReferencedNode, Node inputArrayIndexExpression) { //For values at array index
         name = inputName;
         arrayIndexExpression = inputArrayIndexExpression;
         referencedVariableNode = inputReferencedNode;

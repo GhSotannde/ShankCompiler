@@ -37,7 +37,6 @@ public class VariableNode extends Node {
         intFrom = inputFrom;
         intTo = inputTo;
         isChangeable = true;
-        hasTypeLimit = true;
         realArray = new float[inputTo - inputFrom];
         intArray = new int[inputTo - inputFrom];
         boolArray = new boolean[inputTo - inputFrom];
@@ -108,7 +107,7 @@ public class VariableNode extends Node {
         return isChangeable;
     }
 
-    public boolean getHasTypeLimit() {
+    public boolean hasTypeLimit() {
         return hasTypeLimit;
     }
 

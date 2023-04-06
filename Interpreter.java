@@ -238,64 +238,87 @@ public class Interpreter {
 
     private void addVariableToVariableMap(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, VariableNode inputVariableNode) {
         String name = inputVariableNode.getName();
-        switch (inputVariableNode.getType()) {
-            case INTEGER:
-                IntegerDataType newIntegerData = new IntegerDataType(0, true); // Variables declared before statements are automatically changeable
-                inputLocalVariableMap.put(name, newIntegerData);
-                break;
-            case REAL:
-                RealDataType newRealData = new RealDataType(0, true);
-                inputLocalVariableMap.put(name, newRealData);
-                break;
-            case CHARACTER:
-                CharacterDataType newCharData = new CharacterDataType(' ', true);
-                inputLocalVariableMap.put(name, newCharData);
-                break;
-            case STRING:
-                StringDataType newStringData = new StringDataType("", true);
-                inputLocalVariableMap.put(name, newStringData);
-                break;
-            case BOOLEAN:
-                BooleanDataType newBooleanData = new BooleanDataType(false, true);
-                inputLocalVariableMap.put(name, newBooleanData);
-                break;
-            case ARRAY:
-                int startIndex = inputVariableNode.getIntFrom();
-                int endIndex = inputVariableNode.getIntTo();
-                ArrayDataType newArrayData = null;
-                switch (inputVariableNode.getArrayType()) {
-                    case INTEGER:
-                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.INTEGER, startIndex, endIndex, inputVariableNode.getChangeable());
-                        break;
-                    case REAL:
-                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.REAL, startIndex, endIndex, inputVariableNode.getChangeable());
-                        break;
-                    case CHARACTER:
-                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.CHARACTER, startIndex, endIndex, inputVariableNode.getChangeable());
-                        break;
-                    case BOOLEAN:
-                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.BOOLEAN, startIndex, endIndex, inputVariableNode.getChangeable());
-                        break;
-                    case STRING:
-                        newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.STRING, startIndex, endIndex, inputVariableNode.getChangeable());
-                        break;
-                    default:
-                        System.out.println("Error: Array type not detected.");
-                        System.exit(5);
-                }
-                inputLocalVariableMap.put(name, newArrayData);
-                break;
-            default:
-                System.out.println("ERROR: Variable type not detected.");
-                System.exit(6);
-                break;
+        if (inputVariableNode.hasTypeLimit()) {
+            switch (inputVariableNode.getType()) {
+                case INTEGER:
+                    IntegerDataType newIntegerData = new IntegerDataType(0, true, inputVariableNode.getIntFrom(), inputVariableNode.getIntTo()); // Variables declared before statements are automatically changeable
+                    inputLocalVariableMap.put(name, newIntegerData);
+                    break;
+                case REAL:
+                    RealDataType newRealData = new RealDataType(0, true, inputVariableNode.getRealFrom(), inputVariableNode.getRealTo());
+                    inputLocalVariableMap.put(name, newRealData);
+                    break;
+                case STRING:
+                    StringDataType newStringData = new StringDataType("", true, inputVariableNode.getIntFrom(), inputVariableNode.getIntTo());
+                    inputLocalVariableMap.put(name, newStringData);
+                    break;
+                default:
+                    System.out.println("ERROR: Variable type not allowed for type limit variable.");
+                    System.exit(6);
+                    break;
+            }
+        }
+        else {
+            switch (inputVariableNode.getType()) {
+                case INTEGER:
+                    IntegerDataType newIntegerData = new IntegerDataType(0, true); // Variables declared before statements are automatically changeable
+                    inputLocalVariableMap.put(name, newIntegerData);
+                    break;
+                case REAL:
+                    RealDataType newRealData = new RealDataType(0, true);
+                    inputLocalVariableMap.put(name, newRealData);
+                    break;
+                case CHARACTER:
+                    CharacterDataType newCharData = new CharacterDataType(' ', true);
+                    inputLocalVariableMap.put(name, newCharData);
+                    break;
+                case STRING:
+                    StringDataType newStringData = new StringDataType("", true);
+                    inputLocalVariableMap.put(name, newStringData);
+                    break;
+                case BOOLEAN:
+                    BooleanDataType newBooleanData = new BooleanDataType(false, true);
+                    inputLocalVariableMap.put(name, newBooleanData);
+                    break;
+                case ARRAY:
+                    int startIndex = inputVariableNode.getIntFrom();
+                    int endIndex = inputVariableNode.getIntTo();
+                    ArrayDataType newArrayData = null;
+                    switch (inputVariableNode.getArrayType()) {
+                        case INTEGER:
+                            newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.INTEGER, startIndex, endIndex, inputVariableNode.getChangeable());
+                            break;
+                        case REAL:
+                            newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.REAL, startIndex, endIndex, inputVariableNode.getChangeable());
+                            break;
+                        case CHARACTER:
+                            newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.CHARACTER, startIndex, endIndex, inputVariableNode.getChangeable());
+                            break;
+                        case BOOLEAN:
+                            newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.BOOLEAN, startIndex, endIndex, inputVariableNode.getChangeable());
+                            break;
+                        case STRING:
+                            newArrayData = new ArrayDataType(ArrayDataType.arrayDataType.STRING, startIndex, endIndex, inputVariableNode.getChangeable());
+                            break;
+                        default:
+                            System.out.println("Error: Array type not detected.");
+                            System.exit(5);
+                    }
+                    inputLocalVariableMap.put(name, newArrayData);
+                    break;
+                default:
+                    System.out.println("ERROR: Variable type not detected.");
+                    System.exit(6);
+                    break;
+            }
         }
     }
 
     private void AssignmentNodeFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, AssignmentNode inputAssignmentNode) throws SyntaxErrorException {
         String assignmentTarget = inputAssignmentNode.getTarget().getName();
         Node assignmentValue = inputAssignmentNode.getValue();
-        if (!(inputLocalVariableMap.get(assignmentTarget).isChangeable())) { //System exits and gives error message if user attempts to alter a constant
+        InterpreterDataType assignmentVariable = inputLocalVariableMap.get(assignmentTarget);
+        if (!(assignmentVariable.isChangeable())) { //System exits and gives error message if user attempts to alter a constant
             System.out.println("ERROR: Cannot change the value of a constant.");
             System.exit(7);
         }
@@ -329,8 +352,8 @@ public class Interpreter {
             }
         }
         if (inputAssignmentNode.getTarget().getIndex() != null) { //Array with index value
-            if (inputLocalVariableMap.get(assignmentTarget) instanceof ArrayDataType) {
-                ArrayDataType array = (ArrayDataType) inputLocalVariableMap.get(assignmentTarget);
+            if (assignmentVariable instanceof ArrayDataType) {
+                ArrayDataType array = (ArrayDataType) assignmentVariable;
                 int arrayIndex = 0;
                 //Converts any data type found in index to integer
                 if (inputAssignmentNode.getTarget().getIndex() instanceof IntegerNode) {
@@ -440,25 +463,78 @@ public class Interpreter {
         }
         else if (assignmentValue instanceof IntegerNode) {
             IntegerNode currentIntegerNode = (IntegerNode) assignmentValue;
-            IntegerDataType newIntegerData = new IntegerDataType(currentIntegerNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-            inputLocalVariableMap.put(assignmentTarget, newIntegerData); //Add new Integer data to the variable map, with the assignment target as its variable name
+            IntegerDataType referencedIntegerData = (IntegerDataType) assignmentVariable;
+            if (referencedIntegerData.hasTypeLimit()) {
+                if (currentIntegerNode.getValue() >= referencedIntegerData.getTypeLimitFrom() && currentIntegerNode.getValue() <= referencedIntegerData.getTypeLimitTo()) {
+                    IntegerDataType newIntegerData = new IntegerDataType(currentIntegerNode.getValue(), assignmentVariable.isChangeable(), referencedIntegerData.getTypeLimitFrom(), referencedIntegerData.getTypeLimitTo());
+                    inputLocalVariableMap.put(assignmentTarget, newIntegerData); //Add new Integer data to the variable map, with the assignment target as its variable name
+                }
+                else {
+                    System.out.println("ERROR: Assignment value outside of type limit range.");
+                    System.exit(13);
+                }
+            }
+            else {
+                IntegerDataType newIntegerData = new IntegerDataType(currentIntegerNode.getValue(), assignmentVariable.isChangeable());
+                inputLocalVariableMap.put(assignmentTarget, newIntegerData); //Add new Integer data to the variable map, with the assignment target as its variable name
+            }
+            
         }
         else if (assignmentValue instanceof MathOpNode) {
             Node newNode = expression(inputLocalVariableMap, assignmentValue); //Run through expression method in order to simplify math op expression and receive a basic data type
             if (newNode instanceof IntegerNode) {
-                IntegerNode currentIntNode = (IntegerNode) newNode;
-                IntegerDataType newIntegerData = new IntegerDataType(currentIntNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-                inputLocalVariableMap.put(assignmentTarget, newIntegerData);
+                IntegerNode currentIntegerNode = (IntegerNode) newNode;
+                IntegerDataType referencedIntegerData = (IntegerDataType) assignmentVariable;
+                if (referencedIntegerData.hasTypeLimit()) {
+                    if (currentIntegerNode.getValue() >= referencedIntegerData.getTypeLimitFrom() && currentIntegerNode.getValue() <= referencedIntegerData.getTypeLimitTo()) {
+                        IntegerDataType newIntegerData = new IntegerDataType(currentIntegerNode.getValue(), assignmentVariable.isChangeable(), referencedIntegerData.getTypeLimitFrom(), referencedIntegerData.getTypeLimitTo());
+                        inputLocalVariableMap.put(assignmentTarget, newIntegerData); //Add new Integer data to the variable map, with the assignment target as its variable name
+                    }
+                    else {
+                        System.out.println("ERROR: Assignment value outside of type limit range.");
+                        System.exit(13);
+                    }
+                }
+                else {
+                    IntegerDataType newIntegerData = new IntegerDataType(currentIntegerNode.getValue(), assignmentVariable.isChangeable());
+                    inputLocalVariableMap.put(assignmentTarget, newIntegerData); //Add new Integer data to the variable map, with the assignment target as its variable name
+                }
             }
             else if (newNode instanceof RealNode) {
                 RealNode currentRealNode = (RealNode) newNode;
-                RealDataType newRealData = new RealDataType(currentRealNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-                inputLocalVariableMap.put(assignmentTarget, newRealData);
+                RealDataType referencedRealData = (RealDataType) assignmentVariable;
+                if (referencedRealData.hasTypeLimit()) {
+                    if (currentRealNode.getValue() >= referencedRealData.getTypeLimitFrom() && currentRealNode.getValue() <= referencedRealData.getTypeLimitTo()) {
+                        RealDataType newRealData = new RealDataType(currentRealNode.getValue(), assignmentVariable.isChangeable(), referencedRealData.getTypeLimitFrom(), referencedRealData.getTypeLimitTo());
+                        inputLocalVariableMap.put(assignmentTarget, newRealData); //Add new Real data to the variable map, with the assignment target as its variable name
+                    }
+                    else {
+                        System.out.println("ERROR: Assignment value outside of type limit range.");
+                        System.exit(13);
+                    }
+                }
+                else {
+                    RealDataType newRealData = new RealDataType(currentRealNode.getValue(), assignmentVariable.isChangeable());
+                    inputLocalVariableMap.put(assignmentTarget, newRealData); //Add new Real data to the variable map, with the assignment target as its variable name
+                }
             }
             else if (newNode instanceof StringNode) {
                 StringNode currentStringNode = (StringNode) newNode;
-                StringDataType newStringData = new StringDataType(currentStringNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-                inputLocalVariableMap.put(assignmentTarget, newStringData);
+                StringDataType referencedStringData = (StringDataType) assignmentVariable;
+                if (referencedStringData.hasTypeLimit()) {
+                    if (currentStringNode.getValue().length() >= referencedStringData.getTypeLimitFrom() && currentStringNode.getValue().length() <= referencedStringData.getTypeLimitTo()) {
+                        StringDataType newStringData = new StringDataType(currentStringNode.getValue(), assignmentVariable.isChangeable(), referencedStringData.getTypeLimitFrom(), referencedStringData.getTypeLimitTo());
+                        inputLocalVariableMap.put(assignmentTarget, newStringData); //Add new String data to the variable map, with the assignment target as its variable name
+                    }
+                    else {
+                        System.out.println("ERROR: Assignment value outside of type limit range.");
+                        System.exit(13);
+                    }
+                }
+                else {
+                    StringDataType newStringData = new StringDataType(currentStringNode.getValue(), assignmentVariable.isChangeable());
+                    inputLocalVariableMap.put(assignmentTarget, newStringData); //Add new String data to the variable map, with the assignment target as its variable name
+                }
             }
             else {
                 System.out.println("ERROR: Incorrect data type returned from math op calculation.");
@@ -467,22 +543,48 @@ public class Interpreter {
         }
         else if (assignmentValue instanceof RealNode) {
             RealNode currentRealNode = (RealNode) assignmentValue;
-            RealDataType newRealData = new RealDataType(currentRealNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-            inputLocalVariableMap.put(assignmentTarget, newRealData);
+                RealDataType referencedRealData = (RealDataType) assignmentVariable;
+                if (referencedRealData.hasTypeLimit()) {
+                    if (currentRealNode.getValue() >= referencedRealData.getTypeLimitFrom() && currentRealNode.getValue() <= referencedRealData.getTypeLimitTo()) {
+                        RealDataType newRealData = new RealDataType(currentRealNode.getValue(), assignmentVariable.isChangeable(), referencedRealData.getTypeLimitFrom(), referencedRealData.getTypeLimitTo());
+                        inputLocalVariableMap.put(assignmentTarget, newRealData); //Add new Real data to the variable map, with the assignment target as its variable name
+                    }
+                    else {
+                        System.out.println("ERROR: Assignment value outside of type limit range.");
+                        System.exit(13);
+                    }
+                }
+                else {
+                    RealDataType newRealData = new RealDataType(currentRealNode.getValue(), assignmentVariable.isChangeable());
+                    inputLocalVariableMap.put(assignmentTarget, newRealData); //Add new Real data to the variable map, with the assignment target as its variable name
+                }
         }
         else if (assignmentValue instanceof CharacterNode) {
             CharacterNode currentCharacterNode = (CharacterNode) assignmentValue;
-            CharacterDataType newCharacterData = new CharacterDataType(currentCharacterNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
+            CharacterDataType newCharacterData = new CharacterDataType(currentCharacterNode.getValue(), assignmentVariable.isChangeable());
             inputLocalVariableMap.put(assignmentTarget, newCharacterData);
         }
         else if (assignmentValue instanceof StringNode) {
             StringNode currentStringNode = (StringNode) assignmentValue;
-            StringDataType newStringData = new StringDataType(currentStringNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
-            inputLocalVariableMap.put(assignmentTarget, newStringData);
+                StringDataType referencedStringData = (StringDataType) assignmentVariable;
+                if (referencedStringData.hasTypeLimit()) {
+                    if (currentStringNode.getValue().length() >= referencedStringData.getTypeLimitFrom() && currentStringNode.getValue().length() <= referencedStringData.getTypeLimitTo()) {
+                        StringDataType newStringData = new StringDataType(currentStringNode.getValue(), assignmentVariable.isChangeable(), referencedStringData.getTypeLimitFrom(), referencedStringData.getTypeLimitTo());
+                        inputLocalVariableMap.put(assignmentTarget, newStringData); //Add new String data to the variable map, with the assignment target as its variable name
+                    }
+                    else {
+                        System.out.println("ERROR: Assignment value outside of type limit range.");
+                        System.exit(13);
+                    }
+                }
+                else {
+                    StringDataType newStringData = new StringDataType(currentStringNode.getValue(), assignmentVariable.isChangeable());
+                    inputLocalVariableMap.put(assignmentTarget, newStringData); //Add new String data to the variable map, with the assignment target as its variable name
+                }
         }
         else if (assignmentValue instanceof BooleanNode) {
             BooleanNode currentBooleanNode = (BooleanNode) assignmentValue;
-            BooleanDataType newBooleanData = new BooleanDataType(currentBooleanNode.getValue(), inputLocalVariableMap.get(assignmentTarget).isChangeable());
+            BooleanDataType newBooleanData = new BooleanDataType(currentBooleanNode.getValue(), assignmentVariable.isChangeable());
             inputLocalVariableMap.put(assignmentTarget, newBooleanData);
         }
         else if (assignmentValue instanceof BooleanCompareNode) {
@@ -492,7 +594,7 @@ public class Interpreter {
         }
     }
 
-    private BooleanDataType booleanCompareNodeFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, BooleanCompareNode inputBooleanCompareNode) {
+    private BooleanDataType booleanCompareNodeFunction(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, BooleanCompareNode inputBooleanCompareNode) throws SyntaxErrorException {
         Node leftChild = expression(inputLocalVariableMap, inputBooleanCompareNode.getLeftChild()); //Run both children through expression to simplify any nodes down to a basic data type
         Node rightChild = expression(inputLocalVariableMap, inputBooleanCompareNode.getRightChild());
         boolean value = false;
@@ -937,7 +1039,7 @@ public class Interpreter {
         }
     }
 
-    private Node expression(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, Node inputNode) {
+    private Node expression(LinkedHashMap<String, InterpreterDataType> inputLocalVariableMap, Node inputNode) throws SyntaxErrorException {
         if (inputNode instanceof MathOpNode) {
             MathOpNode currentMathOpNode = (MathOpNode) inputNode;
             Node leftChild = expression(inputLocalVariableMap, currentMathOpNode.getLeftChild()); //Recursively calls expression in order to simplify nested MathOpNodes
@@ -1029,6 +1131,72 @@ public class Interpreter {
                 String stringData = currentStringData.getData();
                 StringNode newStringNode = new StringNode(stringData);
                 return newStringNode;
+            }
+            else if (currentData instanceof ArrayDataType) { //For array index references
+                ArrayDataType referencedArray = (ArrayDataType) currentData;
+                Node index = currentVariableReferenceNode.getIndex();
+                int arrayIndex = 0;
+                if (index == null) {
+                    System.out.println("ERROR: Cannot use array in expression.");
+                    System.exit(37);
+                }
+                else {
+                    if (index instanceof IntegerNode) { //First convert the index into an integer
+                        IntegerNode intIndex = (IntegerNode) index;
+                        arrayIndex = intIndex.getValue();
+                    }
+                    else if (index instanceof MathOpNode) {
+                        MathOpNode mathOpIndex = (MathOpNode) index;
+                        InterpreterDataType mathOpIndexData = MathOpNodeFunction(inputLocalVariableMap, mathOpIndex);
+                        if (mathOpIndexData instanceof IntegerDataType) {
+                            IntegerDataType intIndex = (IntegerDataType) mathOpIndexData;
+                            arrayIndex = intIndex.getData();
+                        }
+                        else {
+                            System.out.println("ERROR: Incorrect data type given for array index.");
+                            System.exit(37);
+                        }
+                    }
+                    else if (index instanceof VariableReferenceNode) {
+                        VariableReferenceNode variableIndex = (VariableReferenceNode) index;
+                        InterpreterDataType variableIndexData = VariableReferenceNodeFunction(inputLocalVariableMap, variableIndex);
+                        if (variableIndexData instanceof IntegerDataType) {
+                            IntegerDataType intIndex = (IntegerDataType) variableIndexData;
+                            arrayIndex = intIndex.getData();
+                        }
+                        else {
+                            System.out.println("ERROR: Incorrect data type given for array index.");
+                            System.exit(37);
+                        }
+                    }
+                    else {
+                        System.out.println("ERROR: Incorrect data type given for array index.");
+                        System.exit(37);
+                    }
+                }
+                InterpreterDataType dataAtIndex = referencedArray.getDataAtIndex(arrayIndex);
+                if (dataAtIndex == null) {
+                    System.out.println("ERROR: Referenced variable not declared.");
+                    System.exit(36);
+                }
+                else if (dataAtIndex instanceof IntegerDataType) { //Only Integer, Real, and String data types can be found in expressions
+                    IntegerDataType currentIntData = (IntegerDataType) dataAtIndex; //Extracts data from referenced variable...
+                    int intData = currentIntData.getData();
+                    IntegerNode newIntegerNode = new IntegerNode(intData);
+                    return newIntegerNode; //...and returns a new node containing extracted data
+                }
+                else if (dataAtIndex instanceof RealDataType) {
+                    RealDataType currentRealData = (RealDataType) dataAtIndex;
+                    float realData = currentRealData.getData();
+                    RealNode newRealNode = new RealNode(realData);
+                    return newRealNode;
+                }
+                else if (dataAtIndex instanceof StringDataType) {
+                    StringDataType currentStringData = (StringDataType) dataAtIndex;
+                    String stringData = currentStringData.getData();
+                    StringNode newStringNode = new StringNode(stringData);
+                    return newStringNode;
+                }
             }
             else {
                 System.out.println("ERROR: Variable referenced within expression has incorrect data type.");

@@ -131,7 +131,7 @@ public class FunctionNode extends Node {
             if (node.getValue() != null) {
                 str += " = " + node.getValue().ToString();
             }
-            if (node.getHasTypeLimit() == true) {
+            if (node.hasTypeLimit() == true) {
                 if (node.getType() == VariableNode.variableType.REAL) {
                     str += " From " + node.getRealFrom() + " To " + node.getRealTo();
                 }

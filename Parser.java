@@ -359,10 +359,29 @@ public class Parser {
         }
         if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.IDENTIFIER) {
             if (functionVariables.containsKey(peek(0).getValue())) {
-                newToken = matchAndRemove(Token.tokenType.IDENTIFIER);
-                VariableNode variable = functionVariables.get(newToken.getValue());
-                VariableReferenceNode variableReferenceNode = new VariableReferenceNode(newToken.getValue(), variable);
-                return variableReferenceNode;
+                Token currentToken = matchAndRemove(Token.tokenType.IDENTIFIER);
+                VariableNode variable = functionVariables.get(currentToken.getValue());
+                if (matchAndRemove(Token.tokenType.LEFTBRACKET) != null) {
+                    Node index = expression();
+                    if (index != null) {
+                        if (matchAndRemove(Token.tokenType.RIGHTBRACKET) == null) {
+                            throw new SyntaxErrorException(tokenArray.get(0));
+                        }
+                        VariableReferenceNode variableReferenceNode = new VariableReferenceNode(currentToken.getValue(), variable, index);
+                        return variableReferenceNode;
+                    }
+                    else {
+                        throw new SyntaxErrorException(tokenArray.get(0));
+                    }
+                }
+                else {
+                    VariableReferenceNode variableReferenceNode = new VariableReferenceNode(currentToken.getValue(), variable);
+                    return variableReferenceNode;
+                }
+            }
+            else {
+                System.out.println("Unitialized variable '" + peek(0).getValue() +"' referenced.");
+                System.exit(0);
             }
         }
         else if (tokenArray.size() > 0 && peek(0).getToken() == Token.tokenType.INTEGER) {
@@ -484,7 +503,7 @@ public class Parser {
             }
             matchAndRemove(Token.tokenType.RIGHTBRACKET);
             VariableNode referencedVariable = functionVariables.get(targetName);
-            VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(targetName, arrayIndex, referencedVariable);
+            VariableReferenceNode newVariableReferenceNode = new VariableReferenceNode(targetName, referencedVariable, arrayIndex);
             return newVariableReferenceNode;
         }
         Node expressionNode = expression();
@@ -545,7 +564,7 @@ public class Parser {
                     if (matchAndRemove(Token.tokenType.RIGHTBRACKET) == null)
                         throw new SyntaxErrorException(tokenArray.get(0));
                     VariableNode referencedVariable = functionVariables.get(targetName);
-                    integerVariableNode = new VariableReferenceNode(targetName, arrayIndex, referencedVariable);
+                    integerVariableNode = new VariableReferenceNode(targetName, referencedVariable, arrayIndex);
                 }
                 else {
                     VariableNode referencedVariable = functionVariables.get(targetName);
