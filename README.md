@@ -1,4 +1,4 @@
-# ShankCompiler
+# Shank Compiler
 
 Compiler for the Shank programming language designed by Professor Michael Phipps of the University of Albany located in Albany, New York. This program was created by Byron Peregrim during his Spring 2023 semester at the University of Albany.
 
